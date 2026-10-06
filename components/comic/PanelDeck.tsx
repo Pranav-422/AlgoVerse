@@ -13,15 +13,19 @@ const STACK = [
   { x: 24, y: 12, rotate: 4, scale: 0.96 },
 ];
 
+const SWIPE_THRESHOLD = 80;
+
 interface Props {
   comic: Comic;
   index: number;
   /** +1 forward, -1 back — controls which way the active card leaves. */
   direction: 1 | -1;
   shuffling?: boolean;
+  /** Called with +1 or -1 when user swipes the deck. */
+  onSwipe?: (dir: 1 | -1) => void;
 }
 
-export function PanelDeck({ comic, index, direction, shuffling = false }: Props) {
+export function PanelDeck({ comic, index, direction, shuffling = false, onSwipe }: Props) {
   const panels = comic.panels;
   const reduce = useReducedMotion();
   const visible = [0, 1, 2]
@@ -42,7 +46,7 @@ export function PanelDeck({ comic, index, direction, shuffling = false }: Props)
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <PanelCard panel={p} comic={comic} />
+            <PanelCard panel={p} comic={comic} active />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -55,28 +59,43 @@ export function PanelDeck({ comic, index, direction, shuffling = false }: Props)
         {visible
           .slice()
           .reverse()
-          .map(({ offset, panel }) => (
-            <motion.div
-              key={comic.id + panel.n}
-              className="absolute inset-0"
-              style={{ zIndex: 10 - offset }}
-              custom={direction}
-              initial={
-                direction === 1
-                  ? { ...STACK[2], x: STACK[2].x + 12, opacity: 0 }
-                  : { x: -420, y: 20, rotate: -9, scale: 1, opacity: 0 }
-              }
-              animate={{ ...STACK[offset], opacity: 1 }}
-              exit={
-                direction === 1
-                  ? { x: -460, y: 30, rotate: -10, opacity: 0, transition: { duration: shuffling ? 0.22 : 0.38 } }
-                  : { ...STACK[2], x: STACK[2].x + 12, opacity: 0, transition: { duration: 0.25 } }
-              }
-              transition={{ type: "spring", stiffness: shuffling ? 520 : 300, damping: shuffling ? 34 : 30 }}
-            >
-              <PanelCard panel={panel} comic={comic} />
-            </motion.div>
-          ))}
+          .map(({ offset, panel }) => {
+            const isFront = offset === 0;
+            return (
+              <motion.div
+                key={comic.id + panel.n}
+                className="absolute inset-0"
+                style={{ zIndex: 10 - offset }}
+                custom={direction}
+                initial={
+                  direction === 1
+                    ? { ...STACK[2], x: STACK[2].x + 12, opacity: 0 }
+                    : { x: -420, y: 20, rotate: -9, scale: 1, opacity: 0 }
+                }
+                animate={{ ...STACK[offset], opacity: 1 }}
+                exit={
+                  direction === 1
+                    ? { x: -460, y: 30, rotate: -10, opacity: 0, transition: { duration: shuffling ? 0.22 : 0.38 } }
+                    : { ...STACK[2], x: STACK[2].x + 12, opacity: 0, transition: { duration: 0.25 } }
+                }
+                transition={{ type: "spring", stiffness: shuffling ? 520 : 300, damping: shuffling ? 34 : 30 }}
+                // Swipe gesture only on the front card
+                {...(isFront && onSwipe
+                  ? {
+                      drag: "x" as const,
+                      dragConstraints: { left: 0, right: 0 },
+                      dragElastic: 0.2,
+                      onDragEnd: (_e: Event, info: { offset: { x: number } }) => {
+                        if (info.offset.x < -SWIPE_THRESHOLD) onSwipe(1);
+                        else if (info.offset.x > SWIPE_THRESHOLD) onSwipe(-1);
+                      },
+                    }
+                  : {})}
+              >
+                <PanelCard panel={panel} comic={comic} active={isFront && !shuffling} />
+              </motion.div>
+            );
+          })}
       </AnimatePresence>
     </div>
   );

@@ -5,6 +5,8 @@
 // line + pose per panel. The model (or the rule-based fallback) only makes that
 // selection; everything drawn comes from the kit.
 
+import type { TraceStep } from "./trace";
+
 // --- the kit -------------------------------------------------------------------
 
 export interface KitLayout {
@@ -57,10 +59,18 @@ export interface DialogueLine {
   scene: SceneSpec;
 }
 
+export interface ComicQuiz {
+  q: string;
+  options: [string, string, string];
+  answer: 0 | 1 | 2;
+  fact: string;
+}
+
 export interface Arc {
   id: string;
   title: string;
   lines: DialogueLine[];
+  quiz?: ComicQuiz;
 }
 
 export interface DialogueBank {
@@ -104,6 +114,7 @@ export interface Comic {
   design: string;
   theme: string;
   panels: Panel[];
+  quiz?: ComicQuiz;
 }
 
 /** Everything "How this was generated" needs for the content on screen. */
@@ -119,6 +130,12 @@ export interface Provenance {
   selection?: Selection;
   note?: string;
   createdAt?: number;
+  /** Ordered pipeline steps with timings (prompt built → model → rule check → …). */
+  trace?: TraceStep[];
+  /** Fact-guard result for rewrites of the brief. */
+  guard?: { ok: boolean; newClaims: string[]; checked: number };
+  /** Learner preferences that shaped this generation, if any. */
+  preferences?: { length: string; style: string; pace: string } | null;
 }
 
 export interface ComicWithProvenance {

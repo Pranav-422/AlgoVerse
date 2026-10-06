@@ -10,7 +10,16 @@ const FORMAT_TAGS: { key: Format; label: string }[] = [
   { key: "visualizer", label: "Visual" },
 ];
 
-export function TopicCard({ topic, opened }: { topic: Topic; opened: Format[] }) {
+export function TopicCard({
+  topic,
+  opened,
+  mastery,
+}: {
+  topic: Topic;
+  opened: Format[];
+  /** Quiz results for this topic: arcs answered / answered correctly / arcs available. */
+  mastery?: { answered: number; correct: number; total: number };
+}) {
   const soon = topic.status === "soon";
   const done = opened.length;
   const pct = (done / 4) * 100;
@@ -54,6 +63,22 @@ export function TopicCard({ topic, opened }: { topic: Topic; opened: Format[] })
         <div className="h-2.5 border-2 border-ink rounded-sm bg-card overflow-hidden">
           <div className="h-full bg-amber" style={{ width: `${pct}%` }} />
         </div>
+        {mastery && mastery.total > 0 && (
+          <div className="mt-2 flex items-center justify-between font-mono text-[10px] uppercase tracking-wider">
+            <span className="text-outline">Quiz mastery</span>
+            <span className="flex items-center gap-1">
+              {Array.from({ length: mastery.total }, (_, i) => (
+                <span
+                  key={i}
+                  className={`w-2.5 h-2.5 rounded-full border border-ink ${i < mastery.correct ? "bg-ok" : i < mastery.answered ? "bg-err" : "bg-card"}`}
+                />
+              ))}
+              <span className="ml-1 text-ink font-bold">
+                {mastery.correct}/{mastery.total}
+              </span>
+            </span>
+          </div>
+        )}
       </div>
     </>
   );

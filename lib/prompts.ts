@@ -12,16 +12,28 @@ export interface BuiltPrompt {
   feedback: { category: FeedbackCategory; instruction: string } | null;
 }
 
-export function buildExpressivePrompt(topic: Topic): BuiltPrompt {
+export type RewriteMode = "expressive" | "hinglish";
+
+export function buildRewritePrompt(topic: Topic, mode: RewriteMode): BuiltPrompt {
   const facts = topic.coreFacts;
-  const constraints = [
-    "Keep every fact exactly as given; add no new facts, numbers or claims",
-    "Same length as the original, give or take 20%",
-    "Richer, more vivid language; concrete imagery",
-    "Plain text, no markdown, no headings",
-  ];
+  const constraints =
+    mode === "hinglish"
+      ? [
+          "Write in Hinglish: Hindi in Roman script, mixed naturally with English",
+          "Keep every technical term in English (array, index, pointer, O(n)…)",
+          "Keep every fact exactly as given; add no new facts, numbers or claims",
+          "Plain text, no markdown, no headings",
+        ]
+      : [
+          "Keep every fact exactly as given; add no new facts, numbers or claims",
+          "Same length as the original, give or take 20%",
+          "Richer, more vivid language; concrete imagery",
+          "Plain text, no markdown, no headings",
+        ];
   const prompt = [
-    `Rewrite the following summary of "${topic.name}" in more expressive, vivid language.`,
+    mode === "hinglish"
+      ? `Explain the following summary of "${topic.name}" in friendly Hinglish for an Indian first-year CSE student.`
+      : `Rewrite the following summary of "${topic.name}" in more expressive, vivid language.`,
     ``,
     `ORIGINAL SUMMARY`,
     topic.summary,

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { KitPalette } from "@/lib/comic";
 
 // The Mentor: one fixed character drawn in SVG, so identity never drifts between panels.
@@ -27,7 +27,16 @@ const FACE: Record<Pose, { brows: string; mouth: string }> = {
   cheer: { brows: "M48 36 L55 35 M65 35 L72 36", mouth: "M52 55 Q60 66 68 55 Z" },
 };
 
-export function Mentor({ pose, palette, className }: { pose: string; palette: KitPalette; className?: string }) {
+interface MentorProps {
+  pose: string;
+  palette: KitPalette;
+  className?: string;
+  isActive?: boolean;
+  isPayoff?: boolean;
+}
+
+export function Mentor({ pose, palette, className, isActive = true, isPayoff = false }: MentorProps) {
+  const reduce = useReducedMotion();
   const p = (ARMS[pose as Pose] ? pose : "explain") as Pose;
   const arm = ARMS[p];
   const face = FACE[p];
@@ -38,40 +47,69 @@ export function Mentor({ pose, palette, className }: { pose: string; palette: Ki
       viewBox="0 0 120 170"
       className={className}
       initial={{ y: 8, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      animate={
+        isPayoff && isActive && !reduce
+          ? { y: [0, -12, 0], opacity: 1 }
+          : { y: 0, opacity: 1 }
+      }
+      transition={{
+        y: isPayoff && isActive && !reduce ? { duration: 0.36, ease: "easeOut" } : { type: "spring", stiffness: 260, damping: 20 },
+        opacity: { duration: 0.2 },
+      }}
       aria-label={`Mentor, ${p}`}
       role="img"
     >
-      {/* legs */}
-      <path d="M50 150 L48 168 M70 150 L72 168" stroke={ink} strokeWidth="6" strokeLinecap="round" />
-      {/* body / jacket */}
-      <path d="M40 92 Q60 84 80 92 L84 152 Q60 158 36 152 Z" fill={palette.accent} stroke={ink} strokeWidth="3" strokeLinejoin="round" />
-      <path d="M60 90 L60 150" stroke={ink} strokeWidth="2" opacity="0.5" />
-      {/* scarf */}
-      <path d="M46 86 Q60 94 74 86 L72 94 Q60 100 48 94 Z" fill={palette.accent2} stroke={ink} strokeWidth="2.5" />
-      <path d="M66 94 L70 112 L62 110 Z" fill={palette.accent2} stroke={ink} strokeWidth="2" />
-      {/* arms */}
-      <motion.path d={arm.left} initial={false} animate={{ d: arm.left }} fill="none" stroke={ink} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-      <motion.path d={arm.right} initial={false} animate={{ d: arm.right }} fill="none" stroke={ink} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={arm.lh[0]} cy={arm.lh[1]} r="5.5" fill={SKIN} stroke={ink} strokeWidth="2.5" />
-      <circle cx={arm.rh[0]} cy={arm.rh[1]} r="5.5" fill={SKIN} stroke={ink} strokeWidth="2.5" />
-      {/* neck + head */}
-      <rect x="55" y="70" width="10" height="12" fill={SKIN} stroke={ink} strokeWidth="2.5" />
-      <circle cx="60" cy="48" r="24" fill={SKIN} stroke={ink} strokeWidth="3" />
-      {/* hair */}
-      <path d="M36 46 Q36 20 60 20 Q86 20 84 46 Q78 32 64 32 Q50 30 40 40 Z" fill={ink} />
-      {/* glasses */}
-      <circle cx="51" cy="47" r="7" fill="#FFFFFF" fillOpacity="0.35" stroke={ink} strokeWidth="2.5" />
-      <circle cx="69" cy="47" r="7" fill="#FFFFFF" fillOpacity="0.35" stroke={ink} strokeWidth="2.5" />
-      <path d="M58 47 L62 47" stroke={ink} strokeWidth="2.5" />
-      <circle cx="51" cy="47.5" r="2" fill={ink} />
-      <circle cx="69" cy="47.5" r="2" fill={ink} />
-      {/* brows + mouth */}
-      <path d={face.brows} stroke={ink} strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <path d={face.mouth} stroke={ink} strokeWidth="2.5" strokeLinecap="round" fill={p === "cheer" ? "#FFFFFF" : "none"} />
-      {p === "think" && <text x="88" y="26" fontSize="18" fontWeight="700" fill={palette.accent} fontFamily="monospace">?</text>}
-      {p === "surprised" && <text x="90" y="24" fontSize="18" fontWeight="700" fill={palette.accent} fontFamily="monospace">!</text>}
+      <motion.g
+        animate={isActive && !reduce ? { y: [-2, 2, -2] } : { y: 0 }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: isPayoff && isActive && !reduce ? 0.36 : 0,
+        }}
+      >
+        {/* legs */}
+        <path d="M50 150 L48 168 M70 150 L72 168" stroke={ink} strokeWidth="6" strokeLinecap="round" />
+        {/* body / jacket */}
+        <path d="M40 92 Q60 84 80 92 L84 152 Q60 158 36 152 Z" fill={palette.accent} stroke={ink} strokeWidth="3" strokeLinejoin="round" />
+        <path d="M60 90 L60 150" stroke={ink} strokeWidth="2" opacity="0.5" />
+        {/* scarf */}
+        <path d="M46 86 Q60 94 74 86 L72 94 Q60 100 48 94 Z" fill={palette.accent2} stroke={ink} strokeWidth="2.5" />
+        <path d="M66 94 L70 112 L62 110 Z" fill={palette.accent2} stroke={ink} strokeWidth="2" />
+        {/* arms */}
+        <motion.path d={arm.left} initial={false} animate={{ d: arm.left }} fill="none" stroke={ink} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+        <motion.path d={arm.right} initial={false} animate={{ d: arm.right }} fill="none" stroke={ink} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={arm.lh[0]} cy={arm.lh[1]} r="5.5" fill={SKIN} stroke={ink} strokeWidth="2.5" />
+        <circle cx={arm.rh[0]} cy={arm.rh[1]} r="5.5" fill={SKIN} stroke={ink} strokeWidth="2.5" />
+        {/* neck + head */}
+        <rect x="55" y="70" width="10" height="12" fill={SKIN} stroke={ink} strokeWidth="2.5" />
+        <circle cx="60" cy="48" r="24" fill={SKIN} stroke={ink} strokeWidth="3" />
+        {/* hair */}
+        <path d="M36 46 Q36 20 60 20 Q86 20 84 46 Q78 32 64 32 Q50 30 40 40 Z" fill={ink} />
+        {/* glasses */}
+        <circle cx="51" cy="47" r="7" fill="#FFFFFF" fillOpacity="0.35" stroke={ink} strokeWidth="2.5" />
+        <circle cx="69" cy="47" r="7" fill="#FFFFFF" fillOpacity="0.35" stroke={ink} strokeWidth="2.5" />
+        <path d="M58 47 L62 47" stroke={ink} strokeWidth="2.5" />
+        {/* blinking pupils */}
+        <motion.g
+          animate={isActive && !reduce ? { scaleY: [1, 1, 0.1, 1, 1] } : { scaleY: 1 }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            times: [0, 0.92, 0.95, 0.98, 1],
+            ease: "easeInOut",
+          }}
+          style={{ transformOrigin: "60px 47.5px" }}
+        >
+          <circle cx="51" cy="47.5" r="2" fill={ink} />
+          <circle cx="69" cy="47.5" r="2" fill={ink} />
+        </motion.g>
+        {/* brows + mouth */}
+        <path d={face.brows} stroke={ink} strokeWidth="2.5" strokeLinecap="round" fill="none" />
+        <path d={face.mouth} stroke={ink} strokeWidth="2.5" strokeLinecap="round" fill={p === "cheer" ? "#FFFFFF" : "none"} />
+        {p === "think" && <text x="88" y="26" fontSize="18" fontWeight="700" fill={palette.accent} fontFamily="monospace">?</text>}
+        {p === "surprised" && <text x="90" y="24" fontSize="18" fontWeight="700" fill={palette.accent} fontFamily="monospace">!</text>}
+      </motion.g>
     </motion.svg>
   );
 }

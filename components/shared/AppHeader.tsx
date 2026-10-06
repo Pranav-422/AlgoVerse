@@ -12,7 +12,7 @@ interface Props {
   crumbs?: Crumb[];
   /** Topic slug — enables the per-format nav. */
   topic?: { slug: string; formats: string[] };
-  active?: "topics" | "brief" | "comic" | "video" | "visualizer";
+  active?: "topics" | "brief" | "comic" | "video" | "visualizer" | "insights" | "consistency";
   children?: React.ReactNode;
 }
 
@@ -40,6 +40,16 @@ export function AppHeader({ email, crumbs, topic, active, children }: Props) {
               <Link href="/dashboard" className={linkCls(active === "topics")}>
                 Topics
               </Link>
+              {!topic && (
+                <>
+                  <Link href="/consistency" className={linkCls(active === "consistency")} title="Where every fact is used">
+                    Facts
+                  </Link>
+                  <Link href="/insights" className={linkCls(active === "insights")} title="Pipeline reliability metrics">
+                    Insights
+                  </Link>
+                </>
+              )}
               {topic &&
                 FORMAT_LINKS.map((f) =>
                   topic.formats.includes(f.key) ? (

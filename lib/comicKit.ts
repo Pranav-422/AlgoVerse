@@ -93,6 +93,39 @@ export function checkSelection(
   return errs;
 }
 
+// --- learner preferences (soft guidance) ----------------------------------------
+
+export interface LearnerPrefs {
+  length: "short" | "detailed";
+  style: "visual" | "worded";
+  pace: "step" | "story";
+}
+
+/** Preferences as guidance lines. Unlike feedback, these are preferences, not hard rules. */
+export function prefGuidance(p: LearnerPrefs): string[] {
+  return [
+    p.length === "short" ? "Learner prefers SHORT comics: favour 4–5 panels and basic lines." : "Learner prefers DETAILED comics: favour 5–6 panels and include detail lines.",
+    p.style === "visual" ? "Learner is VISUAL: favour lines whose scene is a diagram (boxes, nodes, trees) over summary badges." : "Learner likes WORDED explanations: favour detail lines that explain why.",
+    p.pace === "step" ? "Learner likes STEP-BY-STEP pacing: favour layouts with more step panels (grid-6, zigzag-5)." : "Learner likes a STORY arc: favour the hero-5 layout with a strong opening and payoff.",
+  ];
+}
+
+/** Layouts ordered by how well they fit the preferences (used by the fallback). */
+function preferredLayouts(layouts: Kit["layouts"], p: LearnerPrefs | null) {
+  if (!p) return layouts;
+  const score = (l: Kit["layouts"][number]) => {
+    const n = l.spans.length;
+    let s = 0;
+    if (p.length === "short") s += n <= 5 ? 2 : 0;
+    else s += n >= 5 ? 2 : 0;
+    if (p.pace === "step") s += l.id === "grid-6" || l.id === "zigzag-5" ? 2 : 0;
+    else s += l.id === "hero-5" ? 2 : 0;
+    return s;
+  };
+  const best = Math.max(...layouts.map(score));
+  return layouts.filter((l) => score(l) === best);
+}
+
 // --- the prompt ----------------------------------------------------------------
 
 export interface PickPrompt {
@@ -101,7 +134,14 @@ export interface PickPrompt {
   feedback: { category: FeedbackCategory; instruction: string } | null;
 }
 
-export function buildPickPrompt(topicName: string, kit: Kit, bank: DialogueBank, feedback: FeedbackCategory | null, previous: Selection | null): PickPrompt {
+export function buildPickPrompt(
+  topicName: string,
+  kit: Kit,
+  bank: DialogueBank,
+  feedback: FeedbackCategory | null,
+  previous: Selection | null,
+  prefs: LearnerPrefs | null = null,
+): PickPrompt {
   const adj = feedback ? { category: feedback, instruction: FEEDBACK_MAP[feedback].instruction } : null;
   const constraints = [...SELECTION_RULES, ...(adj ? [`Feedback: ${adj.instruction}`] : [])];
   const list = (items: { id: string; name?: string; about: string }[]) => items.map((i) => `- ${i.id}: ${i.about}`);
@@ -132,6 +172,7 @@ export function buildPickPrompt(topicName: string, kit: Kit, bank: DialogueBank,
     ...SELECTION_RULES.map((r) => `- ${r}`),
     `- Prefer poses that fit the line (cheer for payoffs, think for questions, point when showing).`,
     ...(adj ? [``, `LEARNER FEEDBACK (${adj.category})`, `- ${adj.instruction}`] : []),
+    ...(prefs ? [``, `LEARNER PREFERENCES (guidance; the RULES and FEEDBACK above always win)`, ...prefGuidance(prefs).map((g) => `- ${g}`)] : []),
     ...(previous ? [``, `PREVIOUS COMIC (your choice must differ from it)`, JSON.stringify(previous)] : []),
     ``,
     `OUTPUT — strict JSON only, no prose:`,
@@ -175,18 +216,27 @@ function rng(seed: number) {
  * Pick a valid selection without a model. Used when there is no API key, the model times out,
  * or its answer breaks the rules twice. Obeys the same rules and feedback constraints.
  */
-export function fallbackPick(kit: Kit, bank: DialogueBank, feedback: FeedbackCategory | null, previous: Selection | null, seed = Date.now()): Selection {
+export function fallbackPick(
+  kit: Kit,
+  bank: DialogueBank,
+  feedback: FeedbackCategory | null,
+  previous: Selection | null,
+  seed = Date.now(),
+  prefs: LearnerPrefs | null = null,
+): Selection {
   const rand = rng(seed);
   const pick = <T,>(xs: T[]) => xs[Math.floor(rand() * xs.length)];
   for (let attempt = 0; attempt < 200; attempt++) {
     let layouts = kit.layouts;
     if (feedback === "too complex") layouts = layouts.filter((l) => l.spans.length === 4);
     if (feedback === "pacing" && previous) layouts = layouts.filter((l) => l.spans.length !== previous.panels.length);
-    const layout = pick(layouts);
+    // Honour preferences for the first half of the attempts, then relax them.
+    const layout = pick(attempt < 100 ? preferredLayouts(layouts, prefs) : layouts);
     const n = layout.spans.length;
     const basicOnly = feedback === "too complex";
     const arc = pick(bank.arcs);
-    const ok = (l: DialogueLine) => !basicOnly || l.level === "basic";
+    const prefBasic = attempt < 100 && prefs?.length === "short";
+    const ok = (l: DialogueLine) => (!basicOnly && !prefBasic) || l.level === "basic";
     const setups = arc.lines.filter((l) => l.role === "setup" && ok(l));
     const steps = arc.lines.filter((l) => l.role === "step" && ok(l));
     const payoffs = arc.lines.filter((l) => l.role === "payoff" && ok(l));
@@ -230,6 +280,7 @@ export function resolveComic(sel: Selection, kit: Kit, bank: DialogueBank, meta:
       const { line } = idx.get(p.line)!;
       return { n: i + 1, lineId: line.id, text: line.text, concept: line.concept, role: line.role, scene: line.scene, pose: p.pose, span: layout.spans[i] };
     }),
+    quiz: first.arc.quiz,
   };
 }
 
@@ -250,6 +301,24 @@ export function lintBank(bank: DialogueBank, kit: Kit, coreFacts: string[]): str
   const errs: string[] = [];
   const ids = new Set<string>();
   for (const arc of bank.arcs) {
+    if (!arc.quiz) {
+      errs.push(`arc ${arc.id}: missing quiz`);
+    } else {
+      const q = arc.quiz;
+      if (!Array.isArray(q.options) || q.options.length !== 3) {
+        errs.push(`arc ${arc.id}: quiz must have exactly 3 options`);
+      }
+      if (typeof q.answer !== "number" || q.answer < 0 || q.answer > 2 || !Number.isInteger(q.answer)) {
+        errs.push(`arc ${arc.id}: quiz answer must be 0, 1, or 2`);
+      }
+      const words = q.q.split(/\s+/).filter(Boolean).length;
+      if (words > 25) {
+        errs.push(`arc ${arc.id}: quiz question has ${words} words (max 25)`);
+      }
+      if (!coreFacts.some((f) => f.trim() === q.fact.trim())) {
+        errs.push(`arc ${arc.id}: quiz fact "${q.fact}" not found verbatim in core facts`);
+      }
+    }
     for (const l of arc.lines) {
       if (ids.has(l.id)) errs.push(`${l.id}: duplicate id`);
       ids.add(l.id);

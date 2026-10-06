@@ -65,6 +65,52 @@ export function HowGenerated({ provenance, title = "How this was generated" }: {
             <p className="border-l-4 border-amber bg-cream px-3 py-2 font-mono text-[12px]">{provenance.note}</p>
           )}
 
+          {provenance.guard && (
+            <div
+              className={`flex items-start gap-2 border-2 rounded px-3 py-2 font-mono text-[12px] ${
+                provenance.guard.ok ? "border-ok bg-[#EAF6EE]" : "border-err bg-[#FCEEEE]"
+              }`}
+            >
+              <span className="font-bold">{provenance.guard.ok ? "✓ Fact guard passed" : "⚠ Fact guard failed"}</span>
+              <span>
+                {provenance.guard.checked} number/complexity claim(s) checked against the knowledge file
+                {provenance.guard.newClaims.length ? ` · new: ${provenance.guard.newClaims.join(", ")}` : " · nothing new was added"}
+              </span>
+            </div>
+          )}
+
+          {provenance.preferences && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="label mr-1">Learner preferences used</span>
+              <span className="tag">{provenance.preferences.length}</span>
+              <span className="tag">{provenance.preferences.style}</span>
+              <span className="tag">{provenance.preferences.pace}</span>
+            </div>
+          )}
+
+          {provenance.trace && provenance.trace.length > 0 && (
+            <div>
+              <h4 className="label mb-2">Pipeline trace</h4>
+              <ol className="relative border-l-2 border-ink ml-2 space-y-2">
+                {provenance.trace.map((t, i) => (
+                  <li key={i} className="pl-4 relative">
+                    <span
+                      className={`absolute -left-[7px] top-1 w-3 h-3 rounded-full border-2 border-ink ${
+                        t.status === "ok" ? "bg-ok" : t.status === "retry" ? "bg-amber-mid" : t.status === "fail" ? "bg-err" : "bg-card"
+                      }`}
+                    />
+                    <div className="flex flex-wrap items-baseline gap-2 font-mono text-[12px]">
+                      <span className="font-bold">{t.step}</span>
+                      <span className="tag !text-[9px]">{t.status}</span>
+                      {t.ms > 0 && <span className="text-outline">{t.ms} ms</span>}
+                    </div>
+                    {t.detail && <p className="font-mono text-[11px] text-muted break-words">{t.detail}</p>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
           <div>
             <h4 className="label mb-2">Prompt sent to the model</h4>
             {provenance.prompt ? (

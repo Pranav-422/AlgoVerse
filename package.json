@@ -9,7 +9,10 @@
     "lint": "eslint",
     "check:engines": "tsx scripts/check-engines.mts",
     "check:comics": "tsx scripts/check-comic-kit.mts",
-    "check": "npm run check:engines && npm run check:comics"
+    "check": "npm run check:engines && npm run check:comics && npm run check:words",
+    "experiment": "tsx --conditions=react-server --env-file=.env.local scripts/experiment.mts",
+    "check:words": "node scripts/scan-words.mjs",
+    "seed:demo": "tsx --conditions=react-server scripts/seed-demo.mts"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",

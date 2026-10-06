@@ -77,7 +77,17 @@
           "text": "Every nested function call in software is managed with a call stack.",
           "scene": { "id": "stack", "values": ["main", "foo", "bar"], "top": true, "note": "call stack" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "Which ordering rule governs insertions and removals in a stack?",
+        "options": [
+          "First In, First Out (FIFO)",
+          "Last In, First Out (LIFO)",
+          "Smallest Value First (Priority)"
+        ],
+        "answer": 1,
+        "fact": "A stack follows Last In, First Out (LIFO)."
+      }
     },
     {
       "id": "stack-brackets",
@@ -155,7 +165,17 @@
           "text": "If any bracket is unmatched or left behind, the expression is invalid.",
           "scene": { "id": "stack", "values": ["("], "top": true, "note": "unmatched!" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "How does a stack determine whether an expression has balanced brackets?",
+        "options": [
+          "By counting total opening and closing brackets without checking order.",
+          "By pushing openers and popping to match closers in O(n).",
+          "By reversing the string and comparing it with the original."
+        ],
+        "answer": 1,
+        "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n)."
+      }
     },
     {
       "id": "queue-fifo",
@@ -233,7 +253,17 @@
           "text": "A deque allows insertion and deletion at both ends.",
           "scene": { "id": "queue", "values": [null, 20, 30, 40], "front": 1, "rear": 3, "note": "deque" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "Which principle determines how elements are added and removed in a queue?",
+        "options": [
+          "First In, First Out (FIFO)",
+          "Last In, First Out (LIFO)",
+          "Random access by index"
+        ],
+        "answer": 0,
+        "fact": "A queue follows First In, First Out (FIFO)."
+      }
     },
     {
       "id": "queue-circular",
@@ -311,7 +341,17 @@
           "text": "Full capacity is detected when advancing rear would bump into front.",
           "scene": { "id": "queue", "values": [50, 60, 30, 40], "front": 2, "rear": 1, "ring": true, "note": "full!" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "How does a circular queue wrap around to reuse freed slots?",
+        "options": [
+          "By shifting remaining elements left whenever front advances.",
+          "By computing the next index as (index + 1) mod capacity.",
+          "By doubling the internal array capacity on every dequeue."
+        ],
+        "answer": 1,
+        "fact": "A circular queue computes the next index as (index + 1) mod capacity."
+      }
     }
   ]
 }

@@ -1,15 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, AlertTriangle, Layers, LayoutGrid } from "lucide-react";
+import { ChevronLeft, ChevronRight, AlertTriangle, Layers, LayoutGrid, Play, Pause, Volume2, VolumeX } from "lucide-react";
 import type { ComicWithProvenance } from "@/lib/comic";
 import type { FeedbackCategory } from "@/lib/feedbackMap";
 import { PanelDeck } from "./PanelDeck";
 import { PageView } from "./PageView";
 import { FeedbackBar } from "./FeedbackBar";
+import { ComicQuiz } from "./ComicQuiz";
 import { HowGenerated } from "@/components/shared/HowGenerated";
 
 const CLIENT_TIMEOUT_MS = 90_000;
+const AUTOPLAY_MS = 4500;
 
 interface Props {
   topicId: string;
@@ -31,20 +33,63 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<"deck" | "page">("deck");
+  const [autoplay, setAutoplay] = useState(false);
+  // Read-aloud uses the browser's built-in speech synthesis (not a model).
+  const [voice, setVoice] = useState(false);
   const shuffleTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoplayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const current = comics[Math.min(which, comics.length - 1)];
   const panels = current.comic.panels;
+  const atLast = index === panels.length - 1;
+  const showQuiz = (atLast || view === "page") && current.comic.quiz;
+
+  // Stop autoplay: clear timer and optionally reset state (only call from event handlers)
+  const stopAutoplay = useCallback(() => {
+    setAutoplay(false);
+    if (autoplayTimer.current) {
+      clearTimeout(autoplayTimer.current);
+      autoplayTimer.current = null;
+    }
+  }, []);
+
 
   const go = useCallback(
-    (d: 1 | -1) => {
+    (d: 1 | -1, manual = true) => {
       if (busy) return;
+      if (manual) stopAutoplay();
       setDirection(d);
       setIndex((i) => Math.min(Math.max(i + d, 0), panels.length - 1));
     },
-    [busy, panels.length],
+    [busy, panels.length, stopAutoplay],
   );
 
+  // Autoplay: schedule next advance; when reaching last panel, stop via a timeout callback (not sync setState)
+  useEffect(() => {
+    if (!autoplay || view !== "deck" || busy) return;
+    if (atLast) {
+      // Schedule the state update asynchronously — not synchronous setState in effect body
+      const t = setTimeout(() => setAutoplay(false), 0);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => {
+      go(1, false);
+    }, AUTOPLAY_MS);
+    return () => clearTimeout(t);
+  }, [autoplay, view, busy, atLast, index, go]);
+
+  // Read the active panel's line aloud whenever it changes.
+  useEffect(() => {
+    if (!voice || view !== "deck" || busy || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const u = new SpeechSynthesisUtterance(panels[Math.min(index, panels.length - 1)].text);
+    u.rate = 0.95;
+    u.lang = "en-IN";
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+    return () => window.speechSynthesis.cancel();
+  }, [voice, view, busy, index, panels]);
+
+  // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement) return;
@@ -55,6 +100,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
     return () => window.removeEventListener("keydown", onKey);
   }, [go]);
 
+  // Shuffle animation during regeneration
   function startShuffle() {
     setDirection(1);
     shuffleTimer.current = setInterval(() => setIndex((i) => (i + 1) % panels.length), 380);
@@ -64,6 +110,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
     shuffleTimer.current = null;
   }
   useEffect(() => stopShuffle, []);
+
 
   async function regenerate() {
     setBusy(true);
@@ -104,6 +151,11 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
     }
   }
 
+  const handleSwipe = useCallback(
+    (d: 1 | -1) => go(d),
+    [go],
+  );
+
   return (
     <div className="space-y-6">
       {/* Comic picker */}
@@ -114,6 +166,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
             key={c.comic.id}
             disabled={busy}
             onClick={() => {
+              stopAutoplay();
               setWhich(i);
               setIndex(0);
             }}
@@ -139,16 +192,48 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
         </span>
         <span className="tag">design · {current.comic.design}</span>
         <span className="tag">theme · {current.comic.theme}</span>
-        <div className="ml-auto flex border-2 border-ink rounded overflow-hidden">
-          {(["deck", "page"] as const).map((v) => (
+
+        {/* View switcher + autoplay toggle */}
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setVoice((v) => !v)}
+            className={`px-3 py-1 border-2 border-ink rounded font-mono text-[11px] font-bold uppercase flex items-center gap-1 ${voice ? "bg-ink text-amber-mid" : "bg-card hover:bg-cream"}`}
+            title="Read each panel aloud (browser speech, not AI-generated)"
+            aria-pressed={voice}
+          >
+            {voice ? <Volume2 size={11} /> : <VolumeX size={11} />} Read
+          </button>
+          {/* Auto-play toggle — only in deck view */}
+          {view === "deck" && (
             <button
-              key={v}
-              onClick={() => setView(v)}
-              className={`px-3 py-1 font-mono text-[11px] font-bold uppercase flex items-center gap-1 ${view === v ? "bg-ink text-amber-mid" : "bg-card hover:bg-cream"}`}
+              onClick={() => {
+                if (autoplay) {
+                  stopAutoplay();
+                } else {
+                  // If at last panel, wrap back
+                  if (atLast) setIndex(0);
+                  setAutoplay(true);
+                }
+              }}
+              disabled={busy}
+              className={`px-3 py-1 border-2 border-ink rounded font-mono text-[11px] font-bold uppercase flex items-center gap-1 ${autoplay ? "bg-ink text-amber-mid" : "bg-card hover:bg-cream"}`}
+              title={autoplay ? "Pause auto-play" : "Auto-play panels"}
             >
-              {v === "deck" ? <Layers size={12} /> : <LayoutGrid size={12} />} {v}
+              {autoplay ? <Pause size={11} /> : <Play size={11} />} Auto
             </button>
-          ))}
+          )}
+
+          <div className="flex border-2 border-ink rounded overflow-hidden">
+            {(["deck", "page"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => { stopAutoplay(); setView(v); }}
+                className={`px-3 py-1 font-mono text-[11px] font-bold uppercase flex items-center gap-1 ${view === v ? "bg-ink text-amber-mid" : "bg-card hover:bg-cream"}`}
+              >
+                {v === "deck" ? <Layers size={12} /> : <LayoutGrid size={12} />} {v}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -162,22 +247,41 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
           }}
         />
       ) : (
-      <div className="grid grid-cols-[56px_1fr_56px] items-center gap-4">
-        <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3" aria-label="Previous panel">
-          <ChevronLeft size={20} />
-        </button>
-        <div className="max-w-[780px] w-full mx-auto pr-6 pb-3">
-          <PanelDeck comic={current.comic} index={Math.min(index, panels.length - 1)} direction={direction} shuffling={busy} />
+        <div className="grid grid-cols-[56px_1fr_56px] items-center gap-4">
+          <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3" aria-label="Previous panel">
+            <ChevronLeft size={20} />
+          </button>
+          <div className="max-w-[780px] w-full mx-auto pr-6 pb-3">
+            {/* Progress bar */}
+            <div className="w-full h-1.5 bg-outline-soft rounded-full mb-2 overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-300"
+                style={{ width: `${((index + 1) / panels.length) * 100}%`, background: current.comic.palette.accent }}
+              />
+            </div>
+
+            <PanelDeck
+              comic={current.comic}
+              index={Math.min(index, panels.length - 1)}
+              direction={direction}
+              shuffling={busy}
+              onSwipe={handleSwipe}
+            />
+
+            {/* One-line hint */}
+            <p className="font-mono text-[10px] text-muted mt-2 text-center opacity-75">
+              Tip: tap any box in the picture to inspect it · swipe or use ← → to move
+            </p>
+          </div>
+          <button
+            onClick={() => go(1)}
+            disabled={busy || index === panels.length - 1}
+            className="btn btn-light !p-3"
+            aria-label="Next panel"
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
-        <button
-          onClick={() => go(1)}
-          disabled={busy || index === panels.length - 1}
-          className="btn btn-light !p-3"
-          aria-label="Next panel"
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
       )}
 
       {error && (
@@ -200,6 +304,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
               key={p.n}
               disabled={busy}
               onClick={() => {
+                stopAutoplay();
                 setDirection(i >= index ? 1 : -1);
                 setIndex(i);
               }}
@@ -213,6 +318,11 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
           ))}
         </div>
       </div>
+
+      {/* Quiz — resets when comic changes via key prop */}
+      {showQuiz && current.comic.quiz && (
+        <ComicQuiz key={current.comic.id} quiz={current.comic.quiz} palette={current.comic.palette} record={{ topicId, arcId: current.comic.arc }} />
+      )}
 
       <FeedbackBar
         selected={category}

@@ -86,7 +86,17 @@
           "text": "If every node has only one child, height degrades to n: O(n).",
           "scene": { "id": "complexity", "label": "Skewed tree height", "big": "O(n)", "vs": "degrades to linked list" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "How many children can a node in a binary tree have at most?",
+        "options": [
+          "At most two children, called left and right.",
+          "Any number of children, as long as there are no cycles.",
+          "Exactly one child per level of height."
+        ],
+        "answer": 0,
+        "fact": "In a binary tree, every node has at most two children, called left and right."
+      }
     },
     {
       "id": "bst-search",
@@ -173,7 +183,17 @@
           "text": "Beware: insert in sorted order and the tree becomes a skewed line taking O(n).",
           "scene": { "id": "complexity", "label": "Skewed BST", "big": "O(n)", "vs": "lost balance" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "Why does searching a balanced binary search tree take O(log n) time?",
+        "options": [
+          "It checks nodes level by level starting from leaves.",
+          "It discards half the remaining nodes at each step.",
+          "All nodes are stored in contiguous array memory."
+        ],
+        "answer": 1,
+        "fact": "Searching a balanced binary search tree takes O(log n) time by discarding half the remaining nodes at each step."
+      }
     },
     {
       "id": "inorder-walk",
@@ -260,7 +280,17 @@
           "text": "Every one of the n nodes is visited exactly once in O(n) time.",
           "scene": { "id": "complexity", "label": "Traversal cost", "big": "O(n)", "vs": "touch each node once" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "What is the result of performing an inorder traversal on a binary search tree?",
+        "options": [
+          "Nodes are visited in reverse insertion order.",
+          "Values are produced in sorted ascending order.",
+          "Values are grouped level by level from root to leaves."
+        ],
+        "answer": 1,
+        "fact": "An inorder traversal of a binary search tree produces values in sorted ascending order."
+      }
     }
   ]
 }

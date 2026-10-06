@@ -28,8 +28,11 @@ for (const op of Object.keys(ARRAY_PARAMS) as ArrayOp[]) {
     common(`array.${op}(${input})`, p);
   }
 }
-for (const op of ["bubbleSort", "selectionSort", "insertionSort"] as ArrayOp[])
+for (const op of ["bubbleSort", "selectionSort", "insertionSort", "mergeSort", "quickSort"] as ArrayOp[])
   check(JSON.stringify(vals(runArray(op, values))) === "[1,2,5,7,9]", `${op} sorts`);
+for (const op of ["mergeSort", "quickSort"] as ArrayOp[])
+  for (const input of [[9, 1, 8, 2, 7, 3, 6, 4, 5, 0], [3, 3, 1, 1], [2, 1], [7]])
+    check(JSON.stringify(vals(runArray(op, input))) === JSON.stringify([...input].sort((a, b) => a - b)), `${op} sorts ${input}`);
 check(JSON.stringify(vals(runArray("reverse", values))) === "[7,1,9,2,5]", "reverse");
 check(JSON.stringify(vals(runArray("insert", values, { index: 2, value: 4 }))) === "[5,2,4,9,1,7]", "insert");
 check(JSON.stringify(vals(runArray("delete", values, { index: 1 }))) === "[5,9,1,7]", "delete");

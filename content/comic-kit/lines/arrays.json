@@ -29,7 +29,17 @@
         { "id": "acc-p2", "role": "payoff", "level": "detail", "concept": "bounds", "fact": "the last valid index is length − 1",
           "text": "Valid indexes run from zero to length minus one. Past that, there is no box.",
           "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18, null], "tags": { "5": "last", "6": "?" } } }
-      ]
+      ],
+      "quiz": {
+        "q": "Why does reading an array element by its index take O(1) time?",
+        "options": [
+          "The address is calculated directly rather than searched for.",
+          "The computer scans through all earlier indices in parallel.",
+          "Array elements are stored in a linked hash table."
+        ],
+        "answer": 0,
+        "fact": "Access by index is O(1) because the address is computed, not searched."
+      }
     },
     {
       "id": "insertion",
@@ -59,7 +69,17 @@
         { "id": "ins-p2", "role": "payoff", "level": "detail", "concept": "delete", "fact": "Deletion in the middle is O(n)",
           "text": "Deleting is the mirror image: everyone after the gap shifts left. Also O(n).",
           "scene": { "id": "row", "values": [3, 8, null, 9, 1], "shift": { "from": 3, "dir": "left" } } }
-      ]
+      ],
+      "quiz": {
+        "q": "Why is inserting an element in the middle of an array an O(n) operation?",
+        "options": [
+          "The entire array must be reallocated in new memory each time.",
+          "All subsequent elements must shift one position to the right.",
+          "A binary search must run first to locate the slot."
+        ],
+        "answer": 1,
+        "fact": "Insertion in the middle is O(n) because later elements must shift right."
+      }
     },
     {
       "id": "search",
@@ -92,7 +112,17 @@
         { "id": "srch-p2", "role": "payoff", "level": "detail", "concept": "sorted", "fact": "requires a sorted array",
           "text": "On an unsorted shelf, halving lies to you. Sort first, or search linearly.",
           "scene": { "id": "messy" } }
-      ]
+      ],
+      "quiz": {
+        "q": "What condition is required for binary search to find an element in O(log n) time?",
+        "options": [
+          "The array elements must already be in sorted order.",
+          "The array length must be an exact power of two.",
+          "Every element must be stored at an even memory address."
+        ],
+        "answer": 0,
+        "fact": "Binary search requires a sorted array and halves the search range each step, so it is O(log n)."
+      }
     },
     {
       "id": "bubble",
@@ -122,7 +152,17 @@
         { "id": "bub-p2", "role": "payoff", "level": "detail", "concept": "quadratic", "fact": "O(n²) in the worst case",
           "text": "Easy to write, slow when big. Fine for five boxes, not five million.",
           "scene": { "id": "row", "values": [1, 2, 5, 7, 9], "found": [0, 1, 2, 3, 4], "note": "sorted" } }
-      ]
+      ],
+      "quiz": {
+        "q": "What is guaranteed after completing one full pass of bubble sort?",
+        "options": [
+          "The entire array is completely sorted.",
+          "The smallest element has moved to index 0.",
+          "The largest remaining element is in its final position."
+        ],
+        "answer": 2,
+        "fact": "After each bubble sort pass, the largest remaining element is in its final position."
+      }
     }
   ]
 }

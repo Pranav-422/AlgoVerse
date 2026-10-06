@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { requireUser } from "@/lib/session";
-import { getProgress } from "@/lib/db";
+import { getProgress, getPreferences, quizMastery } from "@/lib/db";
+import { loadBank } from "@/lib/comicKit";
 import { getAllTopics, pad2, type Format } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
@@ -30,6 +31,13 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
 
   const topics = getAllTopics();
   const progress = getProgress(user.id);
+  const prefs = getPreferences(user.id);
+  const quiz = quizMastery(user.id);
+  const masteryFor = (id: string) => {
+    const total = loadBank(id)?.arcs.length ?? 0;
+    const q = quiz[id] ?? { answered: 0, correct: 0 };
+    return { ...q, total };
+  };
   const ready = topics.filter((t) => t.status !== "soon");
   const openedTotal = ready.reduce((n, t) => n + (progress[t.id]?.filter((f) => t.formats.includes(f)).length ?? 0), 0);
   const availableTotal = ready.reduce((n, t) => n + t.formats.length, 0);
@@ -119,6 +127,26 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
 
         </Reveal>
 
+        {/* Learning style */}
+        <section className={`box p-4 flex flex-wrap items-center justify-between gap-3 ${prefs ? "" : "!bg-amber-light"}`}>
+          {prefs ? (
+            <div className="flex flex-wrap items-center gap-2 font-mono text-[12px]">
+              <span className="label !text-ink font-bold mr-1">Your learning style</span>
+              <span className="tag">{prefs.length}</span>
+              <span className="tag">{prefs.style}</span>
+              <span className="tag">{prefs.pace}</span>
+              <span className="text-outline">· comics are picked with this in mind</span>
+            </div>
+          ) : (
+            <p className="font-mono text-[12px]">
+              <span className="font-bold">Tell us how you like to learn</span> — three taps, and comics will be picked to suit you.
+            </p>
+          )}
+          <Link href="/welcome" className="btn btn-light !py-1.5">
+            {prefs ? "Change" : "Set my learning style"}
+          </Link>
+        </section>
+
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
           <span className="label mr-1">Filter:</span>
@@ -147,7 +175,7 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
           <Stagger key={`${q}|${filter}`} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {shown.map((t) => (
               <StaggerItem key={t.id}>
-                <TopicCard topic={t} opened={progress[t.id] ?? []} />
+                <TopicCard topic={t} opened={progress[t.id] ?? []} mastery={masteryFor(t.id)} />
               </StaggerItem>
             ))}
           </Stagger>

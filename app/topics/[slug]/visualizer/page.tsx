@@ -6,7 +6,7 @@ import { NotBuilt } from "@/components/shared/NotBuilt";
 import { HowGenerated } from "@/components/shared/HowGenerated";
 import { TopicVisualizer } from "@/components/visualizer/TopicVisualizer";
 
-const SUPPORTED = ["arrays", "linked-lists", "stacks-queues"];
+const SUPPORTED = ["arrays", "linked-lists", "stacks-queues", "sorting"];
 
 export default async function VisualizerPage(props: PageProps<"/topics/[slug]/visualizer">) {
   const { slug } = await props.params;

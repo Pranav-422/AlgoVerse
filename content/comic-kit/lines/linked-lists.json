@@ -86,7 +86,17 @@
           "text": "Searching for an unknown value takes up to n steps: O(n).",
           "scene": { "id": "complexity", "label": "Search for value", "big": "O(n)", "vs": "walk the whole chain" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "Why does reaching the k-th node of a linked list take O(k) time?",
+        "options": [
+          "Pointers must be followed sequentially starting from the head node.",
+          "Each pointer lookup requires computing a complex memory hash.",
+          "All nodes must be sorted before traversing the chain."
+        ],
+        "answer": 0,
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
+      }
     },
     {
       "id": "insert-head",
@@ -173,7 +183,17 @@
           "text": "Removing the head is just as swift: move head forward in O(1).",
           "scene": { "id": "complexity", "label": "Delete at head", "big": "O(1)", "vs": "head = head.next" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "What steps insert a new node at the head of a singly linked list?",
+        "options": [
+          "Shift existing nodes right and place the new node at index zero.",
+          "Point the new node's next to head, then update head to the new node.",
+          "Traverse to the tail node and connect it back to the new head."
+        ],
+        "answer": 1,
+        "fact": "To insert at the head, point the new node's next to head, then update head to the new node."
+      }
     },
     {
       "id": "reverse",
@@ -260,7 +280,17 @@
           "text": "Only three pointer variables were needed, achieving O(1) auxiliary space.",
           "scene": { "id": "complexity", "label": "Reverse space", "big": "O(1)", "vs": "no extra nodes" }
         }
-      ]
+      ],
+      "quiz": {
+        "q": "How is a singly linked list reversed in place in O(n) time?",
+        "options": [
+          "By using three pointers to redirect each node's next pointer.",
+          "By swapping values between the first and last nodes repeatedly.",
+          "By copying all node values into a temporary stack array."
+        ],
+        "answer": 0,
+        "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)."
+      }
     }
   ]
 }

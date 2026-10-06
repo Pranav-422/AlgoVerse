@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import type { KitPalette, SceneSpec } from "@/lib/comic";
 
 // Pre-made scene illustrations. Each dialogue line names one scene and its props;
 // the model never chooses scene content, so what is drawn always matches the line.
 
-type P = { palette: KitPalette };
+type P = { palette: KitPalette; isActive?: boolean };
 
 const FONT = "var(--font-jetbrains), monospace";
 
@@ -23,7 +24,8 @@ interface RowProps {
   note?: string;
 }
 
-function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, tags = {}, note, palette }: RowProps & P) {
+function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, tags = {}, note, palette, isActive = true }: RowProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
   const W = 46;
   const G = 8;
   const width = values.length * (W + G) - G;
@@ -34,7 +36,12 @@ function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, 
   const cx = (i: number) => x0 + i * (W + G) + W / 2;
 
   return (
-    <svg viewBox={`0 0 ${vbW} 160`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg
+      viewBox={`0 0 ${vbW} 160`}
+      className={`w-full h-full ${isActive ? "scene-pop" : ""}`}
+      preserveAspectRatio="xMidYMid meet"
+      onClick={() => setInspected(null)}
+    >
       {note && (
         <g transform={`translate(${x0 - 4} 14) rotate(-3)`}>
           <rect width={note.length * 8 + 18} height="24" fill={palette.soft} stroke={palette.ink} strokeWidth="2" />
@@ -46,11 +53,34 @@ function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, 
       {values.map((v, i) => {
         const x = x0 + i * (W + G);
         const g = isGrey(i);
+        const isInspected = inspected === i;
         const fill = found.includes(i) ? palette.accent : fresh.includes(i) ? palette.accent : hi.includes(i) ? palette.accent2 : g ? palette.soft : "#FFFFFF";
         const txt = found.includes(i) || fresh.includes(i) ? palette.paper : palette.ink;
+        const tipText = v === null ? `index ${i} · empty` : `index ${i} · value ${v}`;
         return (
-          <g key={i} opacity={g ? 0.45 : 1}>
-            <rect x={x} y={y} width={W} height={W} rx="3" fill={v === null ? "none" : fill} stroke={palette.ink} strokeWidth="2.5" strokeDasharray={v === null ? "5 4" : undefined} />
+          <g
+            key={i}
+            opacity={g ? 0.45 : 1}
+            style={{ cursor: "pointer" }}
+            onMouseEnter={() => setInspected(i)}
+            onMouseLeave={() => setInspected((c) => (c === i ? null : c))}
+            onClick={(e) => {
+              e.stopPropagation();
+              setInspected((c) => (c === i ? null : i));
+            }}
+          >
+            <title>{tipText}</title>
+            <rect
+              x={x}
+              y={y}
+              width={W}
+              height={W}
+              rx="3"
+              fill={v === null ? "none" : fill}
+              stroke={isInspected ? palette.accent : palette.ink}
+              strokeWidth={isInspected ? "4" : "2.5"}
+              strokeDasharray={v === null ? "5 4" : undefined}
+            />
             {v !== null && (
               <text x={x + W / 2} y={y + W / 2 + 6} textAnchor="middle" fontSize="17" fontWeight="700" fill={txt} fontFamily={FONT}>
                 {v}
@@ -71,6 +101,27 @@ function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, 
           </g>
         );
       })}
+      {inspected !== null && (
+        <g className="pointer-events-none">
+          {(() => {
+            const v = values[inspected];
+            const text = v === null ? `index ${inspected} · empty` : `index ${inspected} · value ${v}`;
+            const chipW = text.length * 7 + 16;
+            const chipH = 20;
+            const targetX = x0 + inspected * (W + G) + W / 2;
+            const chipX = Math.max(6, Math.min(vbW - chipW - 6, targetX - chipW / 2));
+            const chipY = 24;
+            return (
+              <g>
+                <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      )}
       {swap && (
         <path
           d={`M${cx(swap[0])} ${y - 6} C ${cx(swap[0])} ${y - 40}, ${cx(swap[1])} ${y - 40}, ${cx(swap[1])} ${y - 6}`}
@@ -100,11 +151,11 @@ function Row({ values, hi = [], found = [], fresh = [], grey = [], swap, shift, 
 
 // --- address formula -------------------------------------------------------------
 
-function Formula({ base, i, size, solved, palette }: { base: number; i: number; size: number; solved: boolean } & P) {
+function Formula({ base, i, size, solved, palette, isActive = true }: { base: number; i: number; size: number; solved: boolean } & P) {
   const addr = base + i * size;
   const cells = Array.from({ length: 6 }, (_, k) => base + k * size);
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet">
       <rect x="20" y="14" width="280" height="62" rx="4" fill="#FFFFFF" stroke={palette.ink} strokeWidth="2.5" />
       <text x="160" y="40" textAnchor="middle" fontSize="15" fontWeight="700" fill={palette.ink} fontFamily={FONT}>
         address = base + i × size
@@ -129,19 +180,19 @@ function Formula({ base, i, size, solved, palette }: { base: number; i: number; 
 
 // --- cinema row ------------------------------------------------------------------
 
-function Cinema({ seats, latecomer, palette }: { seats: number; latecomer: number | null } & P) {
+function Cinema({ seats, latecomer, palette, isActive = true }: { seats: number; latecomer: number | null } & P) {
   const W = 42;
   const x0 = (320 - seats * (W + 6)) / 2;
   const tones = [palette.accent, palette.accent2, palette.soft, palette.ink];
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet">
       {Array.from({ length: seats }, (_, i) => {
         const x = x0 + i * (W + 6);
         return (
           <g key={i}>
             <circle cx={x + W / 2} cy="86" r="11" fill={tones[i % tones.length]} stroke={palette.ink} strokeWidth="2" />
             <rect x={x} y="98" width={W} height="34" rx="6" fill="#FFFFFF" stroke={palette.ink} strokeWidth="2.5" />
-            <text x={x + W / 2} y="148" textAnchor="middle" fontSize="10" fill={palette.ink} opacity="0.6" fontFamily={FONT}>
+            <text x={x + W / 2} y={148} textAnchor="middle" fontSize="10" fill={palette.ink} opacity="0.6" fontFamily={FONT}>
               seat {i}
             </text>
           </g>
@@ -162,9 +213,9 @@ function Cinema({ seats, latecomer, palette }: { seats: number; latecomer: numbe
 
 // --- complexity badge ------------------------------------------------------------
 
-function Complexity({ label, big, vs, palette }: { label: string; big: string; vs?: string } & P) {
+function Complexity({ label, big, vs, palette, isActive = true }: { label: string; big: string; vs?: string } & P) {
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet">
       <g transform="rotate(-4 160 78)">
         <circle cx="160" cy="76" r="58" fill={palette.accent2} stroke={palette.ink} strokeWidth="3" />
         <circle cx="160" cy="76" r="48" fill="none" stroke={palette.ink} strokeWidth="1.5" strokeDasharray="3 4" />
@@ -182,11 +233,11 @@ function Complexity({ label, big, vs, palette }: { label: string; big: string; v
 
 // --- sorted vs unsorted shelves ---------------------------------------------------
 
-function Messy({ palette }: P) {
+function Messy({ palette, isActive = true }: P) {
   const messy = [42, 8, 67, 15, 80, 23];
   const sorted = [8, 15, 23, 42, 67, 80];
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet">
       {messy.map((v, i) => (
         <g key={`m${i}`} transform={`rotate(${(i % 2 ? 6 : -5)} ${40 + i * 40} 40)`}>
           <rect x={22 + i * 40} y="24" width="34" height="30" rx="2" fill="#FFFFFF" stroke={palette.ink} strokeWidth="2" />
@@ -237,7 +288,9 @@ function Chain({
   nullEnd = false,
   note,
   palette,
+  isActive = true,
 }: ChainProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
   const N = values.length;
   const Wv = 34;
   const Wp = 16;
@@ -253,7 +306,12 @@ function Chain({
   const baseY = 80;
 
   return (
-    <svg viewBox={`0 0 ${vbW} 160`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg
+      viewBox={`0 0 ${vbW} 160`}
+      className={`w-full h-full ${isActive ? "scene-pop" : ""}`}
+      preserveAspectRatio="xMidYMid meet"
+      onClick={() => setInspected(null)}
+    >
       <defs>
         <marker id={`chain-arrow-${palette.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
           <path d="M0 0 L10 5 L0 10 Z" fill={palette.accent} />
@@ -294,13 +352,26 @@ function Chain({
         const isFound = found.includes(i);
         const isFresh = fresh.includes(i);
         const isHi = hi.includes(i);
+        const isInspected = inspected === i;
         const fill = isFound || isFresh ? palette.accent : isHi ? palette.accent2 : "#FFFFFF";
         const txt = isFound || isFresh ? palette.paper : palette.ink;
         const tag = tags[String(i)] ?? tags[i];
         const isRev = reversed > i;
+        const nextTarget = reversed > i ? (i > 0 ? String(values[i - 1]) : "null") : (i < N - 1 ? String(values[i + 1]) : (nullEnd ? "null" : "end"));
+        const tipText = `node ${v} · next → ${nextTarget}`;
 
         return (
-          <g key={i}>
+          <g
+            key={i}
+            style={{ cursor: "pointer" }}
+            onMouseEnter={() => setInspected(i)}
+            onMouseLeave={() => setInspected((c) => (c === i ? null : c))}
+            onClick={(e) => {
+              e.stopPropagation();
+              setInspected((c) => (c === i ? null : i));
+            }}
+          >
+            <title>{tipText}</title>
             {tag && (
               <g>
                 <rect x={x + W / 2 - (tag.length * 7 + 12) / 2} y={y - 28} width={tag.length * 7 + 12} height="18" rx="2" fill={palette.ink} />
@@ -311,7 +382,16 @@ function Chain({
               </g>
             )}
 
-            <rect x={x} y={y} width={W} height={H} rx="3" fill={fill} stroke={palette.ink} strokeWidth="2.5" />
+            <rect
+              x={x}
+              y={y}
+              width={W}
+              height={H}
+              rx="3"
+              fill={fill}
+              stroke={isInspected ? palette.accent : palette.ink}
+              strokeWidth={isInspected ? "4" : "2.5"}
+            />
             <line x1={x + Wv} y1={y} x2={x + Wv} y2={y + H} stroke={palette.ink} strokeWidth="2" />
 
             <text x={x + Wv / 2} y={y + H / 2 + 5} textAnchor="middle" fontSize="15" fontWeight="700" fill={txt} fontFamily={FONT}>
@@ -367,6 +447,38 @@ function Chain({
           </g>
         );
       })}
+
+      {inspected !== null && (
+        <g className="pointer-events-none">
+          {(() => {
+            const v = values[inspected];
+            const nextTarget =
+              reversed > inspected
+                ? inspected > 0
+                  ? String(values[inspected - 1])
+                  : "null"
+                : inspected < N - 1
+                ? String(values[inspected + 1])
+                : nullEnd
+                ? "null"
+                : "end";
+            const text = `node ${v} · next → ${nextTarget}`;
+            const chipW = text.length * 7 + 16;
+            const chipH = 20;
+            const targetX = startX + inspected * (W + gap) + W / 2;
+            const chipX = Math.max(6, Math.min(vbW - chipW - 6, targetX - chipW / 2));
+            const chipY = 24;
+            return (
+              <g>
+                <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      )}
     </svg>
   );
 }
@@ -392,7 +504,9 @@ function Stack({
   capacity,
   note,
   palette,
+  isActive = true,
 }: StackProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
   const cap = capacity ?? Math.max(values.length, 4);
   const W = 88;
   const H = 22;
@@ -401,7 +515,12 @@ function Stack({
   const yTop = yFloor - cap * H;
 
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg
+      viewBox="0 0 320 160"
+      className={`w-full h-full ${isActive ? "scene-pop" : ""}`}
+      preserveAspectRatio="xMidYMid meet"
+      onClick={() => setInspected(null)}
+    >
       <defs>
         <marker id={`stack-arrow-${palette.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
           <path d="M0 0 L10 5 L0 10 Z" fill={palette.accent} />
@@ -435,8 +554,25 @@ function Stack({
         const hasVal = k < values.length;
         const v = hasVal ? values[k] : null;
         const isHi = hi.includes(k);
+        const isInspected = inspected === k;
+        const isTop = k === values.length - 1;
+        const tipText = isTop ? `top · ${v}` : `slot ${k} · ${v}`;
         return (
-          <g key={k}>
+          <g
+            key={k}
+            style={hasVal ? { cursor: "pointer" } : undefined}
+            onMouseEnter={hasVal ? () => setInspected(k) : undefined}
+            onMouseLeave={hasVal ? () => setInspected((c) => (c === k ? null : c)) : undefined}
+            onClick={
+              hasVal
+                ? (e) => {
+                    e.stopPropagation();
+                    setInspected((c) => (c === k ? null : k));
+                  }
+                : undefined
+            }
+          >
+            {hasVal && <title>{tipText}</title>}
             {hasVal ? (
               <g>
                 <rect
@@ -446,8 +582,8 @@ function Stack({
                   height={H - 4}
                   rx="2"
                   fill={isHi ? palette.accent2 : palette.soft}
-                  stroke={palette.ink}
-                  strokeWidth="1.5"
+                  stroke={isInspected ? palette.accent : palette.ink}
+                  strokeWidth={isInspected ? "3" : "1.5"}
                 />
                 <text x={x + W / 2} y={slotY + H / 2 + 5} textAnchor="middle" fontSize="12" fontWeight="700" fill={palette.ink} fontFamily={FONT}>
                   {v}
@@ -470,6 +606,29 @@ function Stack({
           </g>
         );
       })}
+
+      {inspected !== null && (
+        <g className="pointer-events-none">
+          {(() => {
+            const v = values[inspected];
+            const isTop = inspected === values.length - 1;
+            const text = isTop ? `top · ${v}` : `slot ${inspected} · ${v}`;
+            const chipW = text.length * 7 + 16;
+            const chipH = 20;
+            const targetX = x + W / 2;
+            const chipX = Math.max(6, Math.min(320 - chipW - 6, targetX - chipW / 2));
+            const chipY = 16;
+            return (
+              <g>
+                <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      )}
 
       {/* TOP pointer */}
       {top && values.length > 0 && (
@@ -544,7 +703,9 @@ function Queue({
   ring = false,
   note,
   palette,
+  isActive = true,
 }: QueueProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
   if (ring) {
     const N = Math.max(values.length, 4);
     const cx = 160;
@@ -552,7 +713,7 @@ function Queue({
     const R = 46;
     const rSlot = 16;
     return (
-      <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet" onClick={() => setInspected(null)}>
         {note && (
           <g transform="translate(16 12) rotate(-3)">
             <rect width={note.length * 8 + 18} height="24" fill={palette.soft} stroke={palette.ink} strokeWidth="2" />
@@ -573,15 +734,29 @@ function Queue({
           const isFront = i === front;
           const isRear = i === rear;
 
+          const isInspected = inspected === i;
+          const tipText = isFront
+            ? `front · ${v ?? "empty"}`
+            : isRear
+            ? `rear · ${v ?? "empty"}`
+            : `slot ${i} · ${v ?? "empty"}`;
+
           return (
-            <g key={i}>
+            <g
+              key={i}
+              style={v !== null ? { cursor: "pointer" } : undefined}
+              onMouseEnter={v !== null ? () => setInspected(i) : undefined}
+              onMouseLeave={v !== null ? () => setInspected((c) => (c === i ? null : c)) : undefined}
+              onClick={v !== null ? (e) => { e.stopPropagation(); setInspected((c) => (c === i ? null : i)); } : undefined}
+            >
+              {v !== null && <title>{tipText}</title>}
               <circle
                 cx={sx}
                 cy={sy}
                 r={rSlot}
                 fill={isHi ? palette.accent2 : v !== null ? palette.soft : "#FFFFFF"}
-                stroke={palette.ink}
-                strokeWidth="2"
+                stroke={isInspected ? palette.accent : palette.ink}
+                strokeWidth={isInspected ? "3.5" : "2"}
                 strokeDasharray={v === null ? "3 3" : undefined}
               />
               {v !== null && (
@@ -620,6 +795,29 @@ function Queue({
           );
         })}
 
+        {inspected !== null && values[inspected] !== undefined && (
+          <g className="pointer-events-none">
+            {(() => {
+              const v = values[inspected];
+              const isFrt = inspected === front;
+              const isRr = inspected === rear;
+              const text = isFrt ? `front · ${v}` : isRr ? `rear · ${v}` : `slot ${inspected} · ${v}`;
+              const chipW = text.length * 7 + 16;
+              const chipH = 20;
+              const chipX = Math.max(6, Math.min(320 - chipW - 6, 160 - chipW / 2));
+              const chipY = 10;
+              return (
+                <g>
+                  <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                  <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                    {text}
+                  </text>
+                </g>
+              );
+            })()}
+          </g>
+        )}
+
         {incoming !== undefined && (
           <g>
             <rect x="250" y="24" width="42" height="26" rx="3" fill={palette.accent} stroke={palette.ink} strokeWidth="2" />
@@ -640,7 +838,7 @@ function Queue({
   const y = 68;
 
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet" onClick={() => setInspected(null)}>
       <defs>
         <marker id={`queue-arrow-lin-${palette.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
           <path d="M0 0 L10 5 L0 10 Z" fill={palette.accent} />
@@ -664,8 +862,17 @@ function Queue({
         const isHi = hi.includes(i);
         const isFront = i === front;
         const isRear = i === rear;
+        const isInspected = inspected === i;
+        const tipText = isFront ? `front · ${v ?? "empty"}` : isRear ? `rear · ${v ?? "empty"}` : `slot ${i} · ${v ?? "empty"}`;
         return (
-          <g key={i}>
+          <g
+            key={i}
+            style={v !== null ? { cursor: "pointer" } : undefined}
+            onMouseEnter={v !== null ? () => setInspected(i) : undefined}
+            onMouseLeave={v !== null ? () => setInspected((c) => (c === i ? null : c)) : undefined}
+            onClick={v !== null ? (e) => { e.stopPropagation(); setInspected((c) => (c === i ? null : i)); } : undefined}
+          >
+            {v !== null && <title>{tipText}</title>}
             <rect
               x={x}
               y={y}
@@ -673,8 +880,8 @@ function Queue({
               height={W}
               rx="3"
               fill={isHi ? palette.accent2 : v !== null ? palette.soft : "#FFFFFF"}
-              stroke={palette.ink}
-              strokeWidth="2"
+              stroke={isInspected ? palette.accent : palette.ink}
+              strokeWidth={isInspected ? "3.5" : "2"}
               strokeDasharray={v === null ? "4 3" : undefined}
             />
             {v !== null && (
@@ -706,6 +913,30 @@ function Queue({
           </g>
         );
       })}
+
+      {inspected !== null && values[inspected] !== undefined && (
+        <g className="pointer-events-none">
+          {(() => {
+            const v = values[inspected];
+            const isFrt = inspected === front;
+            const isRr = inspected === rear;
+            const text = isFrt ? `front · ${v}` : isRr ? `rear · ${v}` : `slot ${inspected} · ${v}`;
+            const chipW = text.length * 7 + 16;
+            const chipH = 20;
+            const targetX = x0 + inspected * (W + G) + W / 2;
+            const chipX = Math.max(6, Math.min(320 - chipW - 6, targetX - chipW / 2));
+            const chipY = 24;
+            return (
+              <g>
+                <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      )}
 
       {incoming !== undefined && (
         <g>
@@ -778,15 +1009,24 @@ function Tree({
   order,
   note,
   palette,
+  isActive = true,
 }: TreeProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
+
   const getOrder = (i: number): number | undefined => {
     if (!order) return undefined;
     if (Array.isArray(order)) return order[i];
     return (order as Record<string, number>)[String(i)] ?? (order as Record<string, number>)[i];
   };
 
+  // Compute parent index for tooltip
+  const getParent = (i: number): number | null => {
+    const pair = TREE_PAIRS.find(([, c]) => c === i);
+    return pair ? pair[0] : null;
+  };
+
   return (
-    <svg viewBox="0 0 320 160" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+    <svg viewBox="0 0 320 160" className={`w-full h-full ${isActive ? "scene-pop" : ""}`} preserveAspectRatio="xMidYMid meet" onClick={() => setInspected(null)}>
       {note && (
         <g transform="translate(16 12) rotate(-3)">
           <rect width={note.length * 8 + 18} height="24" fill={palette.soft} stroke={palette.ink} strokeWidth="2" />
@@ -823,13 +1063,28 @@ function Tree({
         const isFound = found.includes(i);
         const isHi = hi.includes(i);
         const isPath = path.includes(i);
+        const isInspected = inspected === i;
         const fill = isFound ? palette.accent : isHi ? palette.accent2 : isPath ? palette.soft : "#FFFFFF";
         const txtColor = isFound ? palette.paper : palette.ink;
         const ord = getOrder(i);
+        const parentIdx = getParent(i);
+        const parentVal = parentIdx !== null && nodes[parentIdx] !== null && nodes[parentIdx] !== undefined ? nodes[parentIdx] : null;
+        const tipText = i === 0
+          ? `root · ${v}`
+          : parentVal !== null
+          ? `node ${v} · child of ${parentVal}`
+          : `node ${v}`;
 
         return (
-          <g key={i}>
-            <circle cx={pt.x} cy={pt.y} r="14" fill={fill} stroke={palette.ink} strokeWidth="2.5" />
+          <g
+            key={i}
+            style={{ cursor: "pointer" }}
+            onMouseEnter={() => setInspected(i)}
+            onMouseLeave={() => setInspected((c) => (c === i ? null : c))}
+            onClick={(e) => { e.stopPropagation(); setInspected((c) => (c === i ? null : i)); }}
+          >
+            <title>{tipText}</title>
+            <circle cx={pt.x} cy={pt.y} r="14" fill={fill} stroke={isInspected ? palette.accent : palette.ink} strokeWidth={isInspected ? "4" : "2.5"} />
             <text x={pt.x} y={pt.y + 4} textAnchor="middle" fontSize="11" fontWeight="700" fill={txtColor} fontFamily={FONT}>
               {v}
             </text>
@@ -845,31 +1100,59 @@ function Tree({
           </g>
         );
       })}
+
+      {inspected !== null && nodes[inspected] !== null && nodes[inspected] !== undefined && (
+        <g className="pointer-events-none">
+          {(() => {
+            const v = nodes[inspected];
+            const parentIdx = getParent(inspected);
+            const parentVal = parentIdx !== null && nodes[parentIdx] !== null && nodes[parentIdx] !== undefined ? nodes[parentIdx] : null;
+            const text = inspected === 0
+              ? `root · ${v}`
+              : parentVal !== null
+              ? `node ${v} · child of ${parentVal}`
+              : `node ${v}`;
+            const pt = TREE_COORDS[inspected]!;
+            const chipW = text.length * 7 + 16;
+            const chipH = 20;
+            const chipX = Math.max(6, Math.min(320 - chipW - 6, pt.x - chipW / 2));
+            const chipY = Math.max(8, pt.y - 34);
+            return (
+              <g>
+                <rect x={chipX} y={chipY} width={chipW} height={chipH} rx="3" fill={palette.ink} stroke={palette.accent} strokeWidth="1.5" />
+                <text x={chipX + chipW / 2} y={chipY + 14} textAnchor="middle" fontSize="10" fontWeight="700" fill={palette.paper} fontFamily={FONT}>
+                  {text}
+                </text>
+              </g>
+            );
+          })()}
+        </g>
+      )}
     </svg>
   );
 }
 
-export function Scene({ spec, palette }: { spec: SceneSpec; palette: KitPalette }) {
+export function Scene({ spec, palette, isActive = true }: { spec: SceneSpec; palette: KitPalette; isActive?: boolean }) {
   const s = spec as Record<string, unknown>;
   switch (spec.id) {
     case "row":
-      return <Row {...(s as unknown as RowProps)} palette={palette} />;
+      return <Row {...(s as unknown as RowProps)} palette={palette} isActive={isActive} />;
     case "formula":
-      return <Formula base={s.base as number} i={s.i as number} size={s.size as number} solved={Boolean(s.solved)} palette={palette} />;
+      return <Formula base={s.base as number} i={s.i as number} size={s.size as number} solved={Boolean(s.solved)} palette={palette} isActive={isActive} />;
     case "cinema":
-      return <Cinema seats={s.seats as number} latecomer={(s.latecomer as number | null) ?? null} palette={palette} />;
+      return <Cinema seats={s.seats as number} latecomer={(s.latecomer as number | null) ?? null} palette={palette} isActive={isActive} />;
     case "complexity":
-      return <Complexity label={s.label as string} big={s.big as string} vs={s.vs as string | undefined} palette={palette} />;
+      return <Complexity label={s.label as string} big={s.big as string} vs={s.vs as string | undefined} palette={palette} isActive={isActive} />;
     case "messy":
-      return <Messy palette={palette} />;
+      return <Messy palette={palette} isActive={isActive} />;
     case "chain":
-      return <Chain {...(s as unknown as ChainProps)} palette={palette} />;
+      return <Chain {...(s as unknown as ChainProps)} palette={palette} isActive={isActive} />;
     case "stack":
-      return <Stack {...(s as unknown as StackProps)} palette={palette} />;
+      return <Stack {...(s as unknown as StackProps)} palette={palette} isActive={isActive} />;
     case "queue":
-      return <Queue {...(s as unknown as QueueProps)} palette={palette} />;
+      return <Queue {...(s as unknown as QueueProps)} palette={palette} isActive={isActive} />;
     case "tree":
-      return <Tree {...(s as unknown as TreeProps)} palette={palette} />;
+      return <Tree {...(s as unknown as TreeProps)} palette={palette} isActive={isActive} />;
     default:
       return null;
   }

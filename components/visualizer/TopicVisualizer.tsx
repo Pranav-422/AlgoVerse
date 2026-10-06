@@ -8,6 +8,8 @@ const Loading = () => <div className="box p-10 font-mono text-[12px] text-outlin
 
 const VISUALIZERS = {
   arrays: dynamic(() => import("./ArrayVisualizer").then((m) => m.ArrayVisualizer), { ssr: false, loading: Loading }),
+  // Sorting reuses the array engine; its knowledge file decides which sorts are offered.
+  sorting: dynamic(() => import("./ArrayVisualizer").then((m) => m.ArrayVisualizer), { ssr: false, loading: Loading }),
   "linked-lists": dynamic(() => import("./LinkedListVisualizer").then((m) => m.LinkedListVisualizer), { ssr: false, loading: Loading }),
   "stacks-queues": dynamic(() => import("./StackQueueVisualizer").then((m) => m.StackQueueVisualizer), { ssr: false, loading: Loading }),
 } as const;

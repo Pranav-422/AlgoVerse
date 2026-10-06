@@ -1,7 +1,7 @@
 import { loadTopicPage } from "@/lib/topicPage";
 import { getComicPool } from "@/lib/comicPool";
 import { getLatestGenerated } from "@/lib/comicGen";
-import { attemptStatus } from "@/lib/db";
+import { attemptStatus, getPreferences } from "@/lib/db";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
@@ -11,7 +11,13 @@ import { ComicViewer } from "@/components/comic/ComicViewer";
 export default async function ComicPage(props: PageProps<"/topics/[slug]/comic">) {
   const { slug } = await props.params;
   const { user, topic, available, related, crumbs } = await loadTopicPage(slug, "comic");
-  const pool = available ? getComicPool(topic.id) : [];
+  const prefs = getPreferences(user.id);
+  // Show the pre-made comic that best matches the learner's stated preferences first.
+  const fit = (n: number, layout: string) =>
+    !prefs ? 0 : (prefs.length === "short" ? (n <= 5 ? 2 : 0) : n >= 5 ? 2 : 0) + (prefs.pace === "step" ? (layout !== "hero-5" ? 1 : 0) : layout === "hero-5" ? 1 : 0);
+  const pool = (available ? getComicPool(topic.id) : []).sort(
+    (a, b) => fit(b.comic.panels.length, b.comic.layout.id) - fit(a.comic.panels.length, a.comic.layout.id),
+  );
   const generated = available ? getLatestGenerated(user.id, topic.id) : null;
   const cap = attemptStatus(user.id, topic.id);
 

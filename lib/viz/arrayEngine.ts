@@ -288,6 +288,104 @@ function reverse(r: Recorder): string[] {
   return code;
 }
 
+function mergeSort(r: Recorder): string[] {
+  const code = [
+    "mergeSort(lo, hi):",
+    "  if lo >= hi: return",
+    "  mid = (lo + hi) / 2",
+    "  mergeSort(lo, mid); mergeSort(mid+1, hi)",
+    "  merge the two sorted halves:",
+    "    take the smaller front element each time",
+  ];
+  const n = r.cells.length;
+  r.snap(`Merge sort: split the array in half until pieces have one element, then merge sorted pieces back together.`, [1]);
+  const range = (lo: number, hi: number, mark: Mark): [number, Mark][] => r.cells.slice(lo, hi + 1).map((_, k) => [lo + k, mark]);
+
+  const sort = (lo: number, hi: number) => {
+    if (lo >= hi) return;
+    const mid = Math.floor((lo + hi) / 2);
+    r.snap(`Split indices ${lo} … ${hi} at ${mid}: left ${lo} … ${mid}, right ${mid + 1} … ${hi}.`, [2, 3, 4], r.m([...range(lo, mid, "compare"), ...range(mid + 1, hi, "focus")]), [
+      { name: "lo", at: lo },
+      { name: "mid", at: mid },
+      { name: "hi", at: hi },
+    ]);
+    sort(lo, mid);
+    sort(mid + 1, hi);
+    // merge
+    const left = r.cells.slice(lo, mid + 1);
+    const right = r.cells.slice(mid + 1, hi + 1);
+    const merged: Cell[] = [];
+    let a = 0;
+    let b = 0;
+    while (a < left.length && b < right.length) {
+      const takeLeft = v(left[a]) <= v(right[b]);
+      r.snap(`Compare fronts: ${v(left[a])} and ${v(right[b])}. Take ${takeLeft ? v(left[a]) : v(right[b])}.`, [5, 6], {
+        ...r.m(range(lo, hi, "out")),
+        [left[a].id]: "compare",
+        [right[b].id]: "compare",
+        ...Object.fromEntries(merged.map((c) => [c.id, "done" as Mark])),
+      });
+      merged.push(takeLeft ? left[a++] : right[b++]);
+      r.cells.splice(lo, hi - lo + 1, ...merged, ...left.slice(a), ...right.slice(b));
+    }
+    merged.push(...left.slice(a), ...right.slice(b));
+    r.cells.splice(lo, hi - lo + 1, ...merged);
+    r.snap(`Indices ${lo} … ${hi} are now merged in order.`, [5], r.m(range(lo, hi, "done")));
+  };
+  sort(0, n - 1);
+  r.snap(`Sorted. log n levels of splitting, n work per level — O(n log n).`, [], r.m(range(0, n - 1, "done")));
+  return code;
+}
+
+function quickSort(r: Recorder): string[] {
+  const code = [
+    "quickSort(lo, hi):",
+    "  if lo >= hi: return",
+    "  pivot = a[hi]; i = lo - 1",
+    "  for j = lo to hi-1:",
+    "    if a[j] < pivot: i++; swap a[i], a[j]",
+    "  swap a[i+1], a[hi]   // pivot in place",
+    "  quickSort(lo, i); quickSort(i+2, hi)",
+  ];
+  const placed: [number, Mark][] = [];
+  r.snap(`Quicksort: pick a pivot, move smaller values to its left, then sort each side.`, [1]);
+  const sort = (lo: number, hi: number) => {
+    if (lo > hi) return;
+    if (lo === hi) {
+      placed.push([lo, "done"]);
+      return;
+    }
+    const pivot = r.cells[hi];
+    let i = lo - 1;
+    r.snap(`Pivot is the last element of ${lo} … ${hi}: ${v(pivot)}.`, [2, 3], r.m(placed, { [pivot.id]: "focus" }), [{ name: "pivot", at: hi }]);
+    for (let j = lo; j < hi; j++) {
+      const less = v(r.cells[j]) < v(pivot);
+      r.snap(`Is ${v(r.cells[j])} < pivot ${v(pivot)}? ${less ? "Yes — move it into the left part." : "No — leave it."}`, [4, 5], r.m([...placed, [j, "compare"]], { [pivot.id]: "focus" }), [
+        { name: "i", at: Math.max(i, lo) },
+        { name: "j", at: j },
+      ]);
+      if (less) {
+        i++;
+        if (i !== j) {
+          [r.cells[i], r.cells[j]] = [r.cells[j], r.cells[i]];
+          r.snap(`Swap a[${i}] and a[${j}].`, [5], r.m([...placed, [i, "swap"], [j, "swap"]], { [pivot.id]: "focus" }), [
+            { name: "i", at: i },
+            { name: "j", at: j },
+          ]);
+        }
+      }
+    }
+    [r.cells[i + 1], r.cells[hi]] = [r.cells[hi], r.cells[i + 1]];
+    placed.push([i + 1, "done"]);
+    r.snap(`Put the pivot ${v(pivot)} at index ${i + 1}. Everything left is smaller, everything right is larger.`, [6], r.m(placed), [{ name: "pivot", at: i + 1 }]);
+    sort(lo, i);
+    sort(i + 2, hi);
+  };
+  sort(0, r.cells.length - 1);
+  r.snap(`Sorted. Average O(n log n); a bad pivot every time makes it O(n²).`, [], r.m(r.cells.map((_, k) => [k, "done"])));
+  return code;
+}
+
 // --- dispatch ----------------------------------------------------------------
 
 export type ArrayOp =
@@ -300,7 +398,9 @@ export type ArrayOp =
   | "traverse"
   | "reverse"
   | "selectionSort"
-  | "insertionSort";
+  | "insertionSort"
+  | "mergeSort"
+  | "quickSort";
 
 /** Which inputs each operation asks for (the UI shows only these fields). */
 export const ARRAY_PARAMS: Record<ArrayOp, ("index" | "value")[]> = {
@@ -314,6 +414,8 @@ export const ARRAY_PARAMS: Record<ArrayOp, ("index" | "value")[]> = {
   reverse: [],
   selectionSort: [],
   insertionSort: [],
+  mergeSort: [],
+  quickSort: [],
 };
 
 export function runArray(op: ArrayOp, values: number[], p: { index?: number; value?: number } = {}): Program<ArrayFrame> {
@@ -331,6 +433,8 @@ export function runArray(op: ArrayOp, values: number[], p: { index?: number; val
     reverse: () => reverse(r),
     selectionSort: () => selectionSort(r),
     insertionSort: () => insertionSort(r),
+    mergeSort: () => mergeSort(r),
+    quickSort: () => quickSort(r),
   };
   const code = run[op]();
   return { frames: r.frames, code };
