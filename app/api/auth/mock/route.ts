@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { findOrCreateUser } from "@/lib/db";
-import { COOKIE } from "@/lib/session";
+import { COOKIE, cookieValue } from "@/lib/session";
 import { ok, fail, readJson } from "@/lib/api";
 
 // Mock sign-in: any email works, the password is never checked (PRD §4.1).
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   if (!guest && !/^\S+@\S+\.\S+$/.test(email)) return fail("INVALID_EMAIL", 400, "Enter an email address.");
 
   const user = findOrCreateUser(email);
-  (await cookies()).set(COOKIE, user.id, {
+  (await cookies()).set(COOKIE, cookieValue(user), {
     httpOnly: true,
     sameSite: "lax",
     path: "/",

@@ -82,8 +82,14 @@ export function findOrCreateUser(email: string): User {
   return user;
 }
 
-export function getUser(userId: string): User | null {
-  return (open().prepare("SELECT * FROM users WHERE id = ?").get(userId) as User | undefined) ?? null;
+/** Look a user up by id; if this instance's database lacks the row, recreate it. */
+export function ensureUser(userId: string, email: string): User {
+  const db = open();
+  const found = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as User | undefined;
+  if (found) return found;
+  const user: User = { id: userId, email, created_at: Date.now() };
+  db.prepare("INSERT OR IGNORE INTO users (id, email, created_at) VALUES (@id, @email, @created_at)").run(user);
+  return (db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as User | undefined) ?? user;
 }
 
 // --- progress ----------------------------------------------------------------
