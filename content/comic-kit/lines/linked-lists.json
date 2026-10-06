@@ -1,0 +1,266 @@
+{
+  "topicId": "linked-lists",
+  "arcs": [
+    {
+      "id": "hunt",
+      "title": "The Treasure Hunt",
+      "lines": [
+        {
+          "id": "ll-h-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "nodes",
+          "fact": "stores a value and a pointer to the next node",
+          "text": "Each node holds a value and a clue pointing to the next node.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "nullEnd": true }
+        },
+        {
+          "id": "ll-h-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "non-contiguous",
+          "fact": "Nodes need not be contiguous in memory",
+          "text": "These boxes scatter across memory instead of sitting side by side.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "tags": { "0": "addr 10", "1": "addr 84", "2": "addr 32" } }
+        },
+        {
+          "id": "ll-h-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "head-pointer",
+          "fact": "head pointer refers to the first node",
+          "text": "There is no index formula. We only know where the head node lives.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "hi": [0] }
+        },
+        {
+          "id": "ll-h-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "follow-pointers",
+          "fact": "pointers must be followed from the head",
+          "text": "To reach the third node, we must start at twelve and follow pointers.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "hi": [0, 1] }
+        },
+        {
+          "id": "ll-h-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "hop-pointers",
+          "fact": null,
+          "text": "Hop from twelve to ninety-nine, then ninety-nine leads to thirty-seven.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "found": [2], "tags": { "2": "target" } }
+        },
+        {
+          "id": "ll-h-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "null-terminator",
+          "fact": "last node's next pointer is null",
+          "text": "The last node points to null, marking the end of our hunt.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "nullEnd": true, "hi": [2] }
+        },
+        {
+          "id": "ll-h-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "search-walk",
+          "fact": "Searching for a value is O(n)",
+          "text": "Finding a value means checking every clue until we find a match.",
+          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "nullEnd": true, "tags": { "0": "check", "1": "check", "2": "match" } }
+        },
+        {
+          "id": "ll-h-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "access-cost",
+          "fact": "Access to the k-th node is O(k)",
+          "text": "Finding node k requires k pointer steps. That makes access O(k).",
+          "scene": { "id": "complexity", "label": "Access k-th node", "big": "O(k)", "vs": "follow every pointer" }
+        },
+        {
+          "id": "ll-h-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "search-cost",
+          "fact": "Searching for a value is O(n)",
+          "text": "Searching for an unknown value takes up to n steps: O(n).",
+          "scene": { "id": "complexity", "label": "Search for value", "big": "O(n)", "vs": "walk the whole chain" }
+        }
+      ]
+    },
+    {
+      "id": "insert-head",
+      "title": "Cutting In Line",
+      "lines": [
+        {
+          "id": "ll-ins-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "head",
+          "fact": "head pointer refers to the first node",
+          "text": "Here is our list with head pointing straight to twenty.",
+          "scene": { "id": "chain", "values": [20, 35, 60], "head": true, "nullEnd": true }
+        },
+        {
+          "id": "ll-ins-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "insert-target",
+          "fact": null,
+          "text": "We want to slip a brand new node, five, in at the very front.",
+          "scene": { "id": "chain", "values": [20, 35, 60], "head": true, "nullEnd": true, "tags": { "0": "front" } }
+        },
+        {
+          "id": "ll-ins-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "allocate-node",
+          "fact": null,
+          "text": "First, create the new node holding five floating above the list.",
+          "scene": { "id": "chain", "values": [5, 20, 35, 60], "fresh": [0], "tags": { "0": "new 5" } }
+        },
+        {
+          "id": "ll-ins-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "point-next",
+          "fact": "point the new node's next to head",
+          "text": "Connect five's next pointer to the current head, node twenty.",
+          "scene": { "id": "chain", "values": [5, 20, 35, 60], "fresh": [0], "head": true, "tags": { "0": "5 -> 20" } }
+        },
+        {
+          "id": "ll-ins-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "no-shifts",
+          "fact": "Nodes need not be contiguous in memory",
+          "text": "Notice that none of the existing nodes shifted or moved in memory.",
+          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "tags": { "1": "unmoved", "2": "unmoved" } }
+        },
+        {
+          "id": "ll-ins-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "update-head",
+          "fact": "update head to the new node",
+          "text": "Finally, swing the head pointer over so it points at five.",
+          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "hi": [0], "nullEnd": true }
+        },
+        {
+          "id": "ll-ins-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "steady-tail",
+          "fact": null,
+          "text": "Nodes thirty-five and sixty keep their exact same connections unchanged.",
+          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "nullEnd": true }
+        },
+        {
+          "id": "ll-ins-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "constant-insert",
+          "fact": "Insertion at the head is O(1)",
+          "text": "Only two pointers changed and zero elements moved. Head insertion is O(1).",
+          "scene": { "id": "complexity", "label": "Insert at head", "big": "O(1)", "vs": "pointer rewiring only" }
+        },
+        {
+          "id": "ll-ins-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "constant-delete",
+          "fact": "Deletion at the head is O(1)",
+          "text": "Removing the head is just as swift: move head forward in O(1).",
+          "scene": { "id": "complexity", "label": "Delete at head", "big": "O(1)", "vs": "head = head.next" }
+        }
+      ]
+    },
+    {
+      "id": "reverse",
+      "title": "Turn Around",
+      "lines": [
+        {
+          "id": "ll-rev-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "forward-chain",
+          "fact": null,
+          "text": "All arrows currently point forward from ten toward thirty.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "head": true, "nullEnd": true }
+        },
+        {
+          "id": "ll-rev-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "three-pointers",
+          "fact": "uses three pointers (prev, curr, next)",
+          "text": "We track three pointer helpers: prev, curr, and next.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "head": true, "tags": { "0": "curr", "1": "next" } }
+        },
+        {
+          "id": "ll-rev-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "save-next",
+          "fact": null,
+          "text": "Save curr's next node so we don't lose the rest of the chain.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "tags": { "0": "curr", "1": "save next" } }
+        },
+        {
+          "id": "ll-rev-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "redirect-first",
+          "fact": null,
+          "text": "Reverse ten's pointer backward toward prev, which begins at null.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 1, "tags": { "0": "10 -> null" } }
+        },
+        {
+          "id": "ll-rev-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "advance-and-flip",
+          "fact": null,
+          "text": "Advance prev and curr forward, then reverse twenty's arrow toward ten.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 2, "tags": { "1": "20 -> 10" } }
+        },
+        {
+          "id": "ll-rev-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "flip-last",
+          "fact": null,
+          "text": "Finally reverse thirty, and make thirty the brand new head of the list.",
+          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 3, "tags": { "2": "new head" } }
+        },
+        {
+          "id": "ll-rev-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "in-place",
+          "fact": null,
+          "text": "The chain is completely flipped without creating a single extra node.",
+          "scene": { "id": "chain", "values": [30, 20, 10], "head": true, "nullEnd": true }
+        },
+        {
+          "id": "ll-rev-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linear-reverse",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)",
+          "text": "Every link was turned around in a single pass: O(n) time.",
+          "scene": { "id": "complexity", "label": "Reverse list", "big": "O(n)", "vs": "single forward pass" }
+        },
+        {
+          "id": "ll-rev-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "space-efficiency",
+          "fact": null,
+          "text": "Only three pointer variables were needed, achieving O(1) auxiliary space.",
+          "scene": { "id": "complexity", "label": "Reverse space", "big": "O(1)", "vs": "no extra nodes" }
+        }
+      ]
+    }
+  ]
+}

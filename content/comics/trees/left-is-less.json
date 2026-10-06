@@ -1,0 +1,17 @@
+{
+  "id": "trees-pool-search",
+  "authoring": "handpicked",
+  "selection": {
+    "layout": "hero-5",
+    "palette": "teal-lab",
+    "design": "bold-ink",
+    "theme": "warehouse",
+    "panels": [
+      { "line": "tr-b-s1", "pose": "explain" },
+      { "line": "tr-b-1", "pose": "think" },
+      { "line": "tr-b-2", "pose": "point" },
+      { "line": "tr-b-3", "pose": "surprised" },
+      { "line": "tr-b-p1", "pose": "cheer" }
+    ]
+  }
+}

@@ -5,7 +5,7 @@ name: Linked Lists
 oneLine: A chain of nodes, each holding a value and the address of the next.
 palette: violet
 status: partial
-formats: brief, visualizer
+formats: brief, comic, visualizer
 related: arrays, stacks-queues
 ---
 
@@ -27,6 +27,7 @@ A treasure hunt. Each clue tells you where the next clue is hidden. Adding a new
 - Access to the k-th node is O(k) because pointers must be followed from the head.
 - Insertion at the head is O(1).
 - Deletion at the head is O(1).
+- To insert at the head, point the new node's next to head, then update head to the new node.
 - Insertion or deletion at a known position requires walking to the node before it, so it is O(n) in general.
 - Searching for a value is O(n).
 - Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).

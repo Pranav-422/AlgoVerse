@@ -256,7 +256,7 @@ export function lintBank(bank: DialogueBank, kit: Kit, coreFacts: string[]): str
       const words = l.text.split(/\s+/).filter(Boolean).length;
       if (words > COMIC_STYLE.dialogueMaxWords) errs.push(`${l.id}: ${words} words (max ${COMIC_STYLE.dialogueMaxWords})`);
       if (l.fact && !coreFacts.some((f) => f.includes(l.fact!))) errs.push(`${l.id}: fact "${l.fact}" not found in the knowledge file`);
-      if (!["row", "formula", "cinema", "complexity", "messy"].includes(l.scene.id)) errs.push(`${l.id}: unknown scene ${l.scene.id}`);
+      if (!["row", "formula", "cinema", "complexity", "messy", "chain", "stack", "queue", "tree"].includes(l.scene.id)) errs.push(`${l.id}: unknown scene ${l.scene.id}`);
     }
     for (const role of ["setup", "payoff"] as const)
       if (!arc.lines.some((l) => l.role === role && l.level === "basic")) errs.push(`arc ${arc.id}: needs a basic ${role} line`);

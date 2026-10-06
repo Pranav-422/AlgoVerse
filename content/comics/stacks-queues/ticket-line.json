@@ -1,0 +1,18 @@
+{
+  "id": "stacks-queues-pool-ticket",
+  "authoring": "handpicked",
+  "selection": {
+    "layout": "grid-6",
+    "palette": "teal-lab",
+    "design": "blueprint",
+    "theme": "lab",
+    "panels": [
+      { "line": "qu-f-s1", "pose": "explain" },
+      { "line": "qu-f-1", "pose": "point" },
+      { "line": "qu-f-2", "pose": "think" },
+      { "line": "qu-f-3", "pose": "point" },
+      { "line": "qu-f-4", "pose": "surprised" },
+      { "line": "qu-f-p1", "pose": "cheer" }
+    ]
+  }
+}

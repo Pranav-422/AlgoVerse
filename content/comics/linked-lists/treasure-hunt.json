@@ -1,0 +1,17 @@
+{
+  "id": "linked-lists-pool-hunt",
+  "authoring": "handpicked",
+  "selection": {
+    "layout": "hero-5",
+    "palette": "violet-night",
+    "design": "bold-ink",
+    "theme": "library",
+    "panels": [
+      { "line": "ll-h-s1", "pose": "explain" },
+      { "line": "ll-h-1", "pose": "point" },
+      { "line": "ll-h-2", "pose": "think" },
+      { "line": "ll-h-4", "pose": "surprised" },
+      { "line": "ll-h-p1", "pose": "cheer" }
+    ]
+  }
+}

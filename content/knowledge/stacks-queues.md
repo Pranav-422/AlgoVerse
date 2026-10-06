@@ -5,7 +5,7 @@ name: Stacks & Queues
 oneLine: Two disciplined lines — last in first out, and first in first out.
 palette: teal
 status: partial
-formats: brief, visualizer
+formats: brief, comic, visualizer
 related: arrays, linked-lists, recursion
 ---
 
@@ -27,6 +27,7 @@ A stack is a pile of plates: you put a plate on top and take a plate from the to
 - Peek reads the top element without removing it in O(1).
 - Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.
 - Function calls are managed with a call stack.
+- A stack checks balanced brackets by pushing openers and popping to match closers in O(n).
 - A queue follows First In, First Out (FIFO).
 - Enqueue adds an element at the rear in O(1).
 - Dequeue removes the element at the front in O(1).

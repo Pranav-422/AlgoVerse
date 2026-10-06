@@ -42,7 +42,7 @@ export interface Kit {
 
 /** Scene drawn behind the Mentor. `id` picks the scene component; the rest are its props. */
 export interface SceneSpec {
-  id: "row" | "formula" | "cinema" | "complexity" | "messy";
+  id: "row" | "formula" | "cinema" | "complexity" | "messy" | "chain" | "stack" | "queue" | "tree";
   [key: string]: unknown;
 }
 

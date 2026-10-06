@@ -1,0 +1,266 @@
+{
+  "topicId": "trees",
+  "arcs": [
+    {
+      "id": "family-tree",
+      "title": "Family Tree",
+      "lines": [
+        {
+          "id": "tr-f-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "hierarchy",
+          "fact": "A tree is a hierarchical collection of nodes connected by edges with no cycles",
+          "text": "Unlike flat arrays, a tree arranges data in branching levels.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70] }
+        },
+        {
+          "id": "tr-f-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "parent-child",
+          "fact": "Every node in a tree except the root has exactly one parent",
+          "text": "Every node except the top has exactly one parent above it.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60], "hi": [1, 2] }
+        },
+        {
+          "id": "tr-f-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "root-node",
+          "fact": "The topmost node is the root",
+          "text": "The top node is forty: the root of the entire tree.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60], "hi": [0], "note": "root" }
+        },
+        {
+          "id": "tr-f-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "binary-branches",
+          "fact": "at most two children, called left and right",
+          "text": "In a binary tree, each node has at most two children.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60], "hi": [1, 2], "note": "left and right" }
+        },
+        {
+          "id": "tr-f-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "leaf-nodes",
+          "fact": "nodes with no children are called leaves",
+          "text": "Nodes at the bottom with no children are called leaf nodes.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "hi": [3, 4, 5, 6], "note": "leaves" }
+        },
+        {
+          "id": "tr-f-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "tree-height",
+          "fact": "The height of a tree is the number of edges on the longest path",
+          "text": "The longest path from root to leaf defines the tree's height.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, null, null], "path": [0, 1, 3], "note": "height = 2" }
+        },
+        {
+          "id": "tr-f-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "log-depth",
+          "fact": null,
+          "text": "With n nodes evenly balanced, this branching depth stays close to log n.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "path": [0, 1, 3] }
+        },
+        {
+          "id": "tr-f-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "balanced-speed",
+          "fact": "Searching a balanced binary search tree takes O(log n)",
+          "text": "A balanced tree keeps height short at log n, enabling rapid operations.",
+          "scene": { "id": "complexity", "label": "Balanced tree height", "big": "O(log n)", "vs": "branching cuts depth" }
+        },
+        {
+          "id": "tr-f-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "skewed-degrade",
+          "fact": "height becomes n and search takes O(n)",
+          "text": "If every node has only one child, height degrades to n: O(n).",
+          "scene": { "id": "complexity", "label": "Skewed tree height", "big": "O(n)", "vs": "degrades to linked list" }
+        }
+      ]
+    },
+    {
+      "id": "bst-search",
+      "title": "Left Is Less",
+      "lines": [
+        {
+          "id": "tr-b-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "bst-rule",
+          "fact": "binary search tree property",
+          "text": "A binary search tree enforces a golden rule on every node.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "note": "BST property" }
+        },
+        {
+          "id": "tr-b-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "ordering",
+          "fact": "all left descendants are smaller and all right descendants are larger",
+          "text": "All values in the left subtree are smaller; right subtree values are larger.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75], "hi": [1, 2], "note": "left < root < right" }
+        },
+        {
+          "id": "tr-b-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "start-root",
+          "fact": null,
+          "text": "We are searching for sixty. Start at the root: fifty.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "hi": [0], "note": "target = 60" }
+        },
+        {
+          "id": "tr-b-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "branch-right",
+          "fact": "discarding half the remaining nodes at each step",
+          "text": "Sixty is greater than fifty, so discard the entire left subtree.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "path": [0, 2], "hi": [2], "note": "go right" }
+        },
+        {
+          "id": "tr-b-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "branch-left",
+          "fact": null,
+          "text": "Now compare sixty against seventy-five: sixty is smaller, so branch left.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "path": [0, 2, 5], "hi": [5], "note": "go left" }
+        },
+        {
+          "id": "tr-b-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "target-found",
+          "fact": null,
+          "text": "Found sixty after three comparisons, never touching the left subtree.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "path": [0, 2, 5], "found": [5], "note": "found 60!" }
+        },
+        {
+          "id": "tr-b-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "insert-path",
+          "fact": "Inserting a node in a binary search tree follows the search path to an empty spot",
+          "text": "Inserting a new node follows this exact path to an empty spot.",
+          "scene": { "id": "tree", "nodes": [50, 25, 75, 10, 30, 60, 90], "path": [0, 2, 5], "hi": [5] }
+        },
+        {
+          "id": "tr-b-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "log-search",
+          "fact": "Searching a balanced binary search tree takes O(log n)",
+          "text": "Halving remaining candidates at each branch gives lightning-fast O(log n) search.",
+          "scene": { "id": "complexity", "label": "BST search", "big": "O(log n)", "vs": "halves each step" }
+        },
+        {
+          "id": "tr-b-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "skewed-risk",
+          "fact": "height becomes n and search takes O(n)",
+          "text": "Beware: insert in sorted order and the tree becomes a skewed line taking O(n).",
+          "scene": { "id": "complexity", "label": "Skewed BST", "big": "O(n)", "vs": "lost balance" }
+        }
+      ]
+    },
+    {
+      "id": "inorder-walk",
+      "title": "Walk the Tree",
+      "lines": [
+        {
+          "id": "tr-w-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "sorted-challenge",
+          "fact": null,
+          "text": "Can we read every value out of this tree in sorted order?",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "note": "read sorted?" }
+        },
+        {
+          "id": "tr-w-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "inorder-rule",
+          "fact": "Inorder traversal visits left subtree, current node, then right subtree",
+          "text": "Inorder traversal visits left subtree, current node, then right subtree.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60], "note": "L -> Root -> R" }
+        },
+        {
+          "id": "tr-w-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "visit-min",
+          "fact": null,
+          "text": "Descend all the way left to ten first, and visit ten.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "order": { "3": 1 }, "hi": [3], "note": "1st: 10" }
+        },
+        {
+          "id": "tr-w-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "visit-parent-right",
+          "fact": null,
+          "text": "Backtrack to twenty, then visit twenty's right child, thirty.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "order": { "3": 1, "1": 2, "4": 3 }, "hi": [4], "note": "10, 20, 30" }
+        },
+        {
+          "id": "tr-w-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "visit-root",
+          "fact": null,
+          "text": "Next visit root forty, then cross into the right subtree.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "order": { "3": 1, "1": 2, "4": 3, "0": 4 }, "hi": [0], "note": "10, 20, 30, 40" }
+        },
+        {
+          "id": "tr-w-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "visit-right-branch",
+          "fact": null,
+          "text": "Visit fifty, sixty, then seventy to complete the full traversal.",
+          "scene": { "id": "tree", "nodes": [40, 20, 60, 10, 30, 50, 70], "order": { "3": 1, "1": 2, "4": 3, "0": 4, "5": 5, "2": 6, "6": 7 }, "note": "all visited" }
+        },
+        {
+          "id": "tr-w-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "result-order",
+          "fact": null,
+          "text": "Reading in that exact sequence gives ten, twenty, thirty, forty, fifty, sixty, seventy.",
+          "scene": { "id": "row", "values": [10, 20, 30, 40, 50, 60, 70] }
+        },
+        {
+          "id": "tr-w-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "sorted-payoff",
+          "fact": "produces values in sorted ascending order",
+          "text": "Inorder traversal of a binary search tree produces values in sorted ascending order.",
+          "scene": { "id": "complexity", "label": "Inorder traversal", "big": "Sorted", "vs": "ascending order" }
+        },
+        {
+          "id": "tr-w-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "linear-traversal-cost",
+          "fact": "Inorder traversal visits all n nodes in O(n) time",
+          "text": "Every one of the n nodes is visited exactly once in O(n) time.",
+          "scene": { "id": "complexity", "label": "Traversal cost", "big": "O(n)", "vs": "touch each node once" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "topicId": "stacks-queues",
+  "arcs": [
+    {
+      "id": "stack-lifo",
+      "title": "The Stack of Plates",
+      "lines": [
+        {
+          "id": "st-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "lifo",
+          "fact": "A stack follows Last In, First Out (LIFO)",
+          "text": "A stack is like a stack of plates: you only touch the top.",
+          "scene": { "id": "stack", "values": [10, 20], "top": true }
+        },
+        {
+          "id": "st-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "top-access",
+          "fact": "Push adds an element to the top of the stack in O(1)",
+          "text": "Pushing adds to the top, and popping removes from the top.",
+          "scene": { "id": "stack", "values": [10, 20], "top": true, "capacity": 4 }
+        },
+        {
+          "id": "st-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "push",
+          "fact": "Push adds an element to the top of the stack in O(1)",
+          "text": "Push plate thirty onto the stack. It lands right above twenty.",
+          "scene": { "id": "stack", "values": [10, 20], "incoming": 30, "top": true, "capacity": 4 }
+        },
+        {
+          "id": "st-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "peek",
+          "fact": "Peek reads the top element without removing it in O(1)",
+          "text": "Now thirty is the new top. Peek lets us inspect thirty without removing it.",
+          "scene": { "id": "stack", "values": [10, 20, 30], "top": true, "hi": [2], "capacity": 4 }
+        },
+        {
+          "id": "st-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "pop",
+          "fact": "Pop removes the top element of the stack in O(1)",
+          "text": "Call pop: thirty is removed first, because thirty arrived last.",
+          "scene": { "id": "stack", "values": [10, 20], "outgoing": 30, "top": true, "capacity": 4 }
+        },
+        {
+          "id": "st-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "overflow-underflow",
+          "fact": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow",
+          "text": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.",
+          "scene": { "id": "stack", "values": [10, 20, 30, 40], "incoming": 50, "capacity": 4, "note": "overflow!" }
+        },
+        {
+          "id": "st-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "constant-stack",
+          "fact": "A stack follows Last In, First Out (LIFO)",
+          "text": "Last in, first out. Both push and pop run in O(1) time.",
+          "scene": { "id": "complexity", "label": "Stack operations", "big": "O(1)", "vs": "top access only" }
+        },
+        {
+          "id": "st-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "call-stack",
+          "fact": "Function calls are managed with a call stack",
+          "text": "Every nested function call in software is managed with a call stack.",
+          "scene": { "id": "stack", "values": ["main", "foo", "bar"], "top": true, "note": "call stack" }
+        }
+      ]
+    },
+    {
+      "id": "stack-brackets",
+      "title": "Matching Brackets",
+      "lines": [
+        {
+          "id": "st-b-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "brackets-problem",
+          "fact": null,
+          "text": "We want to check if brackets in code match up correctly.",
+          "scene": { "id": "stack", "values": [], "note": "{ [ ( ) ] }", "capacity": 3 }
+        },
+        {
+          "id": "st-b-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "push-openers",
+          "fact": "pushing openers and popping to match closers",
+          "text": "The rule: push every open bracket, and pop whenever a closer appears.",
+          "scene": { "id": "stack", "values": [], "incoming": "{", "capacity": 3 }
+        },
+        {
+          "id": "st-b-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "push-pair",
+          "fact": "Push adds an element to the top of the stack in O(1)",
+          "text": "See opening brace and opening bracket: push both onto the stack.",
+          "scene": { "id": "stack", "values": ["{", "["], "top": true, "capacity": 3 }
+        },
+        {
+          "id": "st-b-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "push-third",
+          "fact": null,
+          "text": "See open paren: push it to the top. Now three brackets wait.",
+          "scene": { "id": "stack", "values": ["{", "[", "("], "top": true, "capacity": 3 }
+        },
+        {
+          "id": "st-b-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "pop-match",
+          "fact": "Pop removes the top element of the stack in O(1)",
+          "text": "Next is closing paren: pop the top, and verify they match.",
+          "scene": { "id": "stack", "values": ["{", "["], "outgoing": "(", "top": true, "capacity": 3 }
+        },
+        {
+          "id": "st-b-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "match-all",
+          "fact": null,
+          "text": "Close bracket and close brace each pop and match their partner.",
+          "scene": { "id": "stack", "values": [], "note": "matched!", "capacity": 3 }
+        },
+        {
+          "id": "st-b-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linear-check",
+          "fact": "pushing openers and popping to match closers in O(n)",
+          "text": "Every opener matched its closer in one pass, leaving the stack empty in O(n).",
+          "scene": { "id": "complexity", "label": "Bracket matching", "big": "O(n)", "vs": "single pass stack" }
+        },
+        {
+          "id": "st-b-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "mismatch-fail",
+          "fact": null,
+          "text": "If any bracket is unmatched or left behind, the expression is invalid.",
+          "scene": { "id": "stack", "values": ["("], "top": true, "note": "unmatched!" }
+        }
+      ]
+    },
+    {
+      "id": "queue-fifo",
+      "title": "The Ticket Line",
+      "lines": [
+        {
+          "id": "qu-f-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "fifo",
+          "fact": "A queue follows First In, First Out (FIFO)",
+          "text": "A queue is a fair line: first person to arrive is served first.",
+          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2 }
+        },
+        {
+          "id": "qu-f-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "two-ends",
+          "fact": "Enqueue adds an element at the rear in O(1)",
+          "text": "Newcomers join at the rear, while departures leave from the front.",
+          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2, "note": "FIFO line" }
+        },
+        {
+          "id": "qu-f-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "enqueue",
+          "fact": "Enqueue adds an element at the rear in O(1)",
+          "text": "Person forty arrives at the ticket booth. Enqueue places forty at the rear.",
+          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2, "incoming": 40 }
+        },
+        {
+          "id": "qu-f-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "advance-rear",
+          "fact": null,
+          "text": "Rear advances to slot three where forty settles in.",
+          "scene": { "id": "queue", "values": [10, 20, 30, 40], "front": 0, "rear": 3, "hi": [3] }
+        },
+        {
+          "id": "qu-f-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "dequeue",
+          "fact": "Dequeue removes the element at the front in O(1)",
+          "text": "Person ten gets their ticket. Dequeue removes ten from the front.",
+          "scene": { "id": "queue", "values": [10, 20, 30, 40], "front": 0, "rear": 3, "outgoing": 10 }
+        },
+        {
+          "id": "qu-f-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "advance-front",
+          "fact": null,
+          "text": "Front moves right to slot one. Twenty is now first in line.",
+          "scene": { "id": "queue", "values": [null, 20, 30, 40], "front": 1, "rear": 3, "hi": [1] }
+        },
+        {
+          "id": "qu-f-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "constant-queue",
+          "fact": "A queue follows First In, First Out (FIFO)",
+          "text": "First in, first out. Both enqueue and dequeue operate in O(1) time.",
+          "scene": { "id": "complexity", "label": "Queue operations", "big": "O(1)", "vs": "front and rear pointers" }
+        },
+        {
+          "id": "qu-f-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "deque-both-ends",
+          "fact": "A deque allows insertion and deletion at both ends",
+          "text": "A deque allows insertion and deletion at both ends.",
+          "scene": { "id": "queue", "values": [null, 20, 30, 40], "front": 1, "rear": 3, "note": "deque" }
+        }
+      ]
+    },
+    {
+      "id": "queue-circular",
+      "title": "Wrap Around the Ring",
+      "lines": [
+        {
+          "id": "qu-c-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "wasted-space",
+          "fact": null,
+          "text": "In a plain array queue, dequeuing leaves dead slots at the front.",
+          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "note": "wasted slots" }
+        },
+        {
+          "id": "qu-c-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "false-overflow",
+          "fact": null,
+          "text": "If rear hits the end, we appear full even with empty space.",
+          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "hi": [3] }
+        },
+        {
+          "id": "qu-c-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "ring-structure",
+          "fact": "circular queue computes the next index as (index + 1) mod capacity",
+          "text": "A circular queue connects the end of the array back to slot zero.",
+          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "ring": true }
+        },
+        {
+          "id": "qu-c-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "modulo-wrap",
+          "fact": "(index + 1) mod capacity",
+          "text": "Modulo math wraps the index: three plus one modulo four is zero.",
+          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "incoming": 50, "ring": true }
+        },
+        {
+          "id": "qu-c-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "slot-reuse",
+          "fact": null,
+          "text": "Enqueue fifty wraps into slot zero, reclaiming the previously freed space.",
+          "scene": { "id": "queue", "values": [50, null, 30, 40], "front": 2, "rear": 0, "ring": true, "hi": [0] }
+        },
+        {
+          "id": "qu-c-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "front-wrap",
+          "fact": "(index + 1) mod capacity",
+          "text": "Front advances with modulo too: two, three, zero, one, in an endless loop.",
+          "scene": { "id": "queue", "values": [50, null, null, 40], "front": 3, "rear": 0, "ring": true }
+        },
+        {
+          "id": "qu-c-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "circular-efficiency",
+          "fact": "circular queue computes the next index as (index + 1) mod capacity",
+          "text": "Wrapping around reuses all memory without shifting elements: pure O(1) efficiency.",
+          "scene": { "id": "complexity", "label": "Circular queue", "big": "O(1)", "vs": "modulo wrap-around" }
+        },
+        {
+          "id": "qu-c-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "full-condition",
+          "fact": null,
+          "text": "Full capacity is detected when advancing rear would bump into front.",
+          "scene": { "id": "queue", "values": [50, 60, 30, 40], "front": 2, "rear": 1, "ring": true, "note": "full!" }
+        }
+      ]
+    }
+  ]
+}
