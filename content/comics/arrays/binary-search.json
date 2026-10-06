@@ -1,0 +1,52 @@
+{
+  "id": "arrays-binary-search",
+  "title": "The Shelf That Halves",
+  "topicId": "arrays",
+  "conceptId": "binary-search",
+  "source": "pregenerated",
+  "authoring": "handwritten",
+  "panels": [
+    {
+      "n": 1,
+      "scene": "A long warehouse shelf of numbered boxes, 0 to 15, labels in ascending order.",
+      "dialogue": "Every box has a number. I don't search — I jump.",
+      "concept": "index-access",
+      "image": null
+    },
+    {
+      "n": 2,
+      "scene": "Mentor stands at the middle box, box 7, holding a clipboard with the target value 54.",
+      "dialogue": "The shelf is sorted. So I start in the middle, not at the left.",
+      "concept": "sorted-precondition",
+      "image": null
+    },
+    {
+      "n": 3,
+      "scene": "Box 7 opens to reveal 45. The left half of the shelf fades to grey.",
+      "dialogue": "45 is smaller than 54. Everything to the left is smaller too. Gone.",
+      "concept": "discard-half",
+      "image": null
+    },
+    {
+      "n": 4,
+      "scene": "Mentor opens box 11, the middle of the remaining boxes 8 to 15. It holds 61. Boxes 11 to 15 fade to grey.",
+      "dialogue": "61 is too big. Everything right of it is bigger. Halve again.",
+      "concept": "halving",
+      "image": null
+    },
+    {
+      "n": 5,
+      "scene": "Box 9, the middle of boxes 8 to 10, opens to reveal 54, glowing amber.",
+      "dialogue": "Found in three looks out of sixteen boxes. That's log n.",
+      "concept": "logarithmic",
+      "image": null
+    },
+    {
+      "n": 6,
+      "scene": "Mentor points at a messy unsorted shelf beside the neat one.",
+      "dialogue": "On this unsorted shelf, the trick fails. Sorted first, or no halving.",
+      "concept": "sorted-precondition",
+      "image": null
+    }
+  ]
+}

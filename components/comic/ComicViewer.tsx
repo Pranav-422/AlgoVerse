@@ -1,0 +1,192 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import type { ComicWithProvenance } from "@/lib/comic";
+import type { FeedbackCategory } from "@/lib/feedbackMap";
+import { PanelDeck } from "./PanelDeck";
+import { FeedbackBar } from "./FeedbackBar";
+import { HowGenerated } from "@/components/shared/HowGenerated";
+
+const CLIENT_TIMEOUT_MS = 90_000;
+
+interface Props {
+  topicId: string;
+  pool: ComicWithProvenance[];
+  initialGenerated: ComicWithProvenance | null;
+  initialRemaining: number;
+  initialResetsAt: number | null;
+}
+
+export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining, initialResetsAt }: Props) {
+  const [generated, setGenerated] = useState<ComicWithProvenance | null>(initialGenerated);
+  const comics = generated ? [...pool, generated] : pool;
+  const [which, setWhich] = useState(initialGenerated ? pool.length : 0);
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [category, setCategory] = useState<FeedbackCategory | null>(null);
+  const [remaining, setRemaining] = useState(initialRemaining);
+  const [resetsAt, setResetsAt] = useState<number | null>(initialResetsAt);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const shuffleTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const current = comics[Math.min(which, comics.length - 1)];
+  const panels = current.comic.panels;
+
+  const go = useCallback(
+    (d: 1 | -1) => {
+      if (busy) return;
+      setDirection(d);
+      setIndex((i) => Math.min(Math.max(i + d, 0), panels.length - 1));
+    },
+    [busy, panels.length],
+  );
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement) return;
+      if (e.key === "ArrowRight") go(1);
+      if (e.key === "ArrowLeft") go(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [go]);
+
+  function startShuffle() {
+    setDirection(1);
+    shuffleTimer.current = setInterval(() => setIndex((i) => (i + 1) % panels.length), 380);
+  }
+  function stopShuffle() {
+    if (shuffleTimer.current) clearInterval(shuffleTimer.current);
+    shuffleTimer.current = null;
+  }
+  useEffect(() => stopShuffle, []);
+
+  async function regenerate() {
+    setBusy(true);
+    setError(null);
+    startShuffle();
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), CLIENT_TIMEOUT_MS);
+    try {
+      const res = await fetch(category ? "/api/comic/feedback" : "/api/comic/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(category ? { topicId, category } : { topicId }),
+        signal: ctl.signal,
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.detail ?? json.error);
+      if (json.data.denied) {
+        setRemaining(0);
+        setResetsAt(json.data.resetsAt);
+        return;
+      }
+      setGenerated({ comic: json.data.comic, provenance: json.data.provenance });
+      setRemaining(json.data.remaining);
+      if (json.data.remaining === 0) setResetsAt(Date.now() + 24 * 3600 * 1000);
+      setWhich(pool.length);
+      setCategory(null);
+    } catch (e) {
+      setError(
+        ctl.signal.aborted
+          ? "Generation timed out. Nothing was charged against your limit."
+          : `Generation failed: ${e instanceof Error ? e.message : String(e)}`,
+      );
+    } finally {
+      clearTimeout(timer);
+      stopShuffle();
+      setIndex(0);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Comic picker */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="label mr-1">Comics:</span>
+        {comics.map((c, i) => (
+          <button
+            key={c.comic.id}
+            disabled={busy}
+            onClick={() => {
+              setWhich(i);
+              setIndex(0);
+            }}
+            className={`px-3 py-1.5 border-2 rounded font-mono text-[11px] font-bold uppercase tracking-wider ${
+              i === which ? "bg-amber border-ink text-white shadow-comic-sm" : "bg-card border-outline-soft hover:border-ink"
+            }`}
+          >
+            {String.fromCharCode(65 + i)} · {c.comic.title}
+            {c.provenance.source === "generated" && " · live"}
+          </button>
+        ))}
+      </div>
+
+      {/* Stage */}
+      <div className="grid grid-cols-[56px_1fr_56px] items-center gap-4">
+        <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3" aria-label="Previous panel">
+          <ChevronLeft size={20} />
+        </button>
+        <div className="max-w-[780px] w-full mx-auto pr-6 pb-3">
+          <PanelDeck panels={panels} index={index} direction={direction} title={current.comic.title} shuffling={busy} />
+        </div>
+        <button
+          onClick={() => go(1)}
+          disabled={busy || index === panels.length - 1}
+          className="btn btn-light !p-3"
+          aria-label="Next panel"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      {error && (
+        <div className="box !bg-[#FCEEEE] !border-err p-4 flex gap-3 items-start font-mono text-[12px] text-err">
+          <AlertTriangle size={16} className="shrink-0" /> {error}
+        </div>
+      )}
+
+      {/* Thumbnail strip */}
+      <div>
+        <div className="flex justify-between label mb-2">
+          <span>Strip navigation</span>
+          <span>
+            Panel {index + 1} of {panels.length}
+          </span>
+        </div>
+        <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${panels.length}, minmax(0,1fr))` }}>
+          {panels.map((p, i) => (
+            <button
+              key={p.n}
+              disabled={busy}
+              onClick={() => {
+                setDirection(i >= index ? 1 : -1);
+                setIndex(i);
+              }}
+              className={`text-left border-2 border-ink rounded p-2 h-20 flex flex-col justify-between transition-all ${
+                i === index ? "bg-amber-light shadow-comic -translate-y-1" : "bg-[#FAF7F0] hover:bg-cream"
+              }`}
+            >
+              <span className="font-mono text-[10px] font-bold">#{String(p.n).padStart(2, "0")}</span>
+              <span className="font-mono text-[10px] uppercase truncate">{p.concept.replace(/-/g, " ")}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <FeedbackBar
+        selected={category}
+        onSelect={setCategory}
+        onRegenerate={regenerate}
+        remaining={remaining}
+        resetsAt={resetsAt}
+        busy={busy}
+      />
+
+      <HowGenerated provenance={current.provenance} />
+    </div>
+  );
+}

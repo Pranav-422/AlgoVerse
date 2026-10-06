@@ -1,0 +1,45 @@
+{
+  "id": "arrays-insertion-shift",
+  "title": "The Cinema Row",
+  "topicId": "arrays",
+  "conceptId": "insert-shift",
+  "source": "pregenerated",
+  "authoring": "handwritten",
+  "panels": [
+    {
+      "n": 1,
+      "scene": "A cinema row of numbered seats 0 to 7, each occupied, side by side with no gaps.",
+      "dialogue": "Seats sit side by side. That's contiguous memory.",
+      "concept": "contiguous",
+      "image": null
+    },
+    {
+      "n": 2,
+      "scene": "Mentor walks straight to seat 5 without looking at seats 0 to 4.",
+      "dialogue": "Seat five? Base plus five times seat width. One step.",
+      "concept": "index-access",
+      "image": null
+    },
+    {
+      "n": 3,
+      "scene": "A latecomer arrives holding a ticket for seat 2. The row is full.",
+      "dialogue": "Now someone needs seat two, and the order must hold.",
+      "concept": "insert",
+      "image": null
+    },
+    {
+      "n": 4,
+      "scene": "Every person from seat 2 onward stands and shifts one seat to the right, arrows above them.",
+      "dialogue": "Everyone from seat two moves right. One by one.",
+      "concept": "shift-right",
+      "image": null
+    },
+    {
+      "n": 5,
+      "scene": "The latecomer sits in seat 2. Mentor points along the row of people who moved.",
+      "dialogue": "Long row, long shuffle. Insertion in the middle is O(n).",
+      "concept": "linear-cost",
+      "image": null
+    }
+  ]
+}

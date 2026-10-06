@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* Theme tokens — mirror lib/theme.ts. "Refined Amber Light" from the Stitch designs. */
+@theme {
+  --color-ink: #18171f;
+  --color-paper: #fff8f3;
+  --color-card: #ffffff;
+  --color-cream: #fef2e3;
+  --color-cream-high: #f5eadf;
+  --color-text: #201b12;
+  --color-muted: #504534;
+  --color-outline: #837562;
+  --color-outline-soft: #d5c4ae;
+  --color-primary: #7e5700;
+  --color-amber: #d09201;
+  --color-amber-mid: #ffba38;
+  --color-amber-light: #ffdeac;
+  --color-violet: #7c5cff;
+  --color-violet-light: #ede8ff;
+  --color-ok: #2f7d4f;
+  --color-err: #b3261e;
+
+  --font-head: var(--font-bricolage), sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+  --font-body: var(--font-spacemono), monospace;
+  --font-serif: var(--font-instrument), Georgia, serif;
+
+  --shadow-comic: 3px 3px 0 #18171f;
+  --shadow-comic-sm: 2px 2px 0 #18171f;
+  --shadow-comic-lg: 5px 5px 0 #18171f;
+  --shadow-comic-amber: 3px 3px 0 #d09201;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-text);
+}
+
+body {
+  font-family: var(--font-body);
+  overscroll-behavior: none;
+}
+
+/* Halftone print dot grid used behind pages */
+.bg-dots {
+  background-color: var(--color-paper);
+  background-image: radial-gradient(rgba(32, 27, 18, 0.55) 0.85px, transparent 0.85px);
+  background-size: 18px 18px;
+}
+.bg-grid {
+  background-color: var(--color-paper);
+  background-image:
+    linear-gradient(rgba(208, 146, 1, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(208, 146, 1, 0.13) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@layer components {
+  /* Standard bordered "comic" box */
+  .box {
+    background: var(--color-card);
+    border: 2px solid var(--color-ink);
+    border-radius: 4px;
+    box-shadow: var(--shadow-comic);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid var(--color-ink);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    box-shadow: var(--shadow-comic-sm);
+    transition:
+      transform 120ms ease,
+      box-shadow 120ms ease,
+      background 120ms ease;
+    cursor: pointer;
+  }
+  .btn:hover:not(:disabled) {
+    transform: translate(-1px, -1px);
+    box-shadow: var(--shadow-comic);
+  }
+  .btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .btn-amber {
+    background: var(--color-amber);
+    color: #fff;
+  }
+  .btn-light {
+    background: #fff;
+    color: var(--color-ink);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: #fff;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1.5px solid var(--color-ink);
+    border-radius: 3px;
+    padding: 1px 6px;
+    background: #fff;
+    color: var(--color-ink);
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+}

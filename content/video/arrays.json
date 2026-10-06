@@ -1,0 +1,11 @@
+{
+  "title": "Arrays: why index access is instant",
+  "file": "/video/arrays.mp4",
+  "chapters": [
+    { "t": 0, "title": "Boxes side by side: contiguous memory" },
+    { "t": 45, "title": "The address formula: base + i × size" },
+    { "t": 110, "title": "Why inserting in the middle costs O(n)" },
+    { "t": 170, "title": "Binary search on a sorted array" },
+    { "t": 235, "title": "Summary and complexity table" }
+  ]
+}
