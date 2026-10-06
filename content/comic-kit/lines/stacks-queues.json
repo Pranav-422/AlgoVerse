@@ -12,7 +12,14 @@
           "concept": "lifo",
           "fact": "A stack follows Last In, First Out (LIFO)",
           "text": "A stack is like a stack of plates: you only touch the top.",
-          "scene": { "id": "stack", "values": [10, 20], "top": true }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "top": true
+          }
         },
         {
           "id": "st-s2",
@@ -21,7 +28,31 @@
           "concept": "top-access",
           "fact": "Push adds an element to the top of the stack in O(1)",
           "text": "Pushing adds to the top, and popping removes from the top.",
-          "scene": { "id": "stack", "values": [10, 20], "top": true, "capacity": 4 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "top": true,
+            "capacity": 4
+          }
+        },
+        {
+          "id": "sqx-1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": null,
+          "text": "A stack organizes data by restricting access to a single end point.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "top": true
+          }
         },
         {
           "id": "st-1",
@@ -30,7 +61,57 @@
           "concept": "push",
           "fact": "Push adds an element to the top of the stack in O(1)",
           "text": "Push plate thirty onto the stack. It lands right above twenty.",
-          "scene": { "id": "stack", "values": [10, 20], "incoming": 30, "top": true, "capacity": 4 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "incoming": 30,
+            "top": true,
+            "capacity": 4
+          },
+          "beat": "add-to-top"
+        },
+        {
+          "id": "sqx-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "Push value 40 onto the stack. It becomes the new top element.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30,
+              40
+            ],
+            "top": true,
+            "incoming": 40
+          },
+          "beat": "add-to-top"
+        },
+        {
+          "id": "sqx-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "Adding item 50 to our stack happens in constant time.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30,
+              50
+            ],
+            "top": true,
+            "incoming": 50
+          },
+          "beat": "add-to-top"
         },
         {
           "id": "st-2",
@@ -39,7 +120,62 @@
           "concept": "peek",
           "fact": "Peek reads the top element without removing it in O(1)",
           "text": "Now thirty is the new top. Peek lets us inspect thirty without removing it.",
-          "scene": { "id": "stack", "values": [10, 20, 30], "top": true, "hi": [2], "capacity": 4 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "top": true,
+            "hi": [
+              2
+            ],
+            "capacity": 4
+          },
+          "beat": "inspect-top"
+        },
+        {
+          "id": "sqx-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "Peek at the stack to view the top value 30 instantly.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "top": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "inspect-top"
+        },
+        {
+          "id": "sqx-5",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "Use peek to observe the top element without modifying the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "top": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "inspect-top"
         },
         {
           "id": "st-3",
@@ -48,7 +184,53 @@
           "concept": "pop",
           "fact": "Pop removes the top element of the stack in O(1)",
           "text": "Call pop: thirty is removed first, because thirty arrived last.",
-          "scene": { "id": "stack", "values": [10, 20], "outgoing": 30, "top": true, "capacity": 4 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "outgoing": 30,
+            "top": true,
+            "capacity": 4
+          },
+          "beat": "remove-top"
+        },
+        {
+          "id": "sqx-6",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Pop the stack to remove the top value 30.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "top": true,
+            "outgoing": 30
+          },
+          "beat": "remove-top"
+        },
+        {
+          "id": "sqx-7",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Remove the top element by performing a pop operation.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20
+            ],
+            "top": true,
+            "outgoing": 30
+          },
+          "beat": "remove-top"
         },
         {
           "id": "st-4",
@@ -57,7 +239,53 @@
           "concept": "overflow-underflow",
           "fact": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow",
           "text": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.",
-          "scene": { "id": "stack", "values": [10, 20, 30, 40], "incoming": 50, "capacity": 4, "note": "overflow!" }
+          "scene": {
+            "id": "stack",
+            "values": [
+              10,
+              20,
+              30,
+              40
+            ],
+            "incoming": 50,
+            "capacity": 4,
+            "note": "overflow!"
+          },
+          "beat": "handle-errors"
+        },
+        {
+          "id": "sqx-8",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.",
+          "text": "Popping an empty stack causes an underflow error.",
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "note": "underflow"
+          },
+          "beat": "handle-errors"
+        },
+        {
+          "id": "sqx-9",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.",
+          "text": "Pushing to a full stack triggers an overflow error.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              1,
+              2,
+              3
+            ],
+            "capacity": 3,
+            "incoming": 4,
+            "note": "overflow"
+          },
+          "beat": "handle-errors"
         },
         {
           "id": "st-p1",
@@ -66,7 +294,12 @@
           "concept": "constant-stack",
           "fact": "A stack follows Last In, First Out (LIFO)",
           "text": "Last in, first out. Both push and pop run in O(1) time.",
-          "scene": { "id": "complexity", "label": "Stack operations", "big": "O(1)", "vs": "top access only" }
+          "scene": {
+            "id": "complexity",
+            "label": "Stack operations",
+            "big": "O(1)",
+            "vs": "top access only"
+          }
         },
         {
           "id": "st-p2",
@@ -75,7 +308,43 @@
           "concept": "call-stack",
           "fact": "Function calls are managed with a call stack",
           "text": "Every nested function call in software is managed with a call stack.",
-          "scene": { "id": "stack", "values": ["main", "foo", "bar"], "top": true, "note": "call stack" }
+          "scene": {
+            "id": "stack",
+            "values": [
+              "main",
+              "foo",
+              "bar"
+            ],
+            "top": true,
+            "note": "call stack"
+          }
+        },
+        {
+          "id": "sqx-10",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Stacks efficiently validate balanced brackets in O(n) time.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "("
+            ]
+          }
+        },
+        {
+          "id": "sqx-11",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": null,
+          "text": "Mastering stacks is essential for managing memory and recursive algorithms.",
+          "scene": {
+            "id": "complexity",
+            "label": "Stack Ops",
+            "big": "O(1)"
+          }
         }
       ],
       "quiz": {
@@ -100,7 +369,12 @@
           "concept": "brackets-problem",
           "fact": null,
           "text": "We want to check if brackets in code match up correctly.",
-          "scene": { "id": "stack", "values": [], "note": "{ [ ( ) ] }", "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "note": "{ [ ( ) ] }",
+            "capacity": 3
+          }
         },
         {
           "id": "st-b-s2",
@@ -109,7 +383,45 @@
           "concept": "push-openers",
           "fact": "pushing openers and popping to match closers",
           "text": "The rule: push every open bracket, and pop whenever a closer appears.",
-          "scene": { "id": "stack", "values": [], "incoming": "{", "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "incoming": "{",
+            "capacity": 3
+          }
+        },
+        {
+          "id": "sqx-12",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": null,
+          "text": "Code syntax relies on properly paired grouping symbols.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "["
+            ],
+            "top": true
+          }
+        },
+        {
+          "id": "sqx-13",
+          "role": "setup",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": null,
+          "text": "Compiler parsers validate these nesting structures before execution.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "(",
+              "{",
+              "["
+            ],
+            "top": true
+          }
         },
         {
           "id": "st-b-1",
@@ -118,7 +430,52 @@
           "concept": "push-pair",
           "fact": "Push adds an element to the top of the stack in O(1)",
           "text": "See opening brace and opening bracket: push both onto the stack.",
-          "scene": { "id": "stack", "values": ["{", "["], "top": true, "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "["
+            ],
+            "top": true,
+            "capacity": 3
+          },
+          "beat": "push-openers"
+        },
+        {
+          "id": "sqx-14",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Encountering an opening brace and bracket, push both onto the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "["
+            ],
+            "top": true,
+            "incoming": "["
+          },
+          "beat": "push-openers"
+        },
+        {
+          "id": "sqx-15",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Each opening symbol is stored temporarily as we scan forward.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "(",
+              "{"
+            ],
+            "top": true,
+            "incoming": "("
+          },
+          "beat": "push-openers"
         },
         {
           "id": "st-b-2",
@@ -127,7 +484,54 @@
           "concept": "push-third",
           "fact": null,
           "text": "See open paren: push it to the top. Now three brackets wait.",
-          "scene": { "id": "stack", "values": ["{", "[", "("], "top": true, "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "[",
+              "("
+            ],
+            "top": true,
+            "capacity": 3
+          },
+          "beat": "push-more"
+        },
+        {
+          "id": "sqx-16",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "See open paren: push it to the top. Now three brackets wait.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "[",
+              "("
+            ],
+            "top": true
+          },
+          "beat": "push-more"
+        },
+        {
+          "id": "sqx-17",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "An incoming parenthesis joins the top of the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "[",
+              "(",
+              "("
+            ],
+            "top": true,
+            "incoming": "("
+          },
+          "beat": "push-more"
         },
         {
           "id": "st-b-3",
@@ -136,7 +540,52 @@
           "concept": "pop-match",
           "fact": "Pop removes the top element of the stack in O(1)",
           "text": "Next is closing paren: pop the top, and verify they match.",
-          "scene": { "id": "stack", "values": ["{", "["], "outgoing": "(", "top": true, "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "["
+            ],
+            "outgoing": "(",
+            "top": true,
+            "capacity": 3
+          },
+          "beat": "pop-and-match"
+        },
+        {
+          "id": "sqx-18",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Next is closing paren: pop the top, and verify they match.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{",
+              "["
+            ],
+            "top": true,
+            "outgoing": "("
+          },
+          "beat": "pop-and-match"
+        },
+        {
+          "id": "sqx-19",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "A closer triggers an immediate pop to check compatibility.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{"
+            ],
+            "top": true,
+            "outgoing": "["
+          },
+          "beat": "pop-and-match"
         },
         {
           "id": "st-b-4",
@@ -145,7 +594,44 @@
           "concept": "match-all",
           "fact": null,
           "text": "Close bracket and close brace each pop and match their partner.",
-          "scene": { "id": "stack", "values": [], "note": "matched!", "capacity": 3 }
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "note": "matched!",
+            "capacity": 3
+          },
+          "beat": "process-remaining"
+        },
+        {
+          "id": "sqx-20",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Close bracket and close brace each pop and match their partner.",
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "top": true
+          },
+          "beat": "process-remaining"
+        },
+        {
+          "id": "sqx-21",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Remaining closers systematically resolve the remaining stack items.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "{"
+            ],
+            "top": true,
+            "outgoing": "}"
+          },
+          "beat": "process-remaining"
         },
         {
           "id": "st-b-p1",
@@ -154,7 +640,12 @@
           "concept": "linear-check",
           "fact": "pushing openers and popping to match closers in O(n)",
           "text": "Every opener matched its closer in one pass, leaving the stack empty in O(n).",
-          "scene": { "id": "complexity", "label": "Bracket matching", "big": "O(n)", "vs": "single pass stack" }
+          "scene": {
+            "id": "complexity",
+            "label": "Bracket matching",
+            "big": "O(n)",
+            "vs": "single pass stack"
+          }
         },
         {
           "id": "st-b-p2",
@@ -163,7 +654,40 @@
           "concept": "mismatch-fail",
           "fact": null,
           "text": "If any bracket is unmatched or left behind, the expression is invalid.",
-          "scene": { "id": "stack", "values": ["("], "top": true, "note": "unmatched!" }
+          "scene": {
+            "id": "stack",
+            "values": [
+              "("
+            ],
+            "top": true,
+            "note": "unmatched!"
+          }
+        },
+        {
+          "id": "sqx-22",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Every opener matched its closer, leaving the stack empty in O(n) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Bracket Check",
+            "big": "O(n)"
+          }
+        },
+        {
+          "id": "sqx-23",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "stack-brackets",
+          "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+          "text": "Linear time complexity ensures scalable parsing for large source files.",
+          "scene": {
+            "id": "complexity",
+            "label": "Linear Scan",
+            "big": "O(n)"
+          }
         }
       ],
       "quiz": {
@@ -188,7 +712,17 @@
           "concept": "fifo",
           "fact": "A queue follows First In, First Out (FIFO)",
           "text": "A queue is a fair line: first person to arrive is served first.",
-          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2 }
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              30,
+              null
+            ],
+            "front": 0,
+            "rear": 2
+          }
         },
         {
           "id": "qu-f-s2",
@@ -197,7 +731,54 @@
           "concept": "two-ends",
           "fact": "Enqueue adds an element at the rear in O(1)",
           "text": "Newcomers join at the rear, while departures leave from the front.",
-          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2, "note": "FIFO line" }
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              30,
+              null
+            ],
+            "front": 0,
+            "rear": 2,
+            "note": "FIFO line"
+          }
+        },
+        {
+          "id": "sqx-24",
+          "role": "setup",
+          "level": "basic",
+          "concept": "queue-basics",
+          "fact": "A queue follows First In, First Out (FIFO).",
+          "text": "A queue follows First In, First Out behavior strictly.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              null
+            ],
+            "front": 0,
+            "rear": 1
+          }
+        },
+        {
+          "id": "sqx-25",
+          "role": "setup",
+          "level": "detail",
+          "concept": "queue-order",
+          "fact": "A queue follows First In, First Out (FIFO).",
+          "text": "The element that enters first is always the first to exit.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              5,
+              15,
+              25
+            ],
+            "front": 0,
+            "rear": 2
+          }
         },
         {
           "id": "qu-f-1",
@@ -206,7 +787,59 @@
           "concept": "enqueue",
           "fact": "Enqueue adds an element at the rear in O(1)",
           "text": "Person forty arrives at the ticket booth. Enqueue places forty at the rear.",
-          "scene": { "id": "queue", "values": [10, 20, 30, null], "front": 0, "rear": 2, "incoming": 40 }
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              30,
+              null
+            ],
+            "front": 0,
+            "rear": 2,
+            "incoming": 40
+          },
+          "beat": "person-arrival"
+        },
+        {
+          "id": "sqx-26",
+          "role": "step",
+          "level": "basic",
+          "concept": "queue-enqueue",
+          "fact": "Enqueue adds an element at the rear in O(1).",
+          "text": "Client ninety arrives and enqueue adds ninety at the rear.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              90
+            ],
+            "front": 0,
+            "rear": 2,
+            "incoming": 90
+          },
+          "beat": "person-arrival"
+        },
+        {
+          "id": "sqx-27",
+          "role": "step",
+          "level": "basic",
+          "concept": "queue-enqueue",
+          "fact": "Enqueue adds an element at the rear in O(1).",
+          "text": "Item fifty arrives. Enqueue places fifty at the rear.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              30,
+              40,
+              50
+            ],
+            "front": 0,
+            "rear": 2,
+            "incoming": 50
+          },
+          "beat": "person-arrival"
         },
         {
           "id": "qu-f-2",
@@ -215,7 +848,65 @@
           "concept": "advance-rear",
           "fact": null,
           "text": "Rear advances to slot three where forty settles in.",
-          "scene": { "id": "queue", "values": [10, 20, 30, 40], "front": 0, "rear": 3, "hi": [3] }
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              30,
+              40
+            ],
+            "front": 0,
+            "rear": 3,
+            "hi": [
+              3
+            ]
+          },
+          "beat": "rear-update"
+        },
+        {
+          "id": "sqx-28",
+          "role": "step",
+          "level": "detail",
+          "concept": "queue-rear",
+          "fact": "Enqueue adds an element at the rear in O(1).",
+          "text": "The rear pointer moves to accommodate the incoming element.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              30,
+              40,
+              50
+            ],
+            "front": 0,
+            "rear": 2,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "rear-update"
+        },
+        {
+          "id": "sqx-29",
+          "role": "step",
+          "level": "detail",
+          "concept": "queue-rear",
+          "fact": "Enqueue adds an element at the rear in O(1).",
+          "text": "Rear advances to slot two where ninety settles in.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              90
+            ],
+            "front": 0,
+            "rear": 2,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "rear-update"
         },
         {
           "id": "qu-f-3",
@@ -224,7 +915,59 @@
           "concept": "dequeue",
           "fact": "Dequeue removes the element at the front in O(1)",
           "text": "Person ten gets their ticket. Dequeue removes ten from the front.",
-          "scene": { "id": "queue", "values": [10, 20, 30, 40], "front": 0, "rear": 3, "outgoing": 10 }
+          "scene": {
+            "id": "queue",
+            "values": [
+              10,
+              20,
+              30,
+              40
+            ],
+            "front": 0,
+            "rear": 3,
+            "outgoing": 10
+          },
+          "beat": "front-removal"
+        },
+        {
+          "id": "sqx-30",
+          "role": "step",
+          "level": "basic",
+          "concept": "queue-dequeue",
+          "fact": "Dequeue removes the element at the front in O(1).",
+          "text": "Client thirty gets served. Dequeue removes thirty from the front.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              40,
+              50
+            ],
+            "front": 0,
+            "rear": 2,
+            "outgoing": 30
+          },
+          "beat": "front-removal"
+        },
+        {
+          "id": "sqx-31",
+          "role": "step",
+          "level": "basic",
+          "concept": "queue-dequeue",
+          "fact": "Dequeue removes the element at the front in O(1).",
+          "text": "Element five leaves the system. Dequeue removes five from the front.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              15,
+              25
+            ],
+            "front": 0,
+            "rear": 2,
+            "outgoing": 5
+          },
+          "beat": "front-removal"
         },
         {
           "id": "qu-f-4",
@@ -233,7 +976,65 @@
           "concept": "advance-front",
           "fact": null,
           "text": "Front moves right to slot one. Twenty is now first in line.",
-          "scene": { "id": "queue", "values": [null, 20, 30, 40], "front": 1, "rear": 3, "hi": [1] }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              20,
+              30,
+              40
+            ],
+            "front": 1,
+            "rear": 3,
+            "hi": [
+              1
+            ]
+          },
+          "beat": "front-advance"
+        },
+        {
+          "id": "sqx-32",
+          "role": "step",
+          "level": "detail",
+          "concept": "queue-front",
+          "fact": "Dequeue removes the element at the front in O(1).",
+          "text": "Front moves right to slot one. Forty is now first in line.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              40,
+              50
+            ],
+            "front": 1,
+            "rear": 2,
+            "hi": [
+              1
+            ]
+          },
+          "beat": "front-advance"
+        },
+        {
+          "id": "sqx-33",
+          "role": "step",
+          "level": "detail",
+          "concept": "queue-front",
+          "fact": "Dequeue removes the element at the front in O(1).",
+          "text": "Front moves right to slot one. Fifteen is now first in line.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              15,
+              25
+            ],
+            "front": 1,
+            "rear": 2,
+            "hi": [
+              1
+            ]
+          },
+          "beat": "front-advance"
         },
         {
           "id": "qu-f-p1",
@@ -242,7 +1043,12 @@
           "concept": "constant-queue",
           "fact": "A queue follows First In, First Out (FIFO)",
           "text": "First in, first out. Both enqueue and dequeue operate in O(1) time.",
-          "scene": { "id": "complexity", "label": "Queue operations", "big": "O(1)", "vs": "front and rear pointers" }
+          "scene": {
+            "id": "complexity",
+            "label": "Queue operations",
+            "big": "O(1)",
+            "vs": "front and rear pointers"
+          }
         },
         {
           "id": "qu-f-p2",
@@ -251,7 +1057,50 @@
           "concept": "deque-both-ends",
           "fact": "A deque allows insertion and deletion at both ends",
           "text": "A deque allows insertion and deletion at both ends.",
-          "scene": { "id": "queue", "values": [null, 20, 30, 40], "front": 1, "rear": 3, "note": "deque" }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              20,
+              30,
+              40
+            ],
+            "front": 1,
+            "rear": 3,
+            "note": "deque"
+          }
+        },
+        {
+          "id": "sqx-34",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "queue-complexity",
+          "fact": "Enqueue adds an element at the rear in O(1).",
+          "text": "Both enqueue and dequeue execute in constant time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Queue Operations",
+            "big": "O(1)"
+          }
+        },
+        {
+          "id": "sqx-35",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "queue-circular",
+          "fact": "A circular queue computes the next index as (index + 1) mod capacity.",
+          "text": "A circular queue wraps around using modulo capacity for indices.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              70,
+              80,
+              60
+            ],
+            "front": 1,
+            "rear": 0,
+            "ring": true
+          }
         }
       ],
       "quiz": {
@@ -276,7 +1125,18 @@
           "concept": "wasted-space",
           "fact": null,
           "text": "In a plain array queue, dequeuing leaves dead slots at the front.",
-          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "note": "wasted slots" }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              null,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 3,
+            "note": "wasted slots"
+          }
         },
         {
           "id": "qu-c-s2",
@@ -285,7 +1145,20 @@
           "concept": "false-overflow",
           "fact": null,
           "text": "If rear hits the end, we appear full even with empty space.",
-          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "hi": [3] }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              null,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 3,
+            "hi": [
+              3
+            ]
+          }
         },
         {
           "id": "qu-c-1",
@@ -294,7 +1167,18 @@
           "concept": "ring-structure",
           "fact": "circular queue computes the next index as (index + 1) mod capacity",
           "text": "A circular queue connects the end of the array back to slot zero.",
-          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "ring": true }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              null,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 3,
+            "ring": true
+          }
         },
         {
           "id": "qu-c-2",
@@ -303,7 +1187,19 @@
           "concept": "modulo-wrap",
           "fact": "(index + 1) mod capacity",
           "text": "Modulo math wraps the index: three plus one modulo four is zero.",
-          "scene": { "id": "queue", "values": [null, null, 30, 40], "front": 2, "rear": 3, "incoming": 50, "ring": true }
+          "scene": {
+            "id": "queue",
+            "values": [
+              null,
+              null,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 3,
+            "incoming": 50,
+            "ring": true
+          }
         },
         {
           "id": "qu-c-3",
@@ -312,7 +1208,21 @@
           "concept": "slot-reuse",
           "fact": null,
           "text": "Enqueue fifty wraps into slot zero, reclaiming the previously freed space.",
-          "scene": { "id": "queue", "values": [50, null, 30, 40], "front": 2, "rear": 0, "ring": true, "hi": [0] }
+          "scene": {
+            "id": "queue",
+            "values": [
+              50,
+              null,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 0,
+            "ring": true,
+            "hi": [
+              0
+            ]
+          }
         },
         {
           "id": "qu-c-4",
@@ -321,7 +1231,18 @@
           "concept": "front-wrap",
           "fact": "(index + 1) mod capacity",
           "text": "Front advances with modulo too: two, three, zero, one, in an endless loop.",
-          "scene": { "id": "queue", "values": [50, null, null, 40], "front": 3, "rear": 0, "ring": true }
+          "scene": {
+            "id": "queue",
+            "values": [
+              50,
+              null,
+              null,
+              40
+            ],
+            "front": 3,
+            "rear": 0,
+            "ring": true
+          }
         },
         {
           "id": "qu-c-p1",
@@ -330,7 +1251,12 @@
           "concept": "circular-efficiency",
           "fact": "circular queue computes the next index as (index + 1) mod capacity",
           "text": "Wrapping around reuses all memory without shifting elements: pure O(1) efficiency.",
-          "scene": { "id": "complexity", "label": "Circular queue", "big": "O(1)", "vs": "modulo wrap-around" }
+          "scene": {
+            "id": "complexity",
+            "label": "Circular queue",
+            "big": "O(1)",
+            "vs": "modulo wrap-around"
+          }
         },
         {
           "id": "qu-c-p2",
@@ -339,7 +1265,19 @@
           "concept": "full-condition",
           "fact": null,
           "text": "Full capacity is detected when advancing rear would bump into front.",
-          "scene": { "id": "queue", "values": [50, 60, 30, 40], "front": 2, "rear": 1, "ring": true, "note": "full!" }
+          "scene": {
+            "id": "queue",
+            "values": [
+              50,
+              60,
+              30,
+              40
+            ],
+            "front": 2,
+            "rear": 1,
+            "ring": true,
+            "note": "full!"
+          }
         }
       ],
       "quiz": {
@@ -351,6 +1289,391 @@
         ],
         "answer": 1,
         "fact": "A circular queue computes the next index as (index + 1) mod capacity."
+      }
+    },
+    {
+      "id": "undo-history",
+      "title": "The Undo Operation",
+      "lines": [
+        {
+          "id": "sqx-36",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack",
+          "fact": "A stack follows Last In, First Out (LIFO).",
+          "text": "Text editors use a stack to track your most recent actions.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic"
+            ],
+            "top": true,
+            "note": "Action History"
+          }
+        },
+        {
+          "id": "sqx-37",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack-push",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "Every new edit is pushed onto the top of the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic",
+              "Color"
+            ],
+            "top": true,
+            "incoming": "Color"
+          }
+        },
+        {
+          "id": "sqx-38",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-pop",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Selecting undo pops the most recent action from the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic"
+            ],
+            "top": true,
+            "outgoing": "Color"
+          },
+          "beat": "undo-action"
+        },
+        {
+          "id": "sqx-39",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-pop",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "The stack returns to its previous state after the pop.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic"
+            ],
+            "top": true
+          },
+          "beat": "undo-action"
+        },
+        {
+          "id": "sqx-40",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-peek",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "We peek at the top to see what action will be undone.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic"
+            ],
+            "top": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "check-top"
+        },
+        {
+          "id": "sqx-41",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-peek",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "The peek operation identifies 'Italic' as the next action to remove.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold",
+              "Italic"
+            ],
+            "top": true,
+            "hi": [
+              2
+            ],
+            "note": "Peeking Italic"
+          },
+          "beat": "check-top"
+        },
+        {
+          "id": "sqx-42",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-complexity",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "Each push operation executes in constant time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Push",
+            "big": "O(1)"
+          },
+          "beat": "analyze-time"
+        },
+        {
+          "id": "sqx-43",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-complexity",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Similarly, every pop operation is also O(1).",
+          "scene": {
+            "id": "complexity",
+            "label": "Pop",
+            "big": "O(1)"
+          },
+          "beat": "analyze-time"
+        },
+        {
+          "id": "sqx-44",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "A stack follows Last In, First Out (LIFO).",
+          "text": "Because it is LIFO, the last action is always the first one undone.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold"
+            ],
+            "top": true
+          }
+        },
+        {
+          "id": "sqx-45",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": null,
+          "text": "This stack structure guarantees predictable undo behavior.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Type",
+              "Bold"
+            ],
+            "top": true
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What is the time complexity of removing the top element from a stack?",
+        "options": [
+          "O(n)",
+          "O(1)",
+          "O(log n)"
+        ],
+        "answer": 1,
+        "fact": "Pop removes the top element of the stack in O(1)."
+      }
+    },
+    {
+      "id": "browser-history",
+      "title": "Browser History Navigation",
+      "lines": [
+        {
+          "id": "sqx-46",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack-operations",
+          "fact": null,
+          "text": "Web browsers use a stack to track your page history.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs",
+              "Mail"
+            ],
+            "top": true,
+            "note": "Back stack"
+          }
+        },
+        {
+          "id": "sqx-47",
+          "role": "setup",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "A stack follows Last In, First Out (LIFO).",
+          "text": "The most recent page visited is always at the top.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs",
+              "Mail"
+            ],
+            "top": true,
+            "hi": [
+              2
+            ]
+          }
+        },
+        {
+          "id": "sqx-48",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-push",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "When you open a new link, we push it onto the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs",
+              "Mail",
+              "News"
+            ],
+            "top": true,
+            "incoming": "News"
+          },
+          "beat": "push-page"
+        },
+        {
+          "id": "sqx-49",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-complexity",
+          "fact": "Push adds an element to the top of the stack in O(1).",
+          "text": "This push operation is extremely efficient with O(1) complexity.",
+          "scene": {
+            "id": "complexity",
+            "label": "Push",
+            "big": "O(1)"
+          },
+          "beat": "push-page"
+        },
+        {
+          "id": "sqx-50",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-pop",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Pressing back triggers a pop to remove the current page.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs"
+            ],
+            "top": true,
+            "outgoing": "Mail"
+          },
+          "beat": "go-back"
+        },
+        {
+          "id": "sqx-51",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-complexity",
+          "fact": "Pop removes the top element of the stack in O(1).",
+          "text": "Popping the top page also runs in O(1) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Pop",
+            "big": "O(1)"
+          },
+          "beat": "go-back"
+        },
+        {
+          "id": "sqx-52",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-peek",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "We peek at the top to see which page is active.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs"
+            ],
+            "top": true,
+            "hi": [
+              1
+            ]
+          },
+          "beat": "view-current"
+        },
+        {
+          "id": "sqx-53",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-peek",
+          "fact": "Peek reads the top element without removing it in O(1).",
+          "text": "Peek allows us to inspect the top without modification.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs"
+            ],
+            "top": true,
+            "note": "No removal"
+          },
+          "beat": "view-current"
+        },
+        {
+          "id": "sqx-54",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-lifo",
+          "fact": "A stack follows Last In, First Out (LIFO).",
+          "text": "The stack ensures the last page visited is the first one returned.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs"
+            ],
+            "top": true
+          }
+        },
+        {
+          "id": "sqx-55",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "stack-operations",
+          "fact": null,
+          "text": "Navigation is managed entirely through these simple stack operations.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "Google",
+              "Docs",
+              "Mail"
+            ],
+            "top": true,
+            "note": "Browser history"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "If you are on your third page and click 'back', what happens to the stack?",
+        "options": [
+          "The top page is removed via pop.",
+          "The bottom page is removed via pop.",
+          "A new page is added via push."
+        ],
+        "answer": 0,
+        "fact": "Pop removes the top element of the stack in O(1)."
       }
     }
   ]

@@ -52,6 +52,7 @@ export async function generateComic(
     );
     selection = res.value;
     attempts = res.attempts;
+    model = res.model;
     if (res.attempts > 1) {
       outcome = "after_retry";
       reason = res.rejected.join(" | ");
@@ -63,8 +64,10 @@ export async function generateComic(
         ? "no Gemini API key is configured"
         : err?.code === "TIMEOUT"
           ? "the model timed out"
-          : `the model's answer was rejected (${e instanceof Error ? e.message : String(e)})`;
-    attempts = err?.code === "NO_KEY" ? 0 : 2;
+          : err?.code === "BAD_OUTPUT"
+            ? `the model's answer broke the kit rules twice (${e instanceof Error ? e.message.slice(0, 160) : String(e)})`
+            : "the Gemini models were busy or rate-limited (free tier)";
+    attempts = err?.code === "NO_KEY" ? 0 : err?.code === "BAD_OUTPUT" ? 2 : 0;
     selection = await tracer.time("rule-based fallback", () => fallbackPick(kit, bank, feedback, previous, Date.now(), prefs), () => "valid selection");
     model = null;
     outcome = "fallback";

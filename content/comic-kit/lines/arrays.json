@@ -5,30 +5,310 @@
       "id": "access",
       "title": "The Shelf That Jumps",
       "lines": [
-        { "id": "acc-s1", "role": "setup", "level": "basic", "concept": "indexing", "fact": "Indexing starts at 0",
+        {
+          "id": "acc-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "indexing",
+          "fact": "Indexing starts at 0",
           "text": "Every box on this shelf has a number, starting at zero.",
-          "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18], "tags": { "0": "0" } } },
-        { "id": "acc-s2", "role": "setup", "level": "basic", "concept": "contiguous", "fact": "contiguous memory",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              40,
+              7,
+              33,
+              25,
+              18
+            ],
+            "tags": {
+              "0": "0"
+            }
+          }
+        },
+        {
+          "id": "acc-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "contiguous",
+          "fact": "contiguous memory",
           "text": "The boxes sit side by side with no gaps. That's contiguous memory.",
-          "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18], "note": "no gaps" } },
-        { "id": "acc-1", "role": "step", "level": "basic", "concept": "index-access", "fact": "the address is computed, not searched",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              40,
+              7,
+              33,
+              25,
+              18
+            ],
+            "note": "no gaps"
+          }
+        },
+        {
+          "id": "ax-1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "contiguous-memory",
+          "fact": "An array stores elements in contiguous memory.",
+          "text": "An array stores its elements in contiguous blocks of memory.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30,
+              40
+            ]
+          }
+        },
+        {
+          "id": "ax-2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "contiguous-memory",
+          "fact": "An array stores elements in contiguous memory.",
+          "text": "Each element sits immediately next to the previous one without gaps.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              15,
+              25
+            ],
+            "hi": [
+              0,
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "id": "acc-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "index-access",
+          "fact": "the address is computed, not searched",
           "text": "I want box four. Do I open boxes zero to three first? No.",
-          "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18], "hi": [4], "grey": [[0, 3]], "tags": { "4": "i = 4" } } },
-        { "id": "acc-2", "role": "step", "level": "detail", "concept": "address-formula", "fact": "base_address + i × element_size",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              40,
+              7,
+              33,
+              25,
+              18
+            ],
+            "hi": [
+              4
+            ],
+            "grey": [
+              [
+                0,
+                3
+              ]
+            ],
+            "tags": {
+              "4": "i = 4"
+            }
+          },
+          "beat": "direct-jump"
+        },
+        {
+          "id": "ax-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "direct-access",
+          "fact": "Access by index is O(1) because the address is computed, not searched.",
+          "text": "To reach index 3, we compute the exact memory location instead of scanning.",
+          "scene": {
+            "id": "row",
+            "hi": [
+              3
+            ],
+            "values": [
+              1,
+              2,
+              3,
+              99
+            ]
+          },
+          "beat": "direct-jump"
+        },
+        {
+          "id": "acc-2",
+          "role": "step",
+          "level": "detail",
+          "concept": "address-formula",
+          "fact": "base_address + i × element_size",
           "text": "The address of box i is the base plus i times the box size.",
-          "scene": { "id": "formula", "base": 100, "i": 4, "size": 4, "solved": false } },
-        { "id": "acc-3", "role": "step", "level": "detail", "concept": "address-formula", "fact": "base_address + i × element_size",
+          "scene": {
+            "id": "formula",
+            "base": 100,
+            "i": 4,
+            "size": 4,
+            "solved": false
+          },
+          "beat": "address-formula"
+        },
+        {
+          "id": "ax-4",
+          "role": "step",
+          "level": "detail",
+          "concept": "address-calculation",
+          "fact": "address(i) = base_address + i × element_size.",
+          "text": "The memory address equals the base address plus index times element size.",
+          "scene": {
+            "id": "formula",
+            "base": 200,
+            "i": 2,
+            "size": 4,
+            "solved": false
+          },
+          "beat": "address-formula"
+        },
+        {
+          "id": "acc-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "address-formula",
+          "fact": "base_address + i × element_size",
           "text": "Base 100, size 4, index 4: address 116. One multiply, one add.",
-          "scene": { "id": "formula", "base": 100, "i": 4, "size": 4, "solved": true } },
-        { "id": "acc-4", "role": "step", "level": "basic", "concept": "index-access", "fact": "Access by index is O(1)",
+          "scene": {
+            "id": "formula",
+            "base": 100,
+            "i": 4,
+            "size": 4,
+            "solved": true
+          },
+          "beat": "address-calculation"
+        },
+        {
+          "id": "ax-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "address-calculation",
+          "fact": "address(i) = base_address + i × element_size.",
+          "text": "Base 200, size 4, index 2 yields address 208 through direct arithmetic.",
+          "scene": {
+            "id": "formula",
+            "base": 200,
+            "i": 2,
+            "size": 4,
+            "solved": true
+          },
+          "beat": "address-calculation"
+        },
+        {
+          "id": "acc-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "index-access",
+          "fact": "Access by index is O(1)",
           "text": "So box four opens instantly, and box four thousand would too.",
-          "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18], "found": [4], "tags": { "4": "25" } } },
-        { "id": "acc-p1", "role": "payoff", "level": "basic", "concept": "constant-time", "fact": "Access by index is O(1)",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              40,
+              7,
+              33,
+              25,
+              18
+            ],
+            "found": [
+              4
+            ],
+            "tags": {
+              "4": "25"
+            }
+          },
+          "beat": "instant-retrieval"
+        },
+        {
+          "id": "ax-6",
+          "role": "step",
+          "level": "basic",
+          "concept": "constant-time",
+          "fact": "Access by index is O(1) because the address is computed, not searched.",
+          "text": "Because we calculate the position directly, access takes constant time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Array Access",
+            "big": "O(1)"
+          },
+          "beat": "instant-retrieval"
+        },
+        {
+          "id": "acc-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "constant-time",
+          "fact": "Access by index is O(1)",
           "text": "Same cost for any index. That's O(1) access.",
-          "scene": { "id": "complexity", "label": "Access by index", "big": "O(1)", "vs": "no searching" } },
-        { "id": "acc-p2", "role": "payoff", "level": "detail", "concept": "bounds", "fact": "the last valid index is length − 1",
+          "scene": {
+            "id": "complexity",
+            "label": "Access by index",
+            "big": "O(1)",
+            "vs": "no searching"
+          }
+        },
+        {
+          "id": "acc-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "bounds",
+          "fact": "the last valid index is length − 1",
           "text": "Valid indexes run from zero to length minus one. Past that, there is no box.",
-          "scene": { "id": "row", "values": [12, 40, 7, 33, 25, 18, null], "tags": { "5": "last", "6": "?" } } }
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              40,
+              7,
+              33,
+              25,
+              18,
+              null
+            ],
+            "tags": {
+              "5": "last",
+              "6": "?"
+            }
+          }
+        },
+        {
+          "id": "ax-7",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "time-complexity",
+          "fact": "Access by index is O(1) because the address is computed, not searched.",
+          "text": "Index lookup remains instantaneous regardless of total array length.",
+          "scene": {
+            "id": "complexity",
+            "label": "Access Time",
+            "big": "O(1)"
+          }
+        },
+        {
+          "id": "ax-8",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "index-bounds",
+          "fact": "Indexing starts at 0; the last valid index is length − 1.",
+          "text": "Valid indices strictly range from zero up to length minus one.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30
+            ]
+          }
+        }
       ],
       "quiz": {
         "q": "Why does reading an array element by its index take O(1) time?",
@@ -45,30 +325,396 @@
       "id": "insertion",
       "title": "The Cinema Row",
       "lines": [
-        { "id": "ins-s1", "role": "setup", "level": "basic", "concept": "contiguous", "fact": "contiguous memory",
+        {
+          "id": "ins-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "contiguous",
+          "fact": "contiguous memory",
           "text": "Seats in a row, every one taken, all side by side.",
-          "scene": { "id": "cinema", "seats": 6, "latecomer": null } },
-        { "id": "ins-s2", "role": "setup", "level": "basic", "concept": "insert", "fact": null,
+          "scene": {
+            "id": "cinema",
+            "seats": 6,
+            "latecomer": null
+          }
+        },
+        {
+          "id": "ins-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "insert",
+          "fact": null,
           "text": "A latecomer needs seat two, and everyone must stay in order.",
-          "scene": { "id": "cinema", "seats": 6, "latecomer": 2 } },
-        { "id": "ins-1", "role": "step", "level": "basic", "concept": "no-gap", "fact": null,
+          "scene": {
+            "id": "cinema",
+            "seats": 6,
+            "latecomer": 2
+          }
+        },
+        {
+          "id": "ax-9",
+          "role": "setup",
+          "level": "basic",
+          "concept": "cinema-insertion",
+          "fact": null,
+          "text": "A full cinema row represents elements stored consecutively.",
+          "scene": {
+            "id": "cinema",
+            "seats": 5,
+            "latecomer": null
+          }
+        },
+        {
+          "id": "ax-10",
+          "role": "setup",
+          "level": "detail",
+          "concept": "cinema-insertion",
+          "fact": null,
+          "text": "Every person sits in adjacent seats without any gaps.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30,
+              40,
+              50
+            ]
+          }
+        },
+        {
+          "id": "ins-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "no-gap",
+          "fact": null,
           "text": "There's no empty seat to slip into. Someone has to move.",
-          "scene": { "id": "row", "values": [3, 8, 5, 9, 1], "hi": [2], "tags": { "2": "here" } } },
-        { "id": "ins-2", "role": "step", "level": "basic", "concept": "shift-right", "fact": "later elements must shift right",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              8,
+              5,
+              9,
+              1
+            ],
+            "hi": [
+              2
+            ],
+            "tags": {
+              "2": "here"
+            }
+          },
+          "beat": "no-empty-seat"
+        },
+        {
+          "id": "ax-11",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": null,
+          "text": "There is no vacant slot available at index two.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30,
+              40,
+              50
+            ],
+            "hi": [
+              2
+            ]
+          },
+          "beat": "no-empty-seat"
+        },
+        {
+          "id": "ax-12",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": null,
+          "text": "Index two is occupied, so we cannot simply place the value.",
+          "scene": {
+            "id": "cinema",
+            "seats": 5,
+            "latecomer": 2
+          },
+          "beat": "no-empty-seat"
+        },
+        {
+          "id": "ins-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "shift-right",
+          "fact": "later elements must shift right",
           "text": "Everyone from seat two onward shifts one seat to the right.",
-          "scene": { "id": "row", "values": [3, 8, 5, 9, 1, null], "shift": { "from": 2, "dir": "right" } } },
-        { "id": "ins-3", "role": "step", "level": "detail", "concept": "shift-order", "fact": "shifted starting from the end",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              8,
+              5,
+              9,
+              1,
+              null
+            ],
+            "shift": {
+              "from": 2,
+              "dir": "right"
+            }
+          },
+          "beat": "shift-right"
+        },
+        {
+          "id": "ax-13",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": "Insertion in the middle is O(n) because later elements must shift right.",
+          "text": "Later elements must shift right to make space.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              null,
+              30,
+              40
+            ],
+            "shift": {
+              "from": 2,
+              "dir": "right"
+            }
+          },
+          "beat": "shift-right"
+        },
+        {
+          "id": "ax-14",
+          "role": "step",
+          "level": "detail",
+          "concept": "insertion",
+          "fact": "Insertion in the middle is O(n) because later elements must shift right.",
+          "text": "Shifting elements right opens the target index.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              15,
+              null,
+              25,
+              35
+            ],
+            "shift": {
+              "from": 2,
+              "dir": "right"
+            }
+          },
+          "beat": "shift-right"
+        },
+        {
+          "id": "ins-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "shift-order",
+          "fact": "shifted starting from the end",
           "text": "We move the last person first, so nobody gets sat on.",
-          "scene": { "id": "row", "values": [3, 8, 5, 9, null, 1], "hi": [5], "tags": { "5": "first" } } },
-        { "id": "ins-4", "role": "step", "level": "basic", "concept": "write", "fact": null,
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              8,
+              5,
+              9,
+              null,
+              1
+            ],
+            "hi": [
+              5
+            ],
+            "tags": {
+              "5": "first"
+            }
+          },
+          "beat": "shift-from-end"
+        },
+        {
+          "id": "ax-15",
+          "role": "step",
+          "level": "detail",
+          "concept": "insertion",
+          "fact": "When inserting, elements are shifted starting from the end so that no value is overwritten.",
+          "text": "Elements are shifted starting from the end so that no value is overwritten.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              null,
+              30,
+              40
+            ],
+            "hi": [
+              4
+            ]
+          },
+          "beat": "shift-from-end"
+        },
+        {
+          "id": "ax-16",
+          "role": "step",
+          "level": "detail",
+          "concept": "insertion",
+          "fact": "When inserting, elements are shifted starting from the end so that no value is overwritten.",
+          "text": "We begin shifting from the final element to protect data integrity.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              15,
+              null,
+              25,
+              35
+            ],
+            "hi": [
+              4
+            ]
+          },
+          "beat": "shift-from-end"
+        },
+        {
+          "id": "ins-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "write",
+          "fact": null,
           "text": "Seat two is free now. The latecomer finally sits down.",
-          "scene": { "id": "row", "values": [3, 8, 4, 5, 9, 1], "fresh": [2], "tags": { "2": "new" } } },
-        { "id": "ins-p1", "role": "payoff", "level": "basic", "concept": "linear-time", "fact": "Insertion in the middle is O(n)",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              8,
+              4,
+              5,
+              9,
+              1
+            ],
+            "fresh": [
+              2
+            ],
+            "tags": {
+              "2": "new"
+            }
+          },
+          "beat": "latecomer-sits"
+        },
+        {
+          "id": "ax-17",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": null,
+          "text": "Index two is now free and the new value is stored.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              99,
+              30,
+              40
+            ],
+            "hi": [
+              2
+            ]
+          },
+          "beat": "latecomer-sits"
+        },
+        {
+          "id": "ax-18",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": null,
+          "text": "The gap is filled and the sequence is restored.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              15,
+              77,
+              25,
+              35
+            ],
+            "hi": [
+              2
+            ]
+          },
+          "beat": "latecomer-sits"
+        },
+        {
+          "id": "ins-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linear-time",
+          "fact": "Insertion in the middle is O(n)",
           "text": "Long row, long shuffle. Inserting in the middle costs O(n).",
-          "scene": { "id": "complexity", "label": "Insert in the middle", "big": "O(n)", "vs": "everyone after it moves" } },
-        { "id": "ins-p2", "role": "payoff", "level": "detail", "concept": "delete", "fact": "Deletion in the middle is O(n)",
+          "scene": {
+            "id": "complexity",
+            "label": "Insert in the middle",
+            "big": "O(n)",
+            "vs": "everyone after it moves"
+          }
+        },
+        {
+          "id": "ins-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "delete",
+          "fact": "Deletion in the middle is O(n)",
           "text": "Deleting is the mirror image: everyone after the gap shifts left. Also O(n).",
-          "scene": { "id": "row", "values": [3, 8, null, 9, 1], "shift": { "from": 3, "dir": "left" } } }
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              8,
+              null,
+              9,
+              1
+            ],
+            "shift": {
+              "from": 3,
+              "dir": "left"
+            }
+          }
+        },
+        {
+          "id": "ax-19",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "insertion",
+          "fact": "Insertion in the middle is O(n) because later elements must shift right.",
+          "text": "Insertion in the middle is linear time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Insertion",
+            "big": "O(n)"
+          }
+        },
+        {
+          "id": "ax-20",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "deletion",
+          "fact": "Deletion in the middle is O(n) because later elements must shift left.",
+          "text": "Deletion requires shifting elements left, also costing linear time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Deletion",
+            "big": "O(n)"
+          }
+        }
       ],
       "quiz": {
         "q": "Why is inserting an element in the middle of an array an O(n) operation?",
@@ -85,33 +731,210 @@
       "id": "search",
       "title": "Find the Box",
       "lines": [
-        { "id": "srch-s1", "role": "setup", "level": "basic", "concept": "search", "fact": null,
+        {
+          "id": "srch-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "search",
+          "fact": null,
           "text": "I'm looking for the value 54 somewhere on this shelf.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "note": "find 54" } },
-        { "id": "srch-s2", "role": "setup", "level": "detail", "concept": "search", "fact": null,
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "note": "find 54"
+          }
+        },
+        {
+          "id": "srch-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "search",
+          "fact": null,
           "text": "No index this time, only a value. So I have to search.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "note": "index = ?" } },
-        { "id": "srch-1", "role": "step", "level": "basic", "concept": "linear-search", "fact": "checks elements one by one",
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "note": "index = ?"
+          }
+        },
+        {
+          "id": "srch-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "linear-search",
+          "fact": "checks elements one by one",
           "text": "The slow way: open box after box, starting from the left.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "grey": [[0, 1]], "hi": [2], "tags": { "2": "i" } } },
-        { "id": "srch-2", "role": "step", "level": "basic", "concept": "linear-search", "fact": "one by one and is O(n)",
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "grey": [
+              [
+                0,
+                1
+              ]
+            ],
+            "hi": [
+              2
+            ],
+            "tags": {
+              "2": "i"
+            }
+          }
+        },
+        {
+          "id": "srch-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "linear-search",
+          "fact": "one by one and is O(n)",
           "text": "Worst case, I open every single box. That's O(n).",
-          "scene": { "id": "complexity", "label": "Linear search", "big": "O(n)", "vs": "check them all" } },
-        { "id": "srch-3", "role": "step", "level": "basic", "concept": "sorted", "fact": "requires a sorted array",
+          "scene": {
+            "id": "complexity",
+            "label": "Linear search",
+            "big": "O(n)",
+            "vs": "check them all"
+          }
+        },
+        {
+          "id": "srch-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "sorted",
+          "fact": "requires a sorted array",
           "text": "But this shelf is sorted. That changes everything.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "note": "sorted ✓" } },
-        { "id": "srch-4", "role": "step", "level": "basic", "concept": "halving", "fact": "halves the search range",
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "note": "sorted ✓"
+          }
+        },
+        {
+          "id": "srch-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "halving",
+          "fact": "halves the search range",
           "text": "Open the middle box: 31. Too small, so the whole left half goes.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "hi": [3], "grey": [[0, 3]], "tags": { "3": "mid" } } },
-        { "id": "srch-5", "role": "step", "level": "detail", "concept": "halving", "fact": "halves the search range",
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "hi": [
+              3
+            ],
+            "grey": [
+              [
+                0,
+                3
+              ]
+            ],
+            "tags": {
+              "3": "mid"
+            }
+          }
+        },
+        {
+          "id": "srch-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "halving",
+          "fact": "halves the search range",
           "text": "Middle of what's left: 54. Found it in two looks.",
-          "scene": { "id": "row", "values": [8, 15, 23, 31, 42, 54, 67, 80], "found": [5], "grey": [[0, 3]], "tags": { "5": "mid" } } },
-        { "id": "srch-p1", "role": "payoff", "level": "basic", "concept": "log-time", "fact": "O(log n)",
+          "scene": {
+            "id": "row",
+            "values": [
+              8,
+              15,
+              23,
+              31,
+              42,
+              54,
+              67,
+              80
+            ],
+            "found": [
+              5
+            ],
+            "grey": [
+              [
+                0,
+                3
+              ]
+            ],
+            "tags": {
+              "5": "mid"
+            }
+          }
+        },
+        {
+          "id": "srch-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "log-time",
+          "fact": "O(log n)",
           "text": "Halving every step means about log n looks. That's binary search.",
-          "scene": { "id": "complexity", "label": "Binary search", "big": "O(log n)", "vs": "halve each step" } },
-        { "id": "srch-p2", "role": "payoff", "level": "detail", "concept": "sorted", "fact": "requires a sorted array",
+          "scene": {
+            "id": "complexity",
+            "label": "Binary search",
+            "big": "O(log n)",
+            "vs": "halve each step"
+          }
+        },
+        {
+          "id": "srch-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "sorted",
+          "fact": "requires a sorted array",
           "text": "On an unsorted shelf, halving lies to you. Sort first, or search linearly.",
-          "scene": { "id": "messy" } }
+          "scene": {
+            "id": "messy"
+          }
+        }
       ],
       "quiz": {
         "q": "What condition is required for binary search to find an element in O(log n) time?",
@@ -128,30 +951,509 @@
       "id": "bubble",
       "title": "Bubbles Rise",
       "lines": [
-        { "id": "bub-s1", "role": "setup", "level": "basic", "concept": "unsorted", "fact": null,
+        {
+          "id": "bub-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "unsorted",
+          "fact": null,
           "text": "This row is out of order. Let's sort it with the simplest trick.",
-          "scene": { "id": "row", "values": [5, 2, 9, 1, 7] } },
-        { "id": "bub-s2", "role": "setup", "level": "detail", "concept": "unsorted", "fact": null,
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              2,
+              9,
+              1,
+              7
+            ]
+          }
+        },
+        {
+          "id": "bub-s2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "unsorted",
+          "fact": null,
           "text": "Five boxes, no plan yet. We'll only ever look at two at a time.",
-          "scene": { "id": "row", "values": [5, 2, 9, 1, 7], "hi": [0, 1] } },
-        { "id": "bub-1", "role": "step", "level": "basic", "concept": "compare-swap", "fact": "swaps adjacent out-of-order pairs",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              2,
+              9,
+              1,
+              7
+            ],
+            "hi": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "id": "ax-21",
+          "role": "setup",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "This row is out of order. Let's sort it with the simplest trick.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              9,
+              1,
+              7,
+              3
+            ]
+          }
+        },
+        {
+          "id": "ax-22",
+          "role": "setup",
+          "level": "detail",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "Five boxes, no plan yet. We'll only ever look at two at a time.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              9,
+              1,
+              7,
+              3
+            ],
+            "hi": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "id": "ax-23",
+          "role": "setup",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "Our goal is to organize these five numbers into ascending order.",
+          "scene": {
+            "id": "messy"
+          }
+        },
+        {
+          "id": "ax-24",
+          "role": "setup",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "The bubble sort algorithm relies on repeatedly swapping adjacent out-of-order pairs.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              9,
+              1,
+              7,
+              3
+            ]
+          }
+        },
+        {
+          "id": "bub-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "compare-swap",
+          "fact": "swaps adjacent out-of-order pairs",
           "text": "Compare two neighbours. If the left one is bigger, swap them.",
-          "scene": { "id": "row", "values": [5, 2, 9, 1, 7], "swap": [0, 1] } },
-        { "id": "bub-2", "role": "step", "level": "basic", "concept": "compare-swap", "fact": "swaps adjacent out-of-order pairs",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              2,
+              9,
+              1,
+              7
+            ],
+            "swap": [
+              0,
+              1
+            ]
+          },
+          "beat": "compare-and-swap"
+        },
+        {
+          "id": "ax-25",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Compare two neighbours. If the left one is bigger, swap them.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              5,
+              1,
+              7,
+              3
+            ],
+            "swap": [
+              0,
+              1
+            ]
+          },
+          "beat": "compare-and-swap"
+        },
+        {
+          "id": "ax-26",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Look at indices 1 and 2. Since 5 is larger than 1, swap them.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              1,
+              5,
+              7,
+              3
+            ],
+            "swap": [
+              1,
+              2
+            ]
+          },
+          "beat": "compare-and-swap"
+        },
+        {
+          "id": "ax-27",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Check index 3 and 4. Swap 7 and 3 to fix their order.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              1,
+              5,
+              3,
+              7
+            ],
+            "swap": [
+              3,
+              4
+            ]
+          },
+          "beat": "compare-and-swap"
+        },
+        {
+          "id": "bub-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "compare-swap",
+          "fact": "swaps adjacent out-of-order pairs",
           "text": "Five and nine are already in order, so we leave them alone.",
-          "scene": { "id": "row", "values": [2, 5, 9, 1, 7], "hi": [1, 2] } },
-        { "id": "bub-3", "role": "step", "level": "detail", "concept": "compare-swap", "fact": "swaps adjacent out-of-order pairs",
+          "scene": {
+            "id": "row",
+            "values": [
+              2,
+              5,
+              9,
+              1,
+              7
+            ],
+            "hi": [
+              1,
+              2
+            ]
+          },
+          "beat": "skip-sorted-pair"
+        },
+        {
+          "id": "ax-28",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Five and nine are already in order, so we leave them alone.",
+          "scene": {
+            "id": "row",
+            "values": [
+              5,
+              9,
+              1,
+              7,
+              3
+            ],
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "skip-sorted-pair"
+        },
+        {
+          "id": "ax-29",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Since 1 is less than 5, these two are correctly positioned.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              5,
+              9,
+              7,
+              3
+            ],
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "skip-sorted-pair"
+        },
+        {
+          "id": "bub-3",
+          "role": "step",
+          "level": "detail",
+          "concept": "compare-swap",
+          "fact": "swaps adjacent out-of-order pairs",
           "text": "Nine meets one, then seven. Nine keeps swapping to the right.",
-          "scene": { "id": "row", "values": [2, 5, 1, 9, 7], "swap": [3, 4] } },
-        { "id": "bub-4", "role": "step", "level": "basic", "concept": "pass", "fact": "largest remaining element is in its final position",
+          "scene": {
+            "id": "row",
+            "values": [
+              2,
+              5,
+              1,
+              9,
+              7
+            ],
+            "swap": [
+              3,
+              4
+            ]
+          },
+          "beat": "propagate-max"
+        },
+        {
+          "id": "ax-30",
+          "role": "step",
+          "level": "detail",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Nine meets one, then seven. Nine keeps swapping to the right.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              5,
+              7,
+              9,
+              3
+            ],
+            "hi": [
+              2,
+              3
+            ]
+          },
+          "beat": "propagate-max"
+        },
+        {
+          "id": "ax-31",
+          "role": "step",
+          "level": "detail",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Seven is larger than three, so move seven to the right.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              5,
+              3,
+              7,
+              9
+            ],
+            "swap": [
+              2,
+              3
+            ]
+          },
+          "beat": "propagate-max"
+        },
+        {
+          "id": "bub-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "pass",
+          "fact": "largest remaining element is in its final position",
           "text": "After one pass, the biggest value has bubbled to the end.",
-          "scene": { "id": "row", "values": [2, 5, 1, 7, 9], "found": [4], "tags": { "4": "settled" } } },
-        { "id": "bub-p1", "role": "payoff", "level": "basic", "concept": "quadratic", "fact": "O(n²) in the worst case",
+          "scene": {
+            "id": "row",
+            "values": [
+              2,
+              5,
+              1,
+              7,
+              9
+            ],
+            "found": [
+              4
+            ],
+            "tags": {
+              "4": "settled"
+            }
+          },
+          "beat": "confirm-final-position"
+        },
+        {
+          "id": "ax-32",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "After each bubble sort pass, the largest remaining element is in its final position.",
+          "text": "After one pass, the biggest value has bubbled to the end.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              5,
+              3,
+              7,
+              9
+            ],
+            "hi": [
+              4
+            ]
+          },
+          "beat": "confirm-final-position"
+        },
+        {
+          "id": "ax-33",
+          "role": "step",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "After each bubble sort pass, the largest remaining element is in its final position.",
+          "text": "Nine is now at index 4, which is its correct final resting place.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              5,
+              3,
+              7,
+              9
+            ],
+            "hi": [
+              4
+            ]
+          },
+          "beat": "confirm-final-position"
+        },
+        {
+          "id": "bub-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "quadratic",
+          "fact": "O(n²) in the worst case",
           "text": "Repeat passes until nothing swaps. Up to n passes of n compares: O(n²).",
-          "scene": { "id": "complexity", "label": "Bubble sort", "big": "O(n²)", "vs": "pass after pass" } },
-        { "id": "bub-p2", "role": "payoff", "level": "detail", "concept": "quadratic", "fact": "O(n²) in the worst case",
+          "scene": {
+            "id": "complexity",
+            "label": "Bubble sort",
+            "big": "O(n²)",
+            "vs": "pass after pass"
+          }
+        },
+        {
+          "id": "bub-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "quadratic",
+          "fact": "O(n²) in the worst case",
           "text": "Easy to write, slow when big. Fine for five boxes, not five million.",
-          "scene": { "id": "row", "values": [1, 2, 5, 7, 9], "found": [0, 1, 2, 3, 4], "note": "sorted" } }
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              7,
+              9
+            ],
+            "found": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "note": "sorted"
+          }
+        },
+        {
+          "id": "ax-34",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Repeat passes until nothing swaps. Up to n passes of n compares: O(n²).",
+          "scene": {
+            "id": "complexity",
+            "label": "Bubble Sort",
+            "big": "O(n²)"
+          }
+        },
+        {
+          "id": "ax-35",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "bubble-sort",
+          "fact": "Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.",
+          "text": "Easy to write, slow when big. Fine for five boxes, not five million.",
+          "scene": {
+            "id": "complexity",
+            "label": "Worst Case",
+            "big": "O(n²)"
+          }
+        },
+        {
+          "id": "ax-36",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "The sorting process finishes when the entire array is in order.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ]
+          }
+        },
+        {
+          "id": "ax-37",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "bubble-sort",
+          "fact": null,
+          "text": "We have successfully moved from an unsorted state to a sorted state.",
+          "scene": {
+            "id": "messy"
+          }
+        }
       ],
       "quiz": {
         "q": "What is guaranteed after completing one full pass of bubble sort?",
@@ -162,6 +1464,461 @@
         ],
         "answer": 2,
         "fact": "After each bubble sort pass, the largest remaining element is in its final position."
+      }
+    },
+    {
+      "id": "selection-sort",
+      "title": "The Grocery Basket",
+      "lines": [
+        {
+          "id": "ax-38",
+          "role": "setup",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "We are sorting this row of grocery prices by selecting the smallest one first.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              2,
+              5,
+              1
+            ]
+          }
+        },
+        {
+          "id": "ax-39",
+          "role": "setup",
+          "level": "detail",
+          "concept": "selection-sort",
+          "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²).",
+          "text": "Selection sort has a complexity of O(n²).",
+          "scene": {
+            "id": "complexity",
+            "label": "Selection Sort",
+            "big": "O(n²)"
+          }
+        },
+        {
+          "id": "ax-40",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²).",
+          "text": "First, scan the entire row to find the smallest value, which is 1.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              2,
+              5,
+              1
+            ],
+            "found": [
+              3
+            ]
+          },
+          "beat": "find-minimum"
+        },
+        {
+          "id": "ax-41",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "Swap the value 1 with the value at the current beginning index, 9.",
+          "scene": {
+            "id": "row",
+            "values": [
+              9,
+              2,
+              5,
+              1
+            ],
+            "swap": [
+              0,
+              3
+            ]
+          },
+          "beat": "swap-minimum"
+        },
+        {
+          "id": "ax-42",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "The array now begins with the correctly placed value 1.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "grey": [
+              [
+                0,
+                0
+              ]
+            ]
+          },
+          "beat": "swap-minimum"
+        },
+        {
+          "id": "ax-43",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "Next, scan the remaining unsorted portion to find the smallest value, which is 2.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "hi": [
+              1,
+              2,
+              3
+            ],
+            "found": [
+              1
+            ]
+          },
+          "beat": "find-minimum-2"
+        },
+        {
+          "id": "ax-44",
+          "role": "step",
+          "level": "detail",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "Since 2 is already at index 1, no swap is required for this pass.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "grey": [
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "beat": "swap-minimum-2"
+        },
+        {
+          "id": "ax-45",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "Looking at the last two elements, the smaller value is 5.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "hi": [
+              2,
+              3
+            ],
+            "found": [
+              2
+            ]
+          },
+          "beat": "find-minimum-3"
+        },
+        {
+          "id": "ax-46",
+          "role": "step",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "Since 5 is already in position, we leave it and move to the final element.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "grey": [
+              [
+                0,
+                2
+              ]
+            ]
+          },
+          "beat": "swap-minimum-3"
+        },
+        {
+          "id": "ax-47",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": null,
+          "text": "The entire array is now sorted using repeated selection.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "grey": [
+              [
+                0,
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "id": "ax-48",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "selection-sort",
+          "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²).",
+          "text": "Selection sort is inefficient for large datasets due to its O(n²) complexity.",
+          "scene": {
+            "id": "complexity",
+            "label": "Selection Sort",
+            "big": "O(n²)"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What is the time complexity of selection sort?",
+        "options": [
+          "O(n)",
+          "O(n²)",
+          "O(log n)"
+        ],
+        "answer": 1,
+        "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²)."
+      }
+    },
+    {
+      "id": "reversing-an-array",
+      "title": "Reversing an Array In Place",
+      "lines": [
+        {
+          "id": "ax-49",
+          "role": "setup",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "An array stores elements in contiguous memory.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30,
+              40,
+              50
+            ]
+          }
+        },
+        {
+          "id": "ax-50",
+          "role": "setup",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": null,
+          "text": "To reverse this sequence, we swap elements from both ends moving inward.",
+          "scene": {
+            "id": "row",
+            "values": [
+              10,
+              20,
+              30,
+              40,
+              50
+            ],
+            "hi": [
+              0,
+              4
+            ]
+          }
+        },
+        {
+          "id": "ax-51",
+          "role": "step",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "First, we swap the values at index 0 and 4.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              20,
+              30,
+              40,
+              10
+            ],
+            "swap": [
+              0,
+              4
+            ]
+          },
+          "beat": "swap-outer"
+        },
+        {
+          "id": "ax-52",
+          "role": "step",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": null,
+          "text": "The values 10 and 50 are now correctly swapped.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              20,
+              30,
+              40,
+              10
+            ]
+          },
+          "beat": "swap-outer"
+        },
+        {
+          "id": "ax-53",
+          "role": "step",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "Next, we swap the values at index 1 and 3.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              40,
+              30,
+              20,
+              10
+            ],
+            "swap": [
+              1,
+              3
+            ]
+          },
+          "beat": "swap-inner"
+        },
+        {
+          "id": "ax-54",
+          "role": "step",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": null,
+          "text": "The elements 20 and 40 have exchanged positions.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              40,
+              30,
+              20,
+              10
+            ]
+          },
+          "beat": "swap-inner"
+        },
+        {
+          "id": "ax-55",
+          "role": "step",
+          "level": "detail",
+          "concept": "array-reversal",
+          "fact": null,
+          "text": "The middle element at index 2 stays stationary.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              40,
+              30,
+              20,
+              10
+            ],
+            "hi": [
+              2
+            ]
+          },
+          "beat": "middle-element"
+        },
+        {
+          "id": "ax-56",
+          "role": "step",
+          "level": "detail",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "The reversal completes when the pointers meet in the middle.",
+          "scene": {
+            "id": "row",
+            "values": [
+              50,
+              40,
+              30,
+              20,
+              10
+            ]
+          },
+          "beat": "terminate"
+        },
+        {
+          "id": "ax-57",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "In-place reversal requires O(n) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Reversal Time",
+            "big": "O(n)"
+          }
+        },
+        {
+          "id": "ax-58",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "array-reversal",
+          "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+          "text": "It uses O(1) extra space as no new array is created.",
+          "scene": {
+            "id": "complexity",
+            "label": "Extra Space",
+            "big": "O(1)"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What is the time complexity of reversing an array in place?",
+        "options": [
+          "O(1)",
+          "O(n)",
+          "O(log n)"
+        ],
+        "answer": 1,
+        "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space."
       }
     }
   ]

@@ -35,6 +35,28 @@ const LINES_DIR = path.join("content", "comic-kit", "lines");
 const topics = target === "all" ? fs.readdirSync(LINES_DIR).filter((f) => f.endsWith(".json")).map((f) => f.replace(".json", "")) : [target];
 const kit = loadKit();
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+// Free tier: ~5 requests/minute and ~20/day per model, so drafts rotate across models
+// and calls are paced. Busy (503) or rate-limited (429) models are skipped for the rest of the run.
+const MODELS = (process.env.EXPAND_MODELS || "gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.8-flash,gemini-3.7-flash,gemini-3.5-flash,gemini-3.1-flash-lite")
+  .split(",")
+  .map((m) => m.trim());
+const dead = new Set<string>();
+let turn = 0;
+async function draft<T>(prompt: string, validate: (v: unknown) => T): Promise<{ value: T; model: string }> {
+  const alive = MODELS.filter((m) => !dead.has(m));
+  if (!alive.length) throw new Error("every model is rate-limited or busy right now — try again later");
+  const order = [...alive.slice(turn % alive.length), ...alive.slice(0, turn % alive.length)];
+  turn++;
+  await sleep(6500);
+  try {
+    const r = await runJson(prompt, validate, undefined, "draft", { models: order, maxAttempts: Math.min(4, order.length) });
+    return { value: r.value, model: r.model };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (/429|RESOURCE_EXHAUSTED/.test(msg)) for (const m of order.slice(0, 4)) if (msg.includes(m)) dead.add(m);
+    throw e;
+  }
+}
 const words = (t: string) => t.split(/\s+/).filter(Boolean).length;
 
 type Draft = Partial<DialogueLine> & Record<string, unknown>;
@@ -135,12 +157,12 @@ for (const topicId of topics) {
       `OUTPUT — strict JSON only: {"beats": {"<existing step line id>": "beat-name"}, "lines": [LINE, ...]}`,
     ].join("\n");
     try {
-      await sleep(4000);
-      const { value } = await runJson(prompt, (v) => {
+      const { value, model } = await draft(prompt, (v) => {
         const o = v as { beats?: Record<string, string>; lines?: Draft[] };
         if (!o || typeof o !== "object" || !Array.isArray(o.lines)) throw new Error("need {beats, lines}");
         return o;
       });
+      console.log(`  ${arc.id}: drafted by ${model}`);
       for (const s of steps) {
         const b = value.beats?.[s.id];
         if (typeof b === "string" && b.trim()) s.beat = b.toLowerCase().replace(/\s+/g, "-").slice(0, 40);
@@ -163,7 +185,7 @@ for (const topicId of topics) {
       }
       console.log(`  ${arc.id}: beats set, now ${arc.lines.length} lines`);
     } catch (e) {
-      console.log(`  ${arc.id}: variants failed — ${e instanceof Error ? e.message : e}`);
+      console.log(`  ${arc.id}: variants failed — ${(e instanceof Error ? e.message : String(e)).slice(0, 140)}`);
     }
   }
 
@@ -186,8 +208,7 @@ for (const topicId of topics) {
     let feedbackNote = "";
     for (let attempt = 0; attempt < 2 && !added; attempt++) {
       try {
-        await sleep(4000);
-        const { value } = await runJson(basePrompt + feedbackNote, (v) => {
+        const { value } = await draft(basePrompt + feedbackNote, (v) => {
           const o = v as { id?: string; title?: string; lines?: Draft[]; quiz?: Arc["quiz"] };
           if (!o || typeof o.title !== "string" || !Array.isArray(o.lines)) throw new Error("need {id, title, lines, quiz}");
           return o;
@@ -214,7 +235,7 @@ for (const topicId of topics) {
         added = true;
         console.log(`  + arc "${arc.title}" (${arc.lines.length} lines)`);
       } catch (e) {
-        console.log(`  new arc attempt failed — ${e instanceof Error ? e.message : e}`);
+        console.log(`  new arc attempt failed — ${(e instanceof Error ? e.message : String(e)).slice(0, 140)}`);
       }
     }
   }

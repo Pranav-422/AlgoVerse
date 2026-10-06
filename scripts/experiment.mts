@@ -1,7 +1,7 @@
 // Constrained vs free generation — the experiment behind the comic-kit design.
 //
 //   npm run experiment            (needs GEMINI_API_KEY in .env.local)
-//   npm run experiment -- 8       (8 runs per arm per topic; default 5)
+//   npm run experiment -- 4       (4 runs per arm per topic; default 2)
 //
 // For every topic that has a dialogue bank, it runs two arms with the same model:
 //   FREE  — the earlier design: Gemini writes a 5-panel comic script itself from the facts.
@@ -20,9 +20,15 @@ import { GoogleGenAI } from "@google/genai";
 import { getTopic } from "../lib/knowledge.ts";
 import { loadKit, loadBank, buildPickPrompt, parseSelection, checkSelection, resolveComic } from "../lib/comicKit.ts";
 
-const RUNS = Number(process.argv[2] ?? 5);
-const MODEL = process.env.GEMINI_TEXT_MODEL || "gemini-2.5-flash";
-const DELAY_MS = 4500; // stay under free-tier requests-per-minute limits
+const RUNS = Number(process.argv[2] ?? 2);
+// Free tier is ~5 requests/minute and ~20/day per model. Each run uses ONE model for both arms
+// (so every FREE-vs-KIT pair is compared on the same model); runs rotate across models.
+const MODELS = (process.env.EXPERIMENT_MODELS || "gemini-3.6-flash,gemini-3.5-flash-lite,gemini-3.8-flash,gemini-3.7-flash,gemini-3.1-flash-lite")
+  .split(",")
+  .map((m) => m.trim());
+const dead = new Set<string>();
+let MODEL = MODELS[0];
+const DELAY_MS = 6500;
 const key = process.env.GEMINI_API_KEY;
 if (!key) {
   console.error("GEMINI_API_KEY is not set. Put it in .env.local and run `npm run experiment`.");
@@ -31,15 +37,26 @@ if (!key) {
 const ai = new GoogleGenAI({ apiKey: key });
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+class Busy extends Error {}
 async function ask(prompt: string, json: boolean): Promise<string> {
   await sleep(DELAY_MS);
-  const res = await ai.models.generateContent({
-    model: MODEL,
-    contents: prompt,
-    config: { temperature: 0.9, ...(json ? { responseMimeType: "application/json" } : {}) },
-  });
-  return res.text?.trim() ?? "";
+  try {
+    const res = await ai.models.generateContent({
+      model: MODEL,
+      contents: prompt,
+      config: { temperature: 0.9, ...(json ? { responseMimeType: "application/json" } : {}) },
+    });
+    return res.text?.trim() ?? "";
+  } catch (e) {
+    const msg = String(e);
+    if (/429|503|RESOURCE_EXHAUSTED|UNAVAILABLE/.test(msg)) {
+      dead.add(MODEL);
+      throw new Busy(MODEL);
+    }
+    throw e;
+  }
 }
+const modelsUsed = new Set<string>();
 
 const bigOs = (t: string) => (t.match(/O\s*\([^)]*\)/g) ?? []).map((s) => s.toLowerCase().replace(/\s+/g, "").replace(/\^2/g, "²"));
 const words = (t: string) => t.split(/\s+/).filter(Boolean).length;
@@ -116,6 +133,15 @@ for (const topicId of topics) {
   const topic = getTopic(topicId)!;
   const bank = loadBank(topicId)!;
   for (let i = 0; i < RUNS; i++) {
+    const live = MODELS.filter((m) => !dead.has(m));
+    if (!live.length) {
+      console.log("every model is busy or rate-limited — stopping early; results so far are kept");
+      break;
+    }
+    MODEL = live[0];
+    const snapshot = JSON.stringify(arms);
+    const exLen = examples.length;
+    try {
     // FREE arm
     arms.free.runs++;
     try {
@@ -140,11 +166,19 @@ for (const topicId of topics) {
     } catch {
       arms.kit.schemaFailures++;
     }
-    console.log(`${topicId} run ${i + 1}/${RUNS} done`);
+    modelsUsed.add(MODEL);
+    console.log(`${topicId} run ${i + 1}/${RUNS} done (${MODEL})`);
+    } catch (e) {
+      if (!(e instanceof Busy)) throw e;
+      Object.assign(arms, JSON.parse(snapshot)); // a run cut off by rate limits is discarded, not half-counted
+      examples.length = exLen;
+      console.log(`${topicId} run ${i + 1}: ${MODEL} busy — retrying this run on another model`);
+      i--;
+    }
   }
 }
 
-const out = { runAt: new Date().toISOString(), model: MODEL, runsPerArmPerTopic: RUNS, topics, arms, examples };
+const out = { runAt: new Date().toISOString(), model: [...modelsUsed].join(", "), runsPerArmPerTopic: RUNS, topics, arms, examples };
 fs.mkdirSync(path.join("content", "experiments"), { recursive: true });
 fs.writeFileSync(path.join("content", "experiments", "constrained-vs-free.json"), JSON.stringify(out, null, 2));
 console.log(JSON.stringify(arms, null, 2));

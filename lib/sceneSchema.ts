@@ -34,6 +34,8 @@ export function validateScene(spec: unknown): string[] {
       if (n > 9) errs.push(`${id}.values has ${n} items (max 9 fit)`);
       for (const k of ["hi", "found", "fresh"]) if (s[k] !== undefined && !isIdxList(s[k], n)) errs.push(`${id}.${k} has an index out of range`);
       if (s.swap !== undefined && !isIdxList(s.swap, n)) errs.push("row.swap out of range");
+      if (s.tags !== undefined && (typeof s.tags !== "object" || Object.keys(s.tags as object).some((k) => !/^\d+$/.test(k) || Number(k) >= n)))
+        errs.push(`${id}.tags keys must be indexes 0…${n - 1}`);
       break;
     case "stack":
       if (s.values !== undefined && (!Array.isArray(values) || n > 8)) errs.push("stack.values must be a list of at most 8");

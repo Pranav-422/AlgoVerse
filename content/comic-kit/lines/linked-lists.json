@@ -12,7 +12,16 @@
           "concept": "nodes",
           "fact": "stores a value and a pointer to the next node",
           "text": "Each node holds a value and a clue pointing to the next node.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "nullEnd": true
+          }
         },
         {
           "id": "ll-h-s2",
@@ -21,7 +30,55 @@
           "concept": "non-contiguous",
           "fact": "Nodes need not be contiguous in memory",
           "text": "These boxes scatter across memory instead of sitting side by side.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "tags": { "0": "addr 10", "1": "addr 84", "2": "addr 32" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "tags": {
+              "0": "addr 10",
+              "1": "addr 84",
+              "2": "addr 32"
+            }
+          }
+        },
+        {
+          "id": "llx-1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "node-structure",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "A linked list consists of discrete nodes holding a value and a pointer.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20
+            ],
+            "head": true,
+            "nullEnd": true
+          }
+        },
+        {
+          "id": "llx-2",
+          "role": "setup",
+          "level": "detail",
+          "concept": "memory-layout",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "Memory addresses for consecutive nodes are completely independent.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              15,
+              25
+            ],
+            "head": true,
+            "nullEnd": true
+          }
         },
         {
           "id": "ll-h-1",
@@ -30,7 +87,62 @@
           "concept": "head-pointer",
           "fact": "head pointer refers to the first node",
           "text": "There is no index formula. We only know where the head node lives.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "hi": [0] }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "hi": [
+              0
+            ]
+          },
+          "beat": "locate-head"
+        },
+        {
+          "id": "llx-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "head-pointer",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "We always begin our journey at the designated head pointer.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0
+            ]
+          },
+          "beat": "locate-head"
+        },
+        {
+          "id": "llx-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "head-pointer",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "The entry point to any linked list is its head reference.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              8,
+              42
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0
+            ]
+          },
+          "beat": "locate-head"
         },
         {
           "id": "ll-h-2",
@@ -39,7 +151,66 @@
           "concept": "follow-pointers",
           "fact": "pointers must be followed from the head",
           "text": "To reach the third node, we must start at twelve and follow pointers.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "hi": [0, 1] }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "follow-pointers"
+        },
+        {
+          "id": "llx-5",
+          "role": "step",
+          "level": "basic",
+          "concept": "pointer-traversal",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "Reaching deep nodes requires traversing pointers sequentially from the start.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37,
+              50
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "follow-pointers"
+        },
+        {
+          "id": "llx-6",
+          "role": "step",
+          "level": "basic",
+          "concept": "pointer-traversal",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "To reach the fourth node, we must step through each preceding link.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              3
+            ]
+          },
+          "beat": "follow-pointers"
         },
         {
           "id": "ll-h-3",
@@ -48,7 +219,70 @@
           "concept": "hop-pointers",
           "fact": null,
           "text": "Hop from twelve to ninety-nine, then ninety-nine leads to thirty-seven.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "found": [2], "tags": { "2": "target" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "found": [
+              2
+            ],
+            "tags": {
+              "2": "target"
+            }
+          },
+          "beat": "hop-nodes"
+        },
+        {
+          "id": "llx-7",
+          "role": "step",
+          "level": "detail",
+          "concept": "node-hop",
+          "fact": null,
+          "text": "Hop from node five to eighteen, then eighteen leads directly to forty-two.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              18,
+              42
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0,
+              1,
+              2
+            ]
+          },
+          "beat": "hop-nodes"
+        },
+        {
+          "id": "llx-8",
+          "role": "step",
+          "level": "detail",
+          "concept": "node-hop",
+          "fact": null,
+          "text": "Traverse from seven to fourteen, and fourteen leads onwards to twenty-one.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              7,
+              14,
+              21
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0,
+              1,
+              2
+            ]
+          },
+          "beat": "hop-nodes"
         },
         {
           "id": "ll-h-4",
@@ -57,7 +291,63 @@
           "concept": "null-terminator",
           "fact": "last node's next pointer is null",
           "text": "The last node points to null, marking the end of our hunt.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "nullEnd": true, "hi": [2] }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "nullEnd": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "null-termination"
+        },
+        {
+          "id": "llx-9",
+          "role": "step",
+          "level": "basic",
+          "concept": "null-end",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "When the next pointer is null, our traversal path terminates.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "null-termination"
+        },
+        {
+          "id": "llx-10",
+          "role": "step",
+          "level": "basic",
+          "concept": "null-end",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "Encountering a null reference signals that we have reached the final node.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              4,
+              8,
+              16
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              2
+            ]
+          },
+          "beat": "null-termination"
         },
         {
           "id": "ll-h-5",
@@ -66,7 +356,66 @@
           "concept": "search-walk",
           "fact": "Searching for a value is O(n)",
           "text": "Finding a value means checking every clue until we find a match.",
-          "scene": { "id": "chain", "values": [12, 99, 37], "head": true, "nullEnd": true, "tags": { "0": "check", "1": "check", "2": "match" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "nullEnd": true,
+            "tags": {
+              "0": "check",
+              "1": "check",
+              "2": "match"
+            }
+          },
+          "beat": "sequential-search"
+        },
+        {
+          "id": "llx-11",
+          "role": "step",
+          "level": "detail",
+          "concept": "search-walk",
+          "fact": "Searching for a value is O(n).",
+          "text": "We examine each node's value one by one until we find a match.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              99,
+              37
+            ],
+            "head": true,
+            "nullEnd": true,
+            "found": [
+              1
+            ]
+          },
+          "beat": "sequential-search"
+        },
+        {
+          "id": "llx-12",
+          "role": "step",
+          "level": "detail",
+          "concept": "search-walk",
+          "fact": "Searching for a value is O(n).",
+          "text": "Scanning for a target requires inspecting every element along the chain.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              3,
+              6,
+              9
+            ],
+            "head": true,
+            "nullEnd": true,
+            "found": [
+              2
+            ]
+          },
+          "beat": "sequential-search"
         },
         {
           "id": "ll-h-p1",
@@ -75,7 +424,12 @@
           "concept": "access-cost",
           "fact": "Access to the k-th node is O(k)",
           "text": "Finding node k requires k pointer steps. That makes access O(k).",
-          "scene": { "id": "complexity", "label": "Access k-th node", "big": "O(k)", "vs": "follow every pointer" }
+          "scene": {
+            "id": "complexity",
+            "label": "Access k-th node",
+            "big": "O(k)",
+            "vs": "follow every pointer"
+          }
         },
         {
           "id": "ll-h-p2",
@@ -84,7 +438,38 @@
           "concept": "search-cost",
           "fact": "Searching for a value is O(n)",
           "text": "Searching for an unknown value takes up to n steps: O(n).",
-          "scene": { "id": "complexity", "label": "Search for value", "big": "O(n)", "vs": "walk the whole chain" }
+          "scene": {
+            "id": "complexity",
+            "label": "Search for value",
+            "big": "O(n)",
+            "vs": "walk the whole chain"
+          }
+        },
+        {
+          "id": "llx-13",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "access-complexity",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "Reaching the k-th node takes linear time proportional to k.",
+          "scene": {
+            "id": "complexity",
+            "label": "Access",
+            "big": "O(k)"
+          }
+        },
+        {
+          "id": "llx-14",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "search-complexity",
+          "fact": "Searching for a value is O(n).",
+          "text": "In the worst case, searching takes n steps across all nodes.",
+          "scene": {
+            "id": "complexity",
+            "label": "Search",
+            "big": "O(n)"
+          }
         }
       ],
       "quiz": {
@@ -109,7 +494,16 @@
           "concept": "head",
           "fact": "head pointer refers to the first node",
           "text": "Here is our list with head pointing straight to twenty.",
-          "scene": { "id": "chain", "values": [20, 35, 60], "head": true, "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "nullEnd": true
+          }
         },
         {
           "id": "ll-ins-s2",
@@ -118,7 +512,53 @@
           "concept": "insert-target",
           "fact": null,
           "text": "We want to slip a brand new node, five, in at the very front.",
-          "scene": { "id": "chain", "values": [20, 35, 60], "head": true, "nullEnd": true, "tags": { "0": "front" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "nullEnd": true,
+            "tags": {
+              "0": "front"
+            }
+          }
+        },
+        {
+          "id": "llx-15",
+          "role": "setup",
+          "level": "basic",
+          "concept": "linked-list-structure",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "Each node in our sequence contains a value and a pointer to the next node.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20
+            ],
+            "head": true,
+            "nullEnd": true
+          }
+        },
+        {
+          "id": "llx-16",
+          "role": "setup",
+          "level": "detail",
+          "concept": "head-and-tail",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "The head pointer refers directly to the first node, and the last node points to null.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              20,
+              40
+            ],
+            "head": true,
+            "nullEnd": true
+          }
         },
         {
           "id": "ll-ins-1",
@@ -127,7 +567,70 @@
           "concept": "allocate-node",
           "fact": null,
           "text": "First, create the new node holding five floating above the list.",
-          "scene": { "id": "chain", "values": [5, 20, 35, 60], "fresh": [0], "tags": { "0": "new 5" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "fresh": [
+              0
+            ],
+            "tags": {
+              "0": "new 5"
+            }
+          },
+          "beat": "allocate-fresh-node"
+        },
+        {
+          "id": "llx-17",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Build a new node storing nine, placed independently above the current sequence.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              20,
+              35
+            ],
+            "head": true,
+            "nullEnd": true,
+            "fresh": [
+              0
+            ],
+            "tags": {
+              "0": "9"
+            }
+          },
+          "beat": "allocate-fresh-node"
+        },
+        {
+          "id": "llx-18",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Instantiate a standalone node holding twelve before attaching it to the chain.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              50,
+              70
+            ],
+            "head": true,
+            "nullEnd": true,
+            "fresh": [
+              0
+            ],
+            "tags": {
+              "0": "12"
+            }
+          },
+          "beat": "allocate-fresh-node"
         },
         {
           "id": "ll-ins-2",
@@ -136,7 +639,69 @@
           "concept": "point-next",
           "fact": "point the new node's next to head",
           "text": "Connect five's next pointer to the current head, node twenty.",
-          "scene": { "id": "chain", "values": [5, 20, 35, 60], "fresh": [0], "head": true, "tags": { "0": "5 -> 20" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "fresh": [
+              0
+            ],
+            "head": true,
+            "tags": {
+              "0": "5 -> 20"
+            }
+          },
+          "beat": "link-to-head"
+        },
+        {
+          "id": "llx-19",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Direct the new node's next pointer toward the existing first node, twenty.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "link-to-head"
+        },
+        {
+          "id": "llx-20",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Point the newly created node's next reference straight at node fifty.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              50,
+              70
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "link-to-head"
         },
         {
           "id": "ll-ins-3",
@@ -145,7 +710,42 @@
           "concept": "no-shifts",
           "fact": "Nodes need not be contiguous in memory",
           "text": "Notice that none of the existing nodes shifted or moved in memory.",
-          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "tags": { "1": "unmoved", "2": "unmoved" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "tags": {
+              "1": "unmoved",
+              "2": "unmoved"
+            }
+          },
+          "beat": "memory-independence"
+        },
+        {
+          "id": "llx-21",
+          "role": "step",
+          "level": "detail",
+          "concept": "insert-head",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "Observe that these nodes reside at arbitrary memory addresses without contiguous allocation constraints.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "nullEnd": true,
+            "note": "non-contiguous"
+          },
+          "beat": "memory-independence"
         },
         {
           "id": "ll-ins-4",
@@ -154,7 +754,65 @@
           "concept": "update-head",
           "fact": "update head to the new node",
           "text": "Finally, swing the head pointer over so it points at five.",
-          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "hi": [0], "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "hi": [
+              0
+            ],
+            "nullEnd": true
+          },
+          "beat": "update-head-pointer"
+        },
+        {
+          "id": "llx-22",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Reassign the head pointer so it references our new node, five.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0
+            ]
+          },
+          "beat": "update-head-pointer"
+        },
+        {
+          "id": "llx-23",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Shift the head pointer forward to officially establish twelve as the first element.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              12,
+              50,
+              70
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              0
+            ]
+          },
+          "beat": "update-head-pointer"
         },
         {
           "id": "ll-ins-5",
@@ -163,7 +821,43 @@
           "concept": "steady-tail",
           "fact": null,
           "text": "Nodes thirty-five and sixty keep their exact same connections unchanged.",
-          "scene": { "id": "chain", "values": [5, 20, 35, 60], "head": true, "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "nullEnd": true
+          },
+          "beat": "preserve-subsequent-links"
+        },
+        {
+          "id": "llx-24",
+          "role": "step",
+          "level": "detail",
+          "concept": "insert-head",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "Every subsequent node maintains its original internal pointer intact without modification.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              20,
+              35,
+              60
+            ],
+            "head": true,
+            "nullEnd": true,
+            "hi": [
+              1,
+              2,
+              3
+            ]
+          },
+          "beat": "preserve-subsequent-links"
         },
         {
           "id": "ll-ins-p1",
@@ -172,7 +866,12 @@
           "concept": "constant-insert",
           "fact": "Insertion at the head is O(1)",
           "text": "Only two pointers changed and zero elements moved. Head insertion is O(1).",
-          "scene": { "id": "complexity", "label": "Insert at head", "big": "O(1)", "vs": "pointer rewiring only" }
+          "scene": {
+            "id": "complexity",
+            "label": "Insert at head",
+            "big": "O(1)",
+            "vs": "pointer rewiring only"
+          }
         },
         {
           "id": "ll-ins-p2",
@@ -181,7 +880,38 @@
           "concept": "constant-delete",
           "fact": "Deletion at the head is O(1)",
           "text": "Removing the head is just as swift: move head forward in O(1).",
-          "scene": { "id": "complexity", "label": "Delete at head", "big": "O(1)", "vs": "head = head.next" }
+          "scene": {
+            "id": "complexity",
+            "label": "Delete at head",
+            "big": "O(1)",
+            "vs": "head = head.next"
+          }
+        },
+        {
+          "id": "llx-25",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "insertion-complexity",
+          "fact": "Insertion at the head is O(1).",
+          "text": "Because the operation takes constant time regardless of list size, head insertion is O(1).",
+          "scene": {
+            "id": "complexity",
+            "label": "Head Insertion",
+            "big": "O(1)"
+          }
+        },
+        {
+          "id": "llx-26",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "deletion-complexity",
+          "fact": "Deletion at the head is O(1).",
+          "text": "Removing the head node bypasses traversal entirely, maintaining an O(1) performance bound.",
+          "scene": {
+            "id": "complexity",
+            "label": "Head Deletion",
+            "big": "O(1)"
+          }
         }
       ],
       "quiz": {
@@ -206,7 +936,16 @@
           "concept": "forward-chain",
           "fact": null,
           "text": "All arrows currently point forward from ten toward thirty.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "head": true, "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "nullEnd": true
+          }
         },
         {
           "id": "ll-rev-s2",
@@ -215,7 +954,54 @@
           "concept": "three-pointers",
           "fact": "uses three pointers (prev, curr, next)",
           "text": "We track three pointer helpers: prev, curr, and next.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "head": true, "tags": { "0": "curr", "1": "next" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "tags": {
+              "0": "curr",
+              "1": "next"
+            }
+          }
+        },
+        {
+          "id": "llx-27",
+          "role": "setup",
+          "level": "basic",
+          "concept": "linked-list-structure",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "A linked list consists of nodes, each storing a value and a pointer to the next.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "nullEnd": true
+          }
+        },
+        {
+          "id": "llx-28",
+          "role": "setup",
+          "level": "detail",
+          "concept": "memory-allocation",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "Unlike arrays, nodes in a linked list do not need to be contiguous in memory.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "note": "Non-contiguous"
+          }
         },
         {
           "id": "ll-rev-1",
@@ -224,7 +1010,61 @@
           "concept": "save-next",
           "fact": null,
           "text": "Save curr's next node so we don't lose the rest of the chain.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "tags": { "0": "curr", "1": "save next" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "tags": {
+              "0": "curr",
+              "1": "save next"
+            }
+          },
+          "beat": "save-next"
+        },
+        {
+          "id": "llx-29",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Store the address of twenty in next to preserve the remainder of the list.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              1
+            ],
+            "note": "next = curr.next"
+          },
+          "beat": "save-next"
+        },
+        {
+          "id": "llx-30",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "We capture the subsequent node in a temporary pointer before changing any connections.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              1
+            ],
+            "note": "save next"
+          },
+          "beat": "save-next"
         },
         {
           "id": "ll-rev-2",
@@ -233,7 +1073,61 @@
           "concept": "redirect-first",
           "fact": null,
           "text": "Reverse ten's pointer backward toward prev, which begins at null.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 1, "tags": { "0": "10 -> null" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "reversed": 1,
+            "tags": {
+              "0": "10 -> null"
+            }
+          },
+          "beat": "reverse-first"
+        },
+        {
+          "id": "llx-31",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Redirect ten's pointer backward to null, establishing the new end of the list.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0
+            ],
+            "reversed": 1
+          },
+          "beat": "reverse-first"
+        },
+        {
+          "id": "llx-32",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Point ten to null to begin the reversal process.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0
+            ],
+            "reversed": 1
+          },
+          "beat": "reverse-first"
         },
         {
           "id": "ll-rev-3",
@@ -242,7 +1136,63 @@
           "concept": "advance-and-flip",
           "fact": null,
           "text": "Advance prev and curr forward, then reverse twenty's arrow toward ten.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 2, "tags": { "1": "20 -> 10" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "reversed": 2,
+            "tags": {
+              "1": "20 -> 10"
+            }
+          },
+          "beat": "slide-pointers"
+        },
+        {
+          "id": "llx-33",
+          "role": "step",
+          "level": "detail",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Shift prev and curr forward, then reorient the arrow from twenty toward ten.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0,
+              1
+            ],
+            "reversed": 2
+          },
+          "beat": "slide-pointers"
+        },
+        {
+          "id": "llx-34",
+          "role": "step",
+          "level": "detail",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Move the window of three pointers and flip the link for twenty.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0,
+              1
+            ],
+            "reversed": 2
+          },
+          "beat": "slide-pointers"
         },
         {
           "id": "ll-rev-4",
@@ -251,7 +1201,61 @@
           "concept": "flip-last",
           "fact": null,
           "text": "Finally reverse thirty, and make thirty the brand new head of the list.",
-          "scene": { "id": "chain", "values": [10, 20, 30], "reversed": 3, "tags": { "2": "new head" } }
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "reversed": 3,
+            "tags": {
+              "2": "new head"
+            }
+          },
+          "beat": "reverse-last"
+        },
+        {
+          "id": "llx-35",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Update thirty to point at twenty, making thirty the new head pointer.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              2
+            ],
+            "reversed": 3
+          },
+          "beat": "reverse-last"
+        },
+        {
+          "id": "llx-36",
+          "role": "step",
+          "level": "basic",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "Finish the reversal by pointing thirty back and assigning it as head.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              2
+            ],
+            "reversed": 3
+          },
+          "beat": "reverse-last"
         },
         {
           "id": "ll-rev-5",
@@ -260,7 +1264,36 @@
           "concept": "in-place",
           "fact": null,
           "text": "The chain is completely flipped without creating a single extra node.",
-          "scene": { "id": "chain", "values": [30, 20, 10], "head": true, "nullEnd": true }
+          "scene": {
+            "id": "chain",
+            "values": [
+              30,
+              20,
+              10
+            ],
+            "head": true,
+            "nullEnd": true
+          },
+          "beat": "complete-flip"
+        },
+        {
+          "id": "llx-37",
+          "role": "step",
+          "level": "detail",
+          "concept": "reverse-list",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "The entire list is now reversed in place without allocating additional memory nodes.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              30,
+              20,
+              10
+            ],
+            "head": true,
+            "nullEnd": true
+          },
+          "beat": "complete-flip"
         },
         {
           "id": "ll-rev-p1",
@@ -269,7 +1302,12 @@
           "concept": "linear-reverse",
           "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)",
           "text": "Every link was turned around in a single pass: O(n) time.",
-          "scene": { "id": "complexity", "label": "Reverse list", "big": "O(n)", "vs": "single forward pass" }
+          "scene": {
+            "id": "complexity",
+            "label": "Reverse list",
+            "big": "O(n)",
+            "vs": "single forward pass"
+          }
         },
         {
           "id": "ll-rev-p2",
@@ -278,7 +1316,38 @@
           "concept": "space-efficiency",
           "fact": null,
           "text": "Only three pointer variables were needed, achieving O(1) auxiliary space.",
-          "scene": { "id": "complexity", "label": "Reverse space", "big": "O(1)", "vs": "no extra nodes" }
+          "scene": {
+            "id": "complexity",
+            "label": "Reverse space",
+            "big": "O(1)",
+            "vs": "no extra nodes"
+          }
+        },
+        {
+          "id": "llx-38",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "reverse-list-complexity",
+          "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+          "text": "We traversed the list exactly once to reverse all pointers, resulting in linear time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Time",
+            "big": "O(n)"
+          }
+        },
+        {
+          "id": "llx-39",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linked-list-access",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "Accessing the k-th node takes linear time because we must traverse from the head.",
+          "scene": {
+            "id": "complexity",
+            "label": "Access",
+            "big": "O(k)"
+          }
         }
       ],
       "quiz": {
@@ -290,6 +1359,424 @@
         ],
         "answer": 0,
         "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)."
+      }
+    },
+    {
+      "id": "laundry-chain",
+      "title": "The Laundry Chain",
+      "lines": [
+        {
+          "id": "llx-40",
+          "role": "setup",
+          "level": "basic",
+          "concept": "structure-definition",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "Each garment is a node holding a tag and a clip for the next piece.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "nullEnd": true
+          }
+        },
+        {
+          "id": "llx-41",
+          "role": "setup",
+          "level": "detail",
+          "concept": "memory-allocation",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "Unlike a shelf, these items are scattered across the room, connected only by clips.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "tags": {
+              "0": "addr 84",
+              "1": "addr 12",
+              "2": "addr 57"
+            },
+            "note": "scattered in memory"
+          }
+        },
+        {
+          "id": "llx-42",
+          "role": "step",
+          "level": "basic",
+          "concept": "traversal-cost",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "To find the third item, we must trace the clips starting from the head.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              2
+            ],
+            "note": "O(k) access"
+          },
+          "beat": "access-cost"
+        },
+        {
+          "id": "llx-43",
+          "role": "step",
+          "level": "basic",
+          "concept": "traversal-cost",
+          "fact": null,
+          "text": "We cannot jump to the third item; we must visit the first and second first.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0,
+              1
+            ]
+          },
+          "beat": "access-cost"
+        },
+        {
+          "id": "llx-44",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion-head",
+          "fact": "Insertion at the head is O(1).",
+          "text": "Adding a new item to the front of the line is an O(1) operation.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              10,
+              20,
+              30
+            ],
+            "fresh": [
+              0
+            ],
+            "head": true
+          },
+          "beat": "insert-head"
+        },
+        {
+          "id": "llx-45",
+          "role": "step",
+          "level": "detail",
+          "concept": "insertion-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Point the new clip to the current head, then move the head pointer forward.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              10,
+              20,
+              30
+            ],
+            "head": true
+          },
+          "beat": "insert-head"
+        },
+        {
+          "id": "llx-46",
+          "role": "step",
+          "level": "basic",
+          "concept": "deletion-head",
+          "fact": "Deletion at the head is O(1).",
+          "text": "Removing the item at the head is also an O(1) task.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "note": "O(1) delete"
+          },
+          "beat": "delete-head"
+        },
+        {
+          "id": "llx-47",
+          "role": "step",
+          "level": "detail",
+          "concept": "deletion-head",
+          "fact": null,
+          "text": "Simply move the head pointer to the second node in the sequence.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              1
+            ],
+            "head": true
+          },
+          "beat": "delete-head"
+        },
+        {
+          "id": "llx-48",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "complexity-summary",
+          "fact": "Searching for a value is O(n).",
+          "text": "Searching through the entire chain requires O(n) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Search",
+            "big": "O(n)"
+          }
+        },
+        {
+          "id": "llx-49",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "structure-summary",
+          "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+          "text": "Every list ends when the final clip points to null.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "nullEnd": true
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why is accessing the k-th node in a linked list O(k)?",
+        "options": [
+          "Because nodes are not contiguous.",
+          "Because pointers must be followed from the head.",
+          "Because the head pointer is null."
+        ],
+        "answer": 1,
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
+      }
+    },
+    {
+      "id": "train-cars",
+      "title": "The Train Yard",
+      "lines": [
+        {
+          "id": "llx-50",
+          "role": "setup",
+          "level": "basic",
+          "concept": "linked-list-structure",
+          "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+          "text": "Think of a train where each car holds cargo and links to the next one.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "nullEnd": true
+          }
+        },
+        {
+          "id": "llx-51",
+          "role": "setup",
+          "level": "basic",
+          "concept": "memory-locality",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "Unlike an array, these cars do not have to be parked on adjacent tracks.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true,
+            "tags": {
+              "0": "addr 84",
+              "1": "addr 12",
+              "2": "addr 57"
+            },
+            "note": "scattered in memory"
+          }
+        },
+        {
+          "id": "llx-52",
+          "role": "step",
+          "level": "basic",
+          "concept": "access-time",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "To reach the third car, you must walk through each preceding car from the start.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0,
+              1,
+              2
+            ]
+          },
+          "beat": "find-value"
+        },
+        {
+          "id": "llx-53",
+          "role": "step",
+          "level": "basic",
+          "concept": "access-time",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "Retrieving data deep in the chain takes linear time relative to the position.",
+          "scene": {
+            "id": "complexity",
+            "label": "Search",
+            "big": "O(k)"
+          },
+          "beat": "find-value"
+        },
+        {
+          "id": "llx-54",
+          "role": "step",
+          "level": "basic",
+          "concept": "insertion-head",
+          "fact": "Insertion at the head is O(1).",
+          "text": "Adding a new engine at the head is efficient since no other cars move.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              10,
+              20,
+              30
+            ],
+            "fresh": [
+              0
+            ]
+          },
+          "beat": "add-to-front"
+        },
+        {
+          "id": "llx-55",
+          "role": "step",
+          "level": "detail",
+          "concept": "insertion-head",
+          "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+          "text": "Point the new car to the current head, then update the head pointer.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              5,
+              10,
+              20,
+              30
+            ],
+            "grey": [
+              [
+                0,
+                1
+              ]
+            ]
+          },
+          "beat": "add-to-front"
+        },
+        {
+          "id": "llx-56",
+          "role": "step",
+          "level": "basic",
+          "concept": "deletion-head",
+          "fact": "Deletion at the head is O(1).",
+          "text": "Removing the head car is also an O(1) operation.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              0
+            ]
+          },
+          "beat": "remove-from-front"
+        },
+        {
+          "id": "llx-57",
+          "role": "step",
+          "level": "detail",
+          "concept": "deletion-head",
+          "fact": "Deletion at the head is O(1).",
+          "text": "Just move the head pointer to the second car and disconnect the first.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "hi": [
+              1
+            ]
+          },
+          "beat": "remove-from-front"
+        },
+        {
+          "id": "llx-58",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linked-list-summary",
+          "fact": "Nodes need not be contiguous in memory.",
+          "text": "This structure excels when you frequently add or remove elements at the front.",
+          "scene": {
+            "id": "chain",
+            "values": [
+              10,
+              20,
+              30
+            ],
+            "head": true
+          }
+        },
+        {
+          "id": "llx-59",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "linked-list-summary",
+          "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+          "text": "However, random access is not supported, unlike in a contiguous array.",
+          "scene": {
+            "id": "complexity",
+            "label": "Random Access",
+            "big": "O(n)"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why is accessing the k-th element in a linked list O(k)?",
+        "options": [
+          "Memory is fragmented",
+          "Pointers must be followed from the head",
+          "Nodes are stored in a stack"
+        ],
+        "answer": 1,
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
       }
     }
   ]

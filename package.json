@@ -13,7 +13,8 @@
     "experiment": "tsx --conditions=react-server --env-file=.env.local scripts/experiment.mts",
     "check:words": "node scripts/scan-words.mjs",
     "seed:demo": "tsx --conditions=react-server scripts/seed-demo.mts",
-    "expand:bank": "tsx --conditions=react-server --env-file=.env.local scripts/expand-bank.mts"
+    "expand:bank": "tsx --conditions=react-server --env-file=.env.local scripts/expand-bank.mts",
+    "normalize:banks": "tsx scripts/normalize-banks.mts"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",

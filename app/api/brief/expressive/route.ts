@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       userId: user.id,
       topicId: topic.id,
       kind: mode,
-      model: TEXT_MODEL,
+      model: res.model,
       outcome: res.attempts > 1 ? "after_retry" : "first_try",
       reason: res.rejected.join(" | ") || null,
       attempts: res.attempts,
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       mode,
       provenance: {
         source: "generated",
-        model: TEXT_MODEL,
+        model: res.model,
         prompt: built.prompt,
         injectedFacts: built.injectedFacts,
         constraints: built.constraints,
