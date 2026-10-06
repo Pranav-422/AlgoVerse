@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Arc, Comic, DialogueBank, DialogueLine, Kit, Selection } from "./comic";
 import { FEEDBACK_MAP, type FeedbackCategory } from "./feedbackMap";
 import { COMIC_STYLE } from "./styleGuide";
+import { validateScene, numbersMatchScene } from "./sceneSchema";
 
 // The comic kit: loading, the selection rules, the prompt that asks the model to pick,
 // a rule-based fallback picker, and resolving a selection into a drawable comic.
@@ -344,7 +345,7 @@ export function lintBank(bank: DialogueBank, kit: Kit, coreFacts: string[]): str
       const words = l.text.split(/\s+/).filter(Boolean).length;
       if (words > COMIC_STYLE.dialogueMaxWords) errs.push(`${l.id}: ${words} words (max ${COMIC_STYLE.dialogueMaxWords})`);
       if (l.fact && !coreFacts.some((f) => f.includes(l.fact!))) errs.push(`${l.id}: fact "${l.fact}" not found in the knowledge file`);
-      if (!["row", "formula", "cinema", "complexity", "messy", "chain", "stack", "queue", "tree"].includes(l.scene.id)) errs.push(`${l.id}: unknown scene ${l.scene.id}`);
+      for (const e of [...validateScene(l.scene), ...numbersMatchScene(l.text, l.scene)]) errs.push(`${l.id}: ${e}`);
     }
     for (const role of ["setup", "payoff"] as const)
       if (!arc.lines.some((l) => l.role === role && l.level === "basic")) errs.push(`arc ${arc.id}: needs a basic ${role} line`);
