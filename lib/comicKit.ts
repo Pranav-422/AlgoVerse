@@ -32,7 +32,8 @@ export const SELECTION_RULES = [
   "All panels use lines from ONE arc",
   "Panel 1 is a setup line, the last panel is a payoff line, the panels between are step lines",
   "Step lines keep the order they have in the bank",
-  "No line is used twice",
+  "No line is used twice, and at most one line per beat",
+  "A plain regenerate (no feedback) must use a different arc than the previous comic",
   "Panel count equals the chosen layout's panel count",
   "Every id must exist in the kit",
 ];
@@ -69,6 +70,8 @@ export function checkSelection(
   const lines = found.map((f) => f!);
   if (new Set(lines.map((l) => l.arc.id)).size > 1) errs.push("lines come from more than one arc");
   if (new Set(sel.panels.map((p) => p.line)).size !== sel.panels.length) errs.push("a line is used twice");
+  const beats = lines.map((l) => l.line.beat).filter(Boolean);
+  if (new Set(beats).size !== beats.length) errs.push("two lines tell the same beat");
   if (lines[0].line.role !== "setup") errs.push("panel 1 must be a setup line");
   if (lines[lines.length - 1].line.role !== "payoff") errs.push("the last panel must be a payoff line");
   const middle = lines.slice(1, -1);
@@ -89,6 +92,9 @@ export function checkSelection(
       if (same || new Set(sel.panels.map((p) => p.pose)).size < 3) errs.push("feedback 'character' needs a new pose sequence with 3+ poses");
     }
     if (!feedback && JSON.stringify(sel) === JSON.stringify(previous)) errs.push("selection is identical to the previous comic");
+    // A plain regenerate must tell a different story when the bank has more than one.
+    const prevArc = idx.get(previous.panels[0]?.line)?.arc.id;
+    if (!feedback && bank.arcs.length > 1 && prevArc && lines[0].arc.id === prevArc) errs.push("a plain regenerate must use a different arc than the previous comic");
   }
   return errs;
 }
@@ -165,8 +171,8 @@ export function buildPickPrompt(
     `POSES (one per panel)`,
     ...list(kit.poses),
     ``,
-    `DIALOGUE BANK (grouped by arc; id | role | level | text)`,
-    ...bank.arcs.flatMap((a) => [`Arc "${a.id}" — ${a.title}`, ...a.lines.map((l) => `  ${l.id} | ${l.role} | ${l.level} | ${l.text}`)]),
+    `DIALOGUE BANK (grouped by arc; id | role | level | beat | text)`,
+    ...bank.arcs.flatMap((a) => [`Arc "${a.id}" — ${a.title}`, ...a.lines.map((l) => `  ${l.id} | ${l.role} | ${l.level} | ${l.beat ?? "-"} | ${l.text}`)]),
     ``,
     `RULES`,
     ...SELECTION_RULES.map((r) => `- ${r}`),
@@ -234,7 +240,10 @@ export function fallbackPick(
     const layout = pick(attempt < 100 ? preferredLayouts(layouts, prefs) : layouts);
     const n = layout.spans.length;
     const basicOnly = feedback === "too complex";
-    const arc = pick(bank.arcs);
+    const prevLines = new Set(previous?.panels.map((p) => p.line) ?? []);
+    const prevArc = bank.arcs.find((a) => a.lines.some((l) => prevLines.has(l.id)))?.id;
+    const arcs = !feedback && prevArc && bank.arcs.length > 1 ? bank.arcs.filter((a) => a.id !== prevArc) : bank.arcs;
+    const arc = pick(arcs);
     const prefBasic = attempt < 100 && prefs?.length === "short";
     const ok = (l: DialogueLine) => (!basicOnly && !prefBasic) || l.level === "basic";
     const setups = arc.lines.filter((l) => l.role === "setup" && ok(l));
@@ -242,7 +251,17 @@ export function fallbackPick(
     const payoffs = arc.lines.filter((l) => l.role === "payoff" && ok(l));
     if (!setups.length || !payoffs.length || steps.length < n - 2) continue;
     // choose n-2 steps, keeping bank order
-    const chosen = [...steps].sort(() => rand() - 0.5).slice(0, n - 2);
+    // One line per beat; lines not used last time are tried first.
+    const shuffled = [...steps].sort((a, b) => Number(prevLines.has(a.id)) - Number(prevLines.has(b.id)) || rand() - 0.5);
+    const seenBeats = new Set<string>();
+    const chosen = shuffled
+      .filter((l) => {
+        if (!l.beat) return true;
+        if (seenBeats.has(l.beat)) return false;
+        seenBeats.add(l.beat);
+        return true;
+      })
+      .slice(0, n - 2);
     const orderedSteps = steps.filter((s) => chosen.includes(s));
     const lines = [pick(setups), ...orderedSteps, pick(payoffs)];
     const poseFor = (l: DialogueLine, i: number) =>

@@ -57,6 +57,11 @@ export interface DialogueLine {
   fact: string | null;
   text: string;
   scene: SceneSpec;
+  /**
+   * Optional story beat. Lines that share a beat are alternative ways of telling the same
+   * moment: a comic may use at most one line per beat.
+   */
+  beat?: string;
 }
 
 export interface ComicQuiz {
