@@ -27,6 +27,7 @@ A stack is a pile of plates: you put a plate on top and take a plate from the to
 - Peek reads the top element without removing it in O(1).
 - Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.
 - Function calls are managed with a call stack.
+- Undo in text editors is commonly implemented with a stack of recent actions.
 - A stack checks balanced brackets by pushing openers and popping to match closers in O(n).
 - A queue follows First In, First Out (FIFO).
 - Enqueue adds an element at the rear in O(1).

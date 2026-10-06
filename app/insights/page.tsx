@@ -20,6 +20,17 @@ const OUTCOMES: { key: string; label: string; color: string }[] = [
 
 const KIND_LABEL: Record<string, string> = { comic: "Comic picks", expressive: "Expressive rewrite", hinglish: "Hinglish rewrite" };
 
+const when = (ts: number) =>
+  new Date(ts).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false });
+
+/** Raw upstream errors are long JSON blobs; keep the human message. */
+const readable = (reason: string | null) => {
+  if (!reason) return "—";
+  const msgs = [...reason.matchAll(/"message":"([^"]{0,140})/g)].map((m) => m[1]);
+  const text = msgs.length ? reason.replace(/\{"error"[\s\S]*$/, "").trim() + " " + [...new Set(msgs)].join(" · ") : reason;
+  return text.length > 220 ? text.slice(0, 220) + "…" : text;
+};
+
 function median(xs: number[]) {
   if (!xs.length) return 0;
   const s = [...xs].sort((a, b) => a - b);
@@ -119,7 +130,7 @@ export default async function InsightsPage() {
                 <table className="w-full font-mono text-[12px]">
                   <thead>
                     <tr className="text-left label !text-[10px] border-b border-outline-soft">
-                      <th className="px-4 py-2">When</th>
+                      <th className="px-4 py-2">When (IST)</th>
                       <th className="px-4 py-2">Feature</th>
                       <th className="px-4 py-2">Topic</th>
                       <th className="px-4 py-2">Outcome</th>
@@ -133,7 +144,7 @@ export default async function InsightsPage() {
                       const o = OUTCOMES.find((x) => x.key === r.outcome);
                       return (
                         <tr key={i} className="border-b border-dashed border-outline-soft align-top">
-                          <td className="px-4 py-2 whitespace-nowrap">{new Date(r.created_at).toISOString().slice(5, 16).replace("T", " ")}</td>
+                          <td className="px-4 py-2 whitespace-nowrap">{when(r.created_at)}</td>
                           <td className="px-4 py-2">{KIND_LABEL[r.kind] ?? r.kind}</td>
                           <td className="px-4 py-2">{r.topic_id}</td>
                           <td className="px-4 py-2 whitespace-nowrap">
@@ -142,7 +153,7 @@ export default async function InsightsPage() {
                           </td>
                           <td className="px-4 py-2 text-right">{r.attempts}</td>
                           <td className="px-4 py-2 text-right">{r.latency_ms} ms</td>
-                          <td className="px-4 py-2 text-muted max-w-[320px] break-words">{r.reason ?? "—"}</td>
+                          <td className="px-4 py-2 text-muted max-w-[320px] break-words">{readable(r.reason)}</td>
                         </tr>
                       );
                     })}

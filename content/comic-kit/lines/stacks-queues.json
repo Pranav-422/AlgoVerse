@@ -1300,7 +1300,7 @@
           "role": "setup",
           "level": "basic",
           "concept": "stack",
-          "fact": "A stack follows Last In, First Out (LIFO).",
+          "fact": "Undo in text editors is commonly implemented with a stack",
           "text": "Text editors use a stack to track your most recent actions.",
           "scene": {
             "id": "stack",

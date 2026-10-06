@@ -13,6 +13,14 @@ Target: 8–10 minutes. Practise it twice on the demo laptop and network.
 6. `npm run seed:demo` → demo@srm.edu with a learning style and **1** Arrays regeneration left.
 7. Record a 3-minute screen capture of the full path as a backup in case the network fails.
 
+## Gemini free tier — plan around it
+
+- Free tier ≈ **5 requests/minute and 20 requests/day per model**. Each comic regenerate or brief rewrite is 1 request (more if a model is busy).
+- The app uses a fixed chain `gemini-3.8-flash → gemini-3.5-flash-lite → gemini-3.6-flash`; a busy or rate-limited model is skipped automatically and the trace shows which model answered.
+- Do **not** run `npm run experiment` or `npm run expand:bank` on demo day — they spend the daily quota. Run them the day before.
+- If every model is out, comics still work through the rule-based fallback, and the trace says so honestly.
+- For the live site, add the key in Vercel once: `npx vercel env add GEMINI_API_KEY production`, then redeploy.
+
 ## On stage
 
 | # | Time | Show | Say (one line) |

@@ -37,7 +37,7 @@ export function VideoPlayer({ src, chapters, hasFile }: { src: string; chapters:
               </p>
             </div>
           )}
-          <span className="absolute top-3 left-3 tag !bg-amber-mid">Pre-rendered</span>
+          {!hasFile && <span className="absolute top-3 left-3 tag !bg-amber-mid">Pre-rendered</span>}
         </div>
       </div>
 

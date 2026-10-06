@@ -1,0 +1,45 @@
+{
+  "runAt": "2026-10-06T18:40:47.991Z",
+  "model": "gemini-3.6-flash, gemini-3.5-flash-lite",
+  "runsPerArmPerTopic": 1,
+  "topics": [
+    "arrays",
+    "linked-lists",
+    "stacks-queues",
+    "trees"
+  ],
+  "arms": {
+    "free": {
+      "runs": 4,
+      "schemaFailures": 0,
+      "lines": 20,
+      "overLimit": 1,
+      "unsupportedBigO": 0,
+      "judgeFlagged": 0,
+      "judgeFailures": 1
+    },
+    "kit": {
+      "runs": 4,
+      "schemaFailures": 1,
+      "lines": 13,
+      "overLimit": 0,
+      "unsupportedBigO": 0,
+      "judgeFlagged": 2,
+      "judgeFailures": 0
+    }
+  },
+  "examples": [
+    {
+      "arm": "kit",
+      "topic": "stacks-queues",
+      "line": "Text editors use a stack to track your most recent actions.",
+      "why": "judge: not supported by the facts"
+    },
+    {
+      "arm": "kit",
+      "topic": "trees",
+      "line": "A binary search tree enforces a golden rule on every node.",
+      "why": "judge: not supported by the facts"
+    }
+  ]
+}
