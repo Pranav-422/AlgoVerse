@@ -1,0 +1,58 @@
+{
+  "layouts": [
+    {
+      "id": "strip-4",
+      "name": "Four-square strip",
+      "about": "4 equal panels in a 2×2 grid. Short and simple.",
+      "cols": 2,
+      "spans": [1, 1, 1, 1]
+    },
+    {
+      "id": "hero-5",
+      "name": "Hero frame",
+      "about": "5 panels: a wide opening panel, three small steps, a wide closing panel.",
+      "cols": 3,
+      "spans": [3, 1, 1, 1, 3]
+    },
+    {
+      "id": "zigzag-5",
+      "name": "Zigzag",
+      "about": "5 panels alternating wide and narrow, ending on a full-width panel.",
+      "cols": 3,
+      "spans": [2, 1, 1, 2, 3]
+    },
+    {
+      "id": "grid-6",
+      "name": "Six-grid",
+      "about": "6 equal panels in a 3×2 grid. The most room for steps.",
+      "cols": 3,
+      "spans": [1, 1, 1, 1, 1, 1]
+    }
+  ],
+  "palettes": [
+    { "id": "amber-paper", "name": "Amber paper", "paper": "#FAF7F0", "ink": "#18171F", "accent": "#D09201", "accent2": "#FFBA38", "soft": "#FFDEAC" },
+    { "id": "violet-night", "name": "Violet night", "paper": "#F3F0FF", "ink": "#1E1838", "accent": "#7C5CFF", "accent2": "#B9A8FF", "soft": "#E2DBFF" },
+    { "id": "teal-lab", "name": "Teal lab", "paper": "#EEF8F6", "ink": "#0E2E2C", "accent": "#1F8A84", "accent2": "#6CCBC4", "soft": "#CDEDE9" },
+    { "id": "tomato-pop", "name": "Tomato pop", "paper": "#FFF4EE", "ink": "#2A1410", "accent": "#E0522D", "accent2": "#FF9F7A", "soft": "#FFD9C9" },
+    { "id": "mono-ink", "name": "Mono ink", "paper": "#F7F7F5", "ink": "#111111", "accent": "#444444", "accent2": "#9A9A9A", "soft": "#E2E2E0" }
+  ],
+  "designs": [
+    { "id": "bold-ink", "name": "Bold ink", "about": "Thick black frames with a hard offset shadow." },
+    { "id": "halftone", "name": "Halftone", "about": "Printed dot texture behind every panel." },
+    { "id": "blueprint", "name": "Blueprint", "about": "Technical grid paper, thin frames, accent-coloured lines." },
+    { "id": "sketch", "name": "Sketchbook", "about": "Loose dashed frames, panels slightly tilted." }
+  ],
+  "themes": [
+    { "id": "warehouse", "name": "Warehouse", "about": "Shelving and crates in the background." },
+    { "id": "cinema", "name": "Cinema", "about": "Curtains and a stage glow in the background." },
+    { "id": "library", "name": "Library", "about": "Book spines lining the background." },
+    { "id": "lab", "name": "Lab", "about": "Clean lab grid with measuring marks." }
+  ],
+  "poses": [
+    { "id": "explain", "about": "Calm, one hand open, explaining." },
+    { "id": "point", "about": "Pointing at the scene." },
+    { "id": "think", "about": "Hand on chin, thinking." },
+    { "id": "surprised", "about": "Eyebrows up, hands raised." },
+    { "id": "cheer", "about": "Arm up, pleased: for payoffs." }
+  ]
+}

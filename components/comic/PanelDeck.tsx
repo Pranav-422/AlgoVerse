@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import type { Panel } from "@/lib/comic";
+import type { Comic } from "@/lib/comic";
 import { PanelCard } from "./PanelCard";
 
 // The card-shuffle stage (SPEC §10). Active panel at rest; the next two sit offset
@@ -14,15 +14,15 @@ const STACK = [
 ];
 
 interface Props {
-  panels: Panel[];
+  comic: Comic;
   index: number;
   /** +1 forward, -1 back — controls which way the active card leaves. */
   direction: 1 | -1;
-  title: string;
   shuffling?: boolean;
 }
 
-export function PanelDeck({ panels, index, direction, title, shuffling = false }: Props) {
+export function PanelDeck({ comic, index, direction, shuffling = false }: Props) {
+  const panels = comic.panels;
   const reduce = useReducedMotion();
   const visible = [0, 1, 2]
     .map((o) => ({ offset: o, panel: panels[(index + o) % panels.length], real: index + o < panels.length }))
@@ -35,14 +35,14 @@ export function PanelDeck({ panels, index, direction, title, shuffling = false }
       <div className="relative w-full aspect-[16/10]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={p.n}
+            key={comic.id + p.n}
             className="absolute inset-0"
             initial={{ opacity: 0 }}
             animate={{ opacity: shuffling ? 0.6 : 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <PanelCard panel={p} total={panels.length} title={title} />
+            <PanelCard panel={p} comic={comic} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -57,7 +57,7 @@ export function PanelDeck({ panels, index, direction, title, shuffling = false }
           .reverse()
           .map(({ offset, panel }) => (
             <motion.div
-              key={panel.n}
+              key={comic.id + panel.n}
               className="absolute inset-0"
               style={{ zIndex: 10 - offset }}
               custom={direction}
@@ -74,7 +74,7 @@ export function PanelDeck({ panels, index, direction, title, shuffling = false }
               }
               transition={{ type: "spring", stiffness: shuffling ? 520 : 300, damping: shuffling ? 34 : 30 }}
             >
-              <PanelCard panel={panel} total={panels.length} title={title} />
+              <PanelCard panel={panel} comic={comic} />
             </motion.div>
           ))}
       </AnimatePresence>

@@ -1,0 +1,18 @@
+{
+  "id": "arrays-pool-search",
+  "authoring": "handpicked",
+  "selection": {
+    "layout": "grid-6",
+    "palette": "violet-night",
+    "design": "halftone",
+    "theme": "library",
+    "panels": [
+      { "line": "srch-s1", "pose": "explain" },
+      { "line": "srch-1", "pose": "point" },
+      { "line": "srch-3", "pose": "surprised" },
+      { "line": "srch-4", "pose": "point" },
+      { "line": "srch-5", "pose": "think" },
+      { "line": "srch-p1", "pose": "cheer" }
+    ]
+  }
+}

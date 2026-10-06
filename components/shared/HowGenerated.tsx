@@ -80,7 +80,7 @@ export function HowGenerated({ provenance, title = "How this was generated" }: {
 
           {provenance.injectedFacts.length > 0 && (
             <div>
-              <h4 className="label mb-2">Knowledge-base facts injected</h4>
+              <h4 className="label mb-2">Knowledge-base facts used</h4>
               <ul className="space-y-1">
                 {provenance.injectedFacts.map((f) => (
                   <li key={f} className="flex gap-2">
@@ -92,9 +92,18 @@ export function HowGenerated({ provenance, title = "How this was generated" }: {
             </div>
           )}
 
+          {provenance.selection && (
+            <div>
+              <h4 className="label mb-2">Picks returned (ids from the comic kit)</h4>
+              <pre className="bg-cream border-2 border-ink rounded p-3 text-[11.5px] leading-relaxed whitespace-pre-wrap font-mono">
+                {JSON.stringify(provenance.selection, null, 2)}
+              </pre>
+            </div>
+          )}
+
           {provenance.constraints.length > 0 && (
             <div>
-              <h4 className="label mb-2">Style-guide constraints applied</h4>
+              <h4 className="label mb-2">Rules applied</h4>
               <div className="flex flex-wrap gap-1.5">
                 {provenance.constraints.map((c) => (
                   <span key={c} className="tag !normal-case !tracking-normal !font-medium">

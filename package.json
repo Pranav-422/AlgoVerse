@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:engines": "tsx scripts/check-engines.mts",
+    "check:comics": "tsx scripts/check-comic-kit.mts",
+    "check": "npm run check:engines && npm run check:comics"
   },
   "dependencies": {
     "@google/genai": "^2.27.0",
@@ -27,6 +30,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

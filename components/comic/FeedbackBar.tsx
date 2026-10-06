@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { RefreshCw, Clock } from "lucide-react";
 import { FEEDBACK_CATEGORIES, type FeedbackCategory } from "@/lib/feedbackMap";
 
@@ -21,6 +22,12 @@ function until(ts: number) {
 
 export function FeedbackBar({ selected, onSelect, onRegenerate, remaining, resetsAt, busy }: Props) {
   const exhausted = remaining <= 0;
+  // Times depend on the viewer's clock and locale, so they are rendered only after mount.
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   return (
     <div className="box px-4 py-3 flex flex-wrap items-center gap-3">
       <span className="label !text-ink font-bold">Didn&apos;t land? Why:</span>
@@ -45,7 +52,7 @@ export function FeedbackBar({ selected, onSelect, onRegenerate, remaining, reset
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-        {exhausted && resetsAt ? (
+        {exhausted && resetsAt && mounted ? (
           <span className="flex items-center gap-1.5 font-mono text-[11px] text-err">
             <Clock size={13} /> Limit reached · resets in {until(resetsAt)} ({new Date(resetsAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})
           </span>

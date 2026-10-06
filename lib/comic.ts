@@ -1,24 +1,112 @@
-// Comic shape (SPEC §7) + schema validation. Client-safe: no server imports.
+// Comic shapes. Client-safe: no server imports.
+//
+// A comic is never free-form. It is a *selection* from the prepared kit
+// (content/comic-kit): a layout, a palette, a design, a theme, and one dialogue
+// line + pose per panel. The model (or the rule-based fallback) only makes that
+// selection; everything drawn comes from the kit.
+
+// --- the kit -------------------------------------------------------------------
+
+export interface KitLayout {
+  id: string;
+  name: string;
+  about: string;
+  cols: number;
+  /** Column span of each panel; length = panel count. */
+  spans: number[];
+}
+
+export interface KitPalette {
+  id: string;
+  name: string;
+  paper: string;
+  ink: string;
+  accent: string;
+  accent2: string;
+  soft: string;
+}
+
+export interface KitOption {
+  id: string;
+  name?: string;
+  about: string;
+}
+
+export interface Kit {
+  layouts: KitLayout[];
+  palettes: KitPalette[];
+  designs: KitOption[];
+  themes: KitOption[];
+  poses: KitOption[];
+}
+
+/** Scene drawn behind the Mentor. `id` picks the scene component; the rest are its props. */
+export interface SceneSpec {
+  id: "row" | "formula" | "cinema" | "complexity" | "messy";
+  [key: string]: unknown;
+}
+
+export interface DialogueLine {
+  id: string;
+  role: "setup" | "step" | "payoff";
+  level: "basic" | "detail";
+  concept: string;
+  /** Snippet that must appear in one of the topic's core facts (null = no factual claim). */
+  fact: string | null;
+  text: string;
+  scene: SceneSpec;
+}
+
+export interface Arc {
+  id: string;
+  title: string;
+  lines: DialogueLine[];
+}
+
+export interface DialogueBank {
+  topicId: string;
+  arcs: Arc[];
+}
+
+// --- a selection (what the model returns) ---------------------------------------
+
+export interface Selection {
+  layout: string;
+  palette: string;
+  design: string;
+  theme: string;
+  panels: { line: string; pose: string }[];
+}
+
+// --- a resolved comic (what the viewer draws) -----------------------------------
 
 export interface Panel {
   n: number;
-  scene: string;
-  dialogue: string;
+  lineId: string;
+  text: string;
   concept: string;
-  /** Public URL of the panel art, or null when no art exists for this panel. */
-  image: string | null;
+  role: DialogueLine["role"];
+  scene: SceneSpec;
+  pose: string;
+  /** Column span in the page layout. */
+  span: number;
 }
 
 export interface Comic {
   id: string;
   title: string;
   topicId: string;
-  conceptId: string;
+  arc: string;
   source: "pregenerated" | "generated";
+  selection: Selection;
+  layout: KitLayout;
+  palette: KitPalette;
+  design: string;
+  theme: string;
   panels: Panel[];
 }
 
-/** Everything "How this was generated" needs for the comic currently on screen. */
+/** Everything "How this was generated" needs for the content on screen. */
 export interface Provenance {
   source: "pregenerated" | "generated" | "handwritten" | "deterministic";
   model: string | null;
@@ -27,6 +115,8 @@ export interface Provenance {
   injectedFacts: string[];
   constraints: string[];
   feedback: { category: string; instruction: string } | null;
+  /** The raw picks (layout/palette/design/theme/lines/poses). */
+  selection?: Selection;
   note?: string;
   createdAt?: number;
 }
@@ -34,39 +124,4 @@ export interface Provenance {
 export interface ComicWithProvenance {
   comic: Comic;
   provenance: Provenance;
-}
-
-const str = (v: unknown, field: string, max = 400): string => {
-  if (typeof v !== "string" || !v.trim()) throw new Error(`${field} must be a non-empty string`);
-  return v.trim().slice(0, max);
-};
-
-/** Validate model output for the script call. Throws on any mismatch. */
-export function validateScript(
-  v: unknown,
-  limits: { min: number; max: number; maxWords: number },
-): { title: string; conceptId: string; panels: Omit<Panel, "image">[] } {
-  if (!v || typeof v !== "object") throw new Error("root must be an object");
-  const o = v as Record<string, unknown>;
-  if (!Array.isArray(o.panels)) throw new Error("panels must be an array");
-  if (o.panels.length < limits.min || o.panels.length > limits.max)
-    throw new Error(`expected ${limits.min}–${limits.max} panels, got ${o.panels.length}`);
-  const panels = o.panels.map((p, i) => {
-    if (!p || typeof p !== "object") throw new Error(`panel ${i + 1} must be an object`);
-    const q = p as Record<string, unknown>;
-    const dialogue = str(q.dialogue, `panels[${i}].dialogue`, 240);
-    const words = dialogue.split(/\s+/).filter(Boolean).length;
-    if (words > limits.maxWords + 4) throw new Error(`panel ${i + 1} dialogue has ${words} words`);
-    return {
-      n: i + 1,
-      scene: str(q.scene, `panels[${i}].scene`),
-      dialogue,
-      concept: str(q.concept ?? "concept", `panels[${i}].concept`, 60),
-    };
-  });
-  return {
-    title: str(o.title ?? "Untitled", "title", 80),
-    conceptId: str(o.conceptId ?? "general", "conceptId", 60),
-    panels,
-  };
 }

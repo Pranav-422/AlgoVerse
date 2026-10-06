@@ -1,83 +1,67 @@
 import "server-only";
-import fs from "node:fs";
-import path from "node:path";
 import crypto from "node:crypto";
 import type { Topic } from "./knowledge";
-import type { Comic, ComicWithProvenance, Provenance } from "./comic";
-import { validateScript } from "./comic";
-import { COMIC_STYLE } from "./styleGuide";
+import type { ComicWithProvenance, Provenance, Selection } from "./comic";
 import type { FeedbackCategory } from "./feedbackMap";
-import { buildComicScriptPrompt } from "./prompts";
-import { generateJson, generatePanelImage, TEXT_MODEL, IMAGE_MODEL } from "./gemini";
-import { saveComic, latestComic, DATA_DIR } from "./db";
+import { loadKit, loadBank, buildPickPrompt, parseSelection, checkSelection, fallbackPick, resolveComic, factsFor } from "./comicKit";
+import { generateJson, ModelError, TEXT_MODEL } from "./gemini";
+import { saveComic, latestComic } from "./db";
+import { getComicPool } from "./comicPool";
 
-// Comic pipeline: script call (text) → optional image calls (one per panel). Two steps, never one.
-
-export const PANEL_DIR = path.join(DATA_DIR, "panels");
-const REF_IMAGE = path.join(process.cwd(), "public", COMIC_STYLE.character.refImage);
-
-/** Image generation stays off until the Phase 5 identity spike passes and COMIC_IMAGES=on. */
-export function imagesEnabled() {
-  return process.env.COMIC_IMAGES === "on" && fs.existsSync(REF_IMAGE);
-}
+// Comic pipeline: ONE bounded model call that picks ids from the kit → rule check →
+// (on failure) rule-based fallback → resolve into panels. The model never writes text.
 
 export async function generateComic(
   userId: string,
   topic: Topic,
   feedback: FeedbackCategory | null,
+  previous: Selection | null,
 ): Promise<ComicWithProvenance> {
-  const built = buildComicScriptPrompt(topic, feedback);
-  const limits =
-    feedback === "too complex"
-      ? { min: 4, max: 4, maxWords: 12 }
-      : { min: COMIC_STYLE.panelCount.min, max: COMIC_STYLE.panelCount.max, maxWords: COMIC_STYLE.dialogueMaxWords };
+  const kit = loadKit();
+  const bank = loadBank(topic.id);
+  if (!bank) throw new ModelError("BAD_OUTPUT", `No dialogue bank for ${topic.id}`);
 
-  const script = await generateJson(built.prompt, (v) => validateScript(v, limits));
-  const comicId = crypto.randomUUID();
+  const built = buildPickPrompt(topic.name, kit, bank, feedback, previous);
+  let selection: Selection;
+  let model: string | null = TEXT_MODEL;
+  let note: string | undefined;
 
-  let images: (string | null)[] = script.panels.map(() => null);
-  let imageNote: string | undefined;
-  if (imagesEnabled()) {
-    const reference = { data: fs.readFileSync(REF_IMAGE), mimeType: "image/png" };
-    fs.mkdirSync(PANEL_DIR, { recursive: true });
-    images = await Promise.all(
-      script.panels.map(async (p) => {
-        try {
-          const img = await generatePanelImage(reference, p.scene, COMIC_STYLE.art);
-          const file = `${comicId}-${p.n}.png`;
-          fs.writeFileSync(path.join(PANEL_DIR, file), img.data);
-          return `/api/comic/panel/${file}`;
-        } catch {
-          return null;
-        }
-      }),
-    );
-    if (images.some((i) => i === null)) imageNote = "Some panel images failed and are shown as scene text.";
-  } else {
-    imageNote =
-      "Panel images are not generated in this build (image identity spike pending). Panels show the generated scene text.";
+  try {
+    // generateJson retries once on malformed or rule-breaking output.
+    selection = await generateJson(built.prompt, (raw) => {
+      const sel = parseSelection(raw);
+      const errs = checkSelection(sel, kit, bank, feedback, previous);
+      if (errs.length) throw new Error(errs.join("; "));
+      return sel;
+    });
+  } catch (e) {
+    const reason =
+      e instanceof ModelError
+        ? e.code === "NO_KEY"
+          ? "no Gemini API key is configured"
+          : e.code === "TIMEOUT"
+            ? "the model timed out"
+            : `the model's answer was rejected (${e.message})`
+        : String(e);
+    selection = fallbackPick(kit, bank, feedback, previous);
+    model = null;
+    note = `Picked by the rule-based fallback because ${reason}. It follows the same kit rules and feedback constraints; no model was called successfully.`;
   }
 
-  const comic: Comic = {
-    id: comicId,
-    title: script.title,
-    topicId: topic.id,
-    conceptId: script.conceptId,
-    source: "generated",
-    panels: script.panels.map((p, i) => ({ ...p, image: images[i] })),
-  };
-
+  const id = crypto.randomUUID();
+  const comic = resolveComic(selection, kit, bank, { id, source: "generated" });
   const provenance: Provenance = {
     source: "generated",
-    model: imagesEnabled() ? `${TEXT_MODEL} (script) + ${IMAGE_MODEL} (panels)` : TEXT_MODEL,
-    prompt: built.prompt,
-    injectedFacts: built.injectedFacts,
+    model,
+    prompt: model ? built.prompt : null,
+    injectedFacts: factsFor(selection, bank, topic.coreFacts),
     constraints: built.constraints,
     feedback: built.feedback,
-    note: imageNote,
+    selection,
+    note,
     createdAt: Date.now(),
   };
-
+  // prompt_used keeps the prompt even for fallback picks, so the record shows what would have been sent.
   saveComic(userId, topic.id, { comic, provenance }, built.prompt);
   return { comic, provenance };
 }
@@ -87,10 +71,19 @@ export function getLatestGenerated(userId: string, topicId: string): ComicWithPr
   if (!row) return null;
   try {
     const parsed = JSON.parse(row.panels_json) as ComicWithProvenance;
-    // prompt_used is the source of truth for what was sent.
-    parsed.provenance.prompt = row.prompt_used;
+    if (!parsed?.comic?.selection) return null; // record from an older format
+    if (parsed.provenance.model) parsed.provenance.prompt = row.prompt_used;
     return parsed;
   } catch {
     return null;
   }
+}
+
+/** The selection of the comic the learner is looking at (pool or their latest generated one). */
+export function findPreviousSelection(userId: string, topicId: string, currentId: unknown): Selection | null {
+  if (typeof currentId !== "string") return null;
+  const pool = getComicPool(topicId).find((c) => c.comic.id === currentId);
+  if (pool) return pool.comic.selection;
+  const latest = getLatestGenerated(userId, topicId);
+  return latest && latest.comic.id === currentId ? latest.comic.selection : null;
 }

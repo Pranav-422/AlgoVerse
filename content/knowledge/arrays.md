@@ -27,11 +27,13 @@ Seats in a cinema row. Seat 14 is found by walking straight to position 14 — n
 - Access by index is O(1) because the address is computed, not searched.
 - Updating an element at a known index is O(1).
 - Insertion in the middle is O(n) because later elements must shift right.
+- When inserting, elements are shifted starting from the end so that no value is overwritten.
 - Deletion in the middle is O(n) because later elements must shift left.
 - Linear search checks elements one by one and is O(n).
 - Binary search requires a sorted array and halves the search range each step, so it is O(log n).
 - Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.
 - Bubble sort repeatedly swaps adjacent out-of-order pairs and is O(n²) in the worst case.
+- After each bubble sort pass, the largest remaining element is in its final position.
 - Selection sort repeatedly selects the smallest remaining element and is O(n²).
 - Insertion sort builds a sorted prefix one element at a time and is O(n²) in the worst case.
 

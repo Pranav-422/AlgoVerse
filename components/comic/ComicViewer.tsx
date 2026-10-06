@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import { ChevronLeft, ChevronRight, AlertTriangle, Layers, LayoutGrid } from "lucide-react";
 import type { ComicWithProvenance } from "@/lib/comic";
 import type { FeedbackCategory } from "@/lib/feedbackMap";
 import { PanelDeck } from "./PanelDeck";
+import { PageView } from "./PageView";
 import { FeedbackBar } from "./FeedbackBar";
 import { HowGenerated } from "@/components/shared/HowGenerated";
 
@@ -29,6 +30,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
   const [resetsAt, setResetsAt] = useState<number | null>(initialResetsAt);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<"deck" | "page">("deck");
   const shuffleTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const current = comics[Math.min(which, comics.length - 1)];
@@ -73,7 +75,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
       const res = await fetch(category ? "/api/comic/feedback" : "/api/comic/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(category ? { topicId, category } : { topicId }),
+        body: JSON.stringify({ topicId, currentId: current.comic.id, ...(category ? { category } : {}) }),
         signal: ctl.signal,
       });
       const json = await res.json();
@@ -125,13 +127,47 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
         ))}
       </div>
 
-      {/* Stage */}
+      {/* The kit picks behind this comic */}
+      <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+        <span className="label mr-1">Picked from the kit:</span>
+        <span className="tag">layout · {current.comic.layout.name} ({panels.length})</span>
+        <span className="tag">
+          palette · {current.comic.palette.name}
+          {[current.comic.palette.accent, current.comic.palette.accent2, current.comic.palette.soft].map((c) => (
+            <span key={c} className="inline-block w-2.5 h-2.5 rounded-full border border-ink ml-0.5" style={{ background: c }} />
+          ))}
+        </span>
+        <span className="tag">design · {current.comic.design}</span>
+        <span className="tag">theme · {current.comic.theme}</span>
+        <div className="ml-auto flex border-2 border-ink rounded overflow-hidden">
+          {(["deck", "page"] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => setView(v)}
+              className={`px-3 py-1 font-mono text-[11px] font-bold uppercase flex items-center gap-1 ${view === v ? "bg-ink text-amber-mid" : "bg-card hover:bg-cream"}`}
+            >
+              {v === "deck" ? <Layers size={12} /> : <LayoutGrid size={12} />} {v}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {view === "page" && !busy ? (
+        <PageView
+          comic={current.comic}
+          active={index}
+          onPick={(i) => {
+            setIndex(i);
+            setView("deck");
+          }}
+        />
+      ) : (
       <div className="grid grid-cols-[56px_1fr_56px] items-center gap-4">
         <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3" aria-label="Previous panel">
           <ChevronLeft size={20} />
         </button>
         <div className="max-w-[780px] w-full mx-auto pr-6 pb-3">
-          <PanelDeck panels={panels} index={index} direction={direction} title={current.comic.title} shuffling={busy} />
+          <PanelDeck comic={current.comic} index={Math.min(index, panels.length - 1)} direction={direction} shuffling={busy} />
         </div>
         <button
           onClick={() => go(1)}
@@ -142,6 +178,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
           <ChevronRight size={20} />
         </button>
       </div>
+      )}
 
       {error && (
         <div className="box !bg-[#FCEEEE] !border-err p-4 flex gap-3 items-start font-mono text-[12px] text-err">

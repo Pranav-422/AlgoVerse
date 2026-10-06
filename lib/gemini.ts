@@ -5,10 +5,8 @@ import { GoogleGenAI } from "@google/genai";
 // Each call is one bounded step: fixed prompt in, result out, a timeout, and at most one retry.
 
 export const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || "gemini-2.5-flash";
-export const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-2.5-flash-image";
 
 export const TEXT_TIMEOUT_MS = 20_000;
-export const IMAGE_TIMEOUT_MS = 45_000;
 
 export class ModelError extends Error {
   constructor(
@@ -93,34 +91,4 @@ export async function generateJson<T>(prompt: string, validate: (v: unknown) => 
     if (e instanceof ModelError && e.code === "BAD_OUTPUT") return attempt();
     throw e;
   }
-}
-
-/**
- * One panel image: the character reference image + the panel's scene text.
- * The character is never described in words — identity comes from the reference image only.
- */
-export async function generatePanelImage(
-  reference: { data: Buffer; mimeType: string },
-  scene: string,
-  styleLine: string,
-): Promise<{ data: Buffer; mimeType: string }> {
-  const ai = getClient();
-  return withTimeout(IMAGE_TIMEOUT_MS, async (abortSignal) => {
-    const res = await ai.models.generateContent({
-      model: IMAGE_MODEL,
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { inlineData: { data: reference.data.toString("base64"), mimeType: reference.mimeType } },
-            { text: `Draw one comic panel featuring the character in the reference image. ${styleLine}\nScene: ${scene}` },
-          ],
-        },
-      ],
-      config: { abortSignal },
-    });
-    const part = res.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data);
-    if (!part?.inlineData?.data) throw new ModelError("BAD_OUTPUT", "Image model returned no image");
-    return { data: Buffer.from(part.inlineData.data, "base64"), mimeType: part.inlineData.mimeType || "image/png" };
-  });
 }

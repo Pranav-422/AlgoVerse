@@ -1,0 +1,17 @@
+{
+  "id": "arrays-pool-insertion",
+  "authoring": "handpicked",
+  "selection": {
+    "layout": "hero-5",
+    "palette": "amber-paper",
+    "design": "bold-ink",
+    "theme": "cinema",
+    "panels": [
+      { "line": "ins-s2", "pose": "explain" },
+      { "line": "ins-1", "pose": "think" },
+      { "line": "ins-2", "pose": "point" },
+      { "line": "ins-4", "pose": "surprised" },
+      { "line": "ins-p1", "pose": "cheer" }
+    ]
+  }
+}
