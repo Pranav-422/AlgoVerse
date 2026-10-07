@@ -14,6 +14,8 @@ export interface GuardResult {
 const normBigO = (s: string) =>
   s
     .toLowerCase()
+    .replace(/\\[,;! ]?/g, "") // LaTeX-style \log, \cdot, \, spacing
+    .replace(/cdot/g, "")
     .replace(/\s+/g, "")
     .replace(/\^2|²/g, "²")
     .replace(/\*/g, "")
