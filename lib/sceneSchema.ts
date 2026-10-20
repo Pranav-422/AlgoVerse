@@ -9,6 +9,7 @@ export const SCENE_DOCS: Record<SceneSpec["id"], string> = {
   stack: `{"id":"stack","values":[bottom→top numbers or short strings],"top"?:true,"hi"?:[indexes],"incoming"?:value,"outgoing"?:value,"capacity"?:number,"note"?:"note"} — a vertical stack`,
   queue: `{"id":"queue","values":[numbers or null],"front":index,"rear":index,"hi"?:[indexes],"incoming"?:number,"outgoing"?:number,"ring"?:true (circular),"note"?:"note"} — a queue with FRONT/REAR`,
   tree: `{"id":"tree","nodes":[level-order numbers or null],"hi"?:[indexes],"found"?:[indexes],"path"?:[indexes],"order"?:{"index":visitNumber},"note"?:"note"} — a binary tree`,
+  graph: `{"id":"graph","nodes":[numbers, 1–8 vertex labels],"edges":[[i,j],...],"directed"?:true,"weights"?:[one number per edge],"hi"?:[node indexes],"visited"?:[node indexes],"path"?:[node indexes in walk order],"order"?:{"nodeIndex":visitNumber},"note"?:"short note"} — a graph of vertices and edges`,
   formula: `{"id":"formula","base":number,"i":number,"size":number,"solved":boolean} — the address formula card (arrays only)`,
   cinema: `{"id":"cinema","seats":number,"latecomer":seatIndex or null} — a cinema row with people`,
   complexity: `{"id":"complexity","label":"short label","big":"O(...)","vs"?:"short phrase"} — a big complexity badge`,
@@ -50,6 +51,62 @@ export function validateScene(spec: unknown): string[] {
       if (!Array.isArray(nodes) || !nodes.length || nodes.length > 15 || !nodes.every((v) => isNum(v) || v === null)) errs.push("tree.nodes must be 1–15 numbers/null in level order");
       const m = nodes?.length ?? 0;
       for (const k of ["hi", "found", "path"]) if (s[k] !== undefined && !isIdxList(s[k], m)) errs.push(`tree.${k} has an index out of range`);
+      break;
+    }
+    case "graph": {
+      const nodes = s.nodes as unknown[] | undefined;
+      if (!Array.isArray(nodes) || nodes.length < 1 || nodes.length > 8 || !nodes.every(isNum)) {
+        errs.push("graph.nodes must be 1–8 numbers");
+      }
+      const n = Array.isArray(nodes) ? nodes.length : 0;
+      const edges = s.edges as unknown[] | undefined;
+      if (
+        !Array.isArray(edges) ||
+        !edges.every(
+          (e) =>
+            Array.isArray(e) &&
+            e.length === 2 &&
+            Number.isInteger(e[0]) &&
+            Number.isInteger(e[1]) &&
+            e[0] >= 0 &&
+            e[0] < n &&
+            e[1] >= 0 &&
+            e[1] < n &&
+            e[0] !== e[1]
+        )
+      ) {
+        errs.push("graph.edges must be pairs of valid distinct indexes");
+      }
+      if (
+        s.weights !== undefined &&
+        (!Array.isArray(s.weights) ||
+          !Array.isArray(edges) ||
+          s.weights.length !== edges.length ||
+          !s.weights.every(isNum))
+      ) {
+        errs.push("graph.weights must match edges length");
+      }
+      for (const k of ["hi", "visited", "path"]) {
+        if (s[k] !== undefined && !isIdxList(s[k], n)) {
+          errs.push(`graph.${k} has an index out of range`);
+        }
+      }
+      if (Array.isArray(s.path) && isIdxList(s.path, n) && Array.isArray(edges)) {
+        const p = s.path as number[];
+        for (let k = 0; k < p.length - 1; k++) {
+          const u = p[k];
+          const v = p[k + 1];
+          const joined = edges.some(
+            (e) =>
+              Array.isArray(e) &&
+              ((e[0] === u && e[1] === v) || (e[0] === v && e[1] === u))
+          );
+          if (!joined) {
+            errs.push("graph.path consecutive nodes must be joined by an edge");
+            break;
+          }
+        }
+      }
       break;
     }
     case "formula":

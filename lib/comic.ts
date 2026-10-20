@@ -44,7 +44,7 @@ export interface Kit {
 
 /** Scene drawn behind the Mentor. `id` picks the scene component; the rest are its props. */
 export interface SceneSpec {
-  id: "row" | "formula" | "cinema" | "complexity" | "messy" | "chain" | "stack" | "queue" | "tree";
+  id: "row" | "formula" | "cinema" | "complexity" | "messy" | "chain" | "stack" | "queue" | "tree" | "graph";
   [key: string]: unknown;
 }
 
@@ -69,6 +69,10 @@ export interface ComicQuiz {
   options: [string, string, string];
   answer: 0 | 1 | 2;
   fact: string;
+  /** One line per option, same order: why it is right, or which misconception it traps. */
+  why: [string, string, string];
+  /** Where this is shown step by step, relative to /topics/<slug>/ (e.g. "visualizer?op=insert"). */
+  see?: string;
 }
 
 export interface Arc {

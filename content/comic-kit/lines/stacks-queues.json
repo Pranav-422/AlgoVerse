@@ -355,7 +355,13 @@
           "Smallest Value First (Priority)"
         ],
         "answer": 1,
-        "fact": "A stack follows Last In, First Out (LIFO)."
+        "fact": "A stack follows Last In, First Out (LIFO).",
+        "why": [
+          "First In, First Out (FIFO) governs queues, not stacks.",
+          "A stack only operates at the top, so the newest element is removed first.",
+          "Stacks order elements by arrival time, not by value or priority."
+        ],
+        "see": "visualizer?op=push"
       }
     },
     {
@@ -698,7 +704,13 @@
           "By reversing the string and comparing it with the original."
         ],
         "answer": 1,
-        "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n)."
+        "fact": "A stack checks balanced brackets by pushing openers and popping to match closers in O(n).",
+        "why": [
+          "Bracket counts can match even if nesting order is invalid, like in ')('.",
+          "Pushing openers and matching them against closers checks both nesting order and bracket type.",
+          "Reversing checks for palindromes, but balanced bracket expressions are not necessarily palindromes."
+        ],
+        "see": "visualizer?op=balanced"
       }
     },
     {
@@ -1111,7 +1123,13 @@
           "Random access by index"
         ],
         "answer": 0,
-        "fact": "A queue follows First In, First Out (FIFO)."
+        "fact": "A queue follows First In, First Out (FIFO).",
+        "why": [
+          "Queues add items at the rear and remove from the front, serving arrivals in order.",
+          "Last In, First Out (LIFO) describes a stack, whereas queues preserve arrival order.",
+          "Queues only allow access at the front and rear, not by arbitrary index."
+        ],
+        "see": "visualizer?op=dequeue"
       }
     },
     {
@@ -1288,7 +1306,13 @@
           "By doubling the internal array capacity on every dequeue."
         ],
         "answer": 1,
-        "fact": "A circular queue computes the next index as (index + 1) mod capacity."
+        "fact": "A circular queue computes the next index as (index + 1) mod capacity.",
+        "why": [
+          "Shifting elements would take O(n) time — circular queues avoid shifting by wrapping indices.",
+          "Modulo arithmetic wraps indices around to the beginning in O(1) time without shifting.",
+          "Dequeuing frees slots rather than filling them, so doubling capacity is unnecessary."
+        ],
+        "see": "visualizer?op=circularEnqueue"
       }
     },
     {
@@ -1481,7 +1505,13 @@
           "O(log n)"
         ],
         "answer": 1,
-        "fact": "Pop removes the top element of the stack in O(1)."
+        "fact": "Pop removes the top element of the stack in O(1).",
+        "why": [
+          "Pop only updates the top pointer or index — no elements need to shift.",
+          "Pop directly accesses and removes the top item in constant time O(1).",
+          "Stacks maintain a direct pointer to the top, so no search is needed."
+        ],
+        "see": "visualizer?op=pop"
       }
     },
     {
@@ -1673,7 +1703,13 @@
           "A new page is added via push."
         ],
         "answer": 0,
-        "fact": "Pop removes the top element of the stack in O(1)."
+        "fact": "Pop removes the top element of the stack in O(1).",
+        "why": [
+          "Navigating back removes the current page from the top of the history stack.",
+          "Stacks only remove items from the top, never from the bottom.",
+          "Push adds newly visited pages, whereas clicking back removes the current page."
+        ],
+        "see": "visualizer?op=pop"
       }
     }
   ]

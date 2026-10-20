@@ -4,11 +4,15 @@
 // - every arc can fill every layout, and the 'too complex' path
 // - the rule-based fallback produces valid selections for every feedback category
 // - the pre-made pool selections are valid
+// - a quiz's "see" link names a visualizer operation this topic offers
 import fs from "node:fs";
 import path from "node:path";
 import { loadKit, loadBank, lintBank, checkSelection, fallbackPick } from "../lib/comicKit.ts";
 import { FEEDBACK_CATEGORIES } from "../lib/feedbackMap.ts";
 import type { Selection } from "../lib/comic.ts";
+import { ARRAY_PARAMS } from "../lib/viz/arrayEngine.ts";
+import { LIST_PARAMS } from "../lib/viz/listEngine.ts";
+import { STACK_PARAMS, QUEUE_PARAMS } from "../lib/viz/stackQueueEngine.ts";
 
 let failures = 0;
 const fail = (m: string) => {
@@ -17,6 +21,7 @@ const fail = (m: string) => {
 };
 
 const kit = loadKit();
+const engineOps = new Set([ARRAY_PARAMS, LIST_PARAMS, STACK_PARAMS, QUEUE_PARAMS].flatMap(Object.keys));
 const banks = fs.readdirSync(path.join("content", "comic-kit", "lines")).map((f) => f.replace(/\.json$/, ""));
 
 for (const topicId of banks) {
@@ -24,6 +29,13 @@ for (const topicId of banks) {
   const md = fs.readFileSync(path.join("content", "knowledge", `${topicId}.md`), "utf8");
   const facts = (md.split("## Core facts")[1] ?? "").split("\n## ")[0].split("\n").filter((l) => l.startsWith("- ")).map((l) => l.slice(2));
   for (const e of lintBank(bank, kit, facts)) fail(`${topicId}: ${e}`);
+  for (const arc of bank.arcs) {
+    const see = arc.quiz?.see;
+    if (see === undefined) continue;
+    const op = see.match(/^visualizer\?op=([A-Za-z]+)$/)?.[1];
+    const offered = !!op && engineOps.has(op) && /^formats:.*visualizer/m.test(md) && (md.includes(`{#${op} `) || md.includes(`{#${op}}`));
+    if (!offered) fail(`${topicId}/${arc.id}: quiz.see "${see}" must be visualizer?op=<an operation this topic's visualizer offers>`);
+  }
 
   let prev: Selection | null = null;
   for (let i = 0; i < 60; i++) {

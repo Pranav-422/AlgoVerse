@@ -318,7 +318,13 @@
           "Array elements are stored in a linked hash table."
         ],
         "answer": 0,
-        "fact": "Access by index is O(1) because the address is computed, not searched."
+        "fact": "Access by index is O(1) because the address is computed, not searched.",
+        "why": [
+          "The CPU calculates base plus index times element size to reach the memory address instantly.",
+          "CPUs do not scan in parallel — the address formula computes the exact position in one step.",
+          "Arrays do not use hash tables — elements sit in contiguous memory reached by index arithmetic."
+        ],
+        "see": "visualizer?op=access"
       }
     },
     {
@@ -724,7 +730,13 @@
           "A binary search must run first to locate the slot."
         ],
         "answer": 1,
-        "fact": "Insertion in the middle is O(n) because later elements must shift right."
+        "fact": "Insertion in the middle is O(n) because later elements must shift right.",
+        "why": [
+          "Reallocation is not the cause — even with spare capacity, subsequent elements must shift right.",
+          "Inserting at index i requires shifting all subsequent elements one place right to make space.",
+          "The insertion index is already known, so no search is needed before shifting elements."
+        ],
+        "see": "visualizer?op=insert"
       }
     },
     {
@@ -941,10 +953,16 @@
         "options": [
           "The array elements must already be in sorted order.",
           "The array length must be an exact power of two.",
-          "Every element must be stored at an even memory address."
+          "The array must contain only unique values with no duplicates."
         ],
         "answer": 0,
-        "fact": "Binary search requires a sorted array and halves the search range each step, so it is O(log n)."
+        "fact": "Binary search requires a sorted array and halves the search range each step, so it is O(log n).",
+        "why": [
+          "Binary search compares against the middle element and discards half the array, requiring sorted order.",
+          "Integer division halves any range — array length does not need to be a power of two.",
+          "Binary search works with duplicate values — it only requires that elements be in sorted order."
+        ],
+        "see": "visualizer?op=binarySearch"
       }
     },
     {
@@ -1463,7 +1481,13 @@
           "The largest remaining element is in its final position."
         ],
         "answer": 2,
-        "fact": "After each bubble sort pass, the largest remaining element is in its final position."
+        "fact": "After each bubble sort pass, the largest remaining element is in its final position.",
+        "why": [
+          "One pass only guarantees the largest remaining element is placed; the rest may still be unsorted.",
+          "Standard bubble sort moves larger items right, so the smallest element only moves left one step.",
+          "Repeated swaps push the largest remaining value all the way to the end in each pass."
+        ],
+        "see": "visualizer?op=bubbleSort"
       }
     },
     {
@@ -1711,7 +1735,13 @@
           "O(log n)"
         ],
         "answer": 1,
-        "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²)."
+        "fact": "Selection sort repeatedly selects the smallest remaining element and is O(n²).",
+        "why": [
+          "Finding each minimum takes O(n) work across n passes, giving O(n²) total comparisons.",
+          "Selection sort compares all remaining unsorted elements in each of the n passes, taking O(n²).",
+          "Selection sort does not divide and conquer — scanning to find each minimum requires quadratic comparisons."
+        ],
+        "see": "visualizer?op=selectionSort"
       }
     },
     {
@@ -1918,7 +1948,13 @@
           "O(log n)"
         ],
         "answer": 1,
-        "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space."
+        "fact": "Reversing an array in place uses two pointers moving toward each other and is O(n) time, O(1) extra space.",
+        "why": [
+          "Reversing uses O(1) extra space, but swapping elements across the array takes O(n) time.",
+          "Two pointers move from opposite ends swapping elements until they meet, taking n/2 swaps, or O(n).",
+          "Reversing requires inspecting every element once, which scales linearly with n rather than logarithmically."
+        ],
+        "see": "visualizer?op=reverse"
       }
     }
   ]

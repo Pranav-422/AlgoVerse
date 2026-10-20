@@ -1,0 +1,639 @@
+{
+  "topicId": "sorting",
+  "arcs": [
+    {
+      "id": "card-hand",
+      "title": "The Card Hand",
+      "lines": [
+        {
+          "id": "so-c-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "sorting-cards",
+          "fact": "Sorting rearranges elements into ascending or descending order based on a comparison key.",
+          "text": "Hold your cards in one hand and sort them one by one.",
+          "scene": {
+            "id": "row",
+            "values": [
+              7,
+              3,
+              9,
+              2
+            ]
+          }
+        },
+        {
+          "id": "so-c-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "sorted-prefix",
+          "fact": "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time.",
+          "text": "The cards already in your left hand form an ordered prefix.",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              7,
+              9,
+              2
+            ],
+            "tags": {
+              "0": "sorted",
+              "1": "sorted",
+              "2": "sorted"
+            }
+          }
+        },
+        {
+          "id": "so-c-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "pick-card",
+          "fact": null,
+          "text": "Pick up the next card and compare it with the card to its left.",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              7,
+              9,
+              2
+            ],
+            "hi": [
+              2,
+              3
+            ]
+          }
+        },
+        {
+          "id": "so-c-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "shift-elements",
+          "fact": "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time.",
+          "text": "Larger cards slide right to open a space for the newcomer.",
+          "scene": {
+            "id": "row",
+            "values": [
+              3,
+              7,
+              null,
+              9
+            ],
+            "hi": [
+              3
+            ],
+            "note": "slide right"
+          }
+        },
+        {
+          "id": "so-c-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "make-room",
+          "fact": null,
+          "text": "Slide seven right, then three right, clearing the front slot.",
+          "scene": {
+            "id": "row",
+            "values": [
+              null,
+              3,
+              7,
+              9
+            ],
+            "hi": [
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "id": "so-c-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "insert-item",
+          "fact": "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time.",
+          "text": "Drop two into the empty slot where it belongs.",
+          "scene": {
+            "id": "row",
+            "values": [
+              2,
+              3,
+              7,
+              9
+            ],
+            "found": [
+              0
+            ]
+          }
+        },
+        {
+          "id": "so-c-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "best-case",
+          "fact": "Insertion sort runs in O(n) linear time on an already sorted or nearly sorted array.",
+          "text": "If cards arrive already in order, no shifting happens at all.",
+          "scene": {
+            "id": "complexity",
+            "label": "Nearly sorted cards",
+            "big": "O(n)",
+            "vs": "no shifting"
+          }
+        },
+        {
+          "id": "so-c-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "in-place",
+          "fact": "An in-place sorting algorithm uses O(1) auxiliary memory beyond the input array.",
+          "text": "Rearranging inside the hand needs only O(1) auxiliary memory.",
+          "scene": {
+            "id": "complexity",
+            "label": "In-place memory",
+            "big": "O(1)",
+            "vs": "inside array"
+          }
+        },
+        {
+          "id": "so-c-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "cards-sorted",
+          "fact": "Sorting rearranges elements into ascending or descending order based on a comparison key.",
+          "text": "Every card is now in position, neatly ordered.",
+          "scene": {
+            "id": "row",
+            "values": [
+              2,
+              3,
+              7,
+              9
+            ],
+            "tags": {
+              "0": "2",
+              "1": "3",
+              "2": "7",
+              "3": "9"
+            }
+          }
+        },
+        {
+          "id": "so-c-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "worst-case",
+          "fact": "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time.",
+          "text": "In the worst case, backward cards cost O(n²) total comparisons.",
+          "scene": {
+            "id": "complexity",
+            "label": "Insertion Sort",
+            "big": "O(n²)",
+            "vs": "reverse order"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "How fast does insertion sort run when the array is already sorted?",
+        "options": [
+          "It runs in O(n) linear time because each element is checked once.",
+          "It takes O(n²) time because all pairs must still be swapped.",
+          "It degrades to O(n log n) because binary search is always required."
+        ],
+        "answer": 0,
+        "fact": "Insertion sort runs in O(n) linear time on an already sorted or nearly sorted array.",
+        "why": [
+          "Each element is compared once with its predecessor and requires no shifts, completing in O(n) time.",
+          "No elements need shifting when already in order, so quadratic swaps never occur.",
+          "Standard insertion sort compares linearly against neighbors and does not switch to binary search."
+        ],
+        "see": "visualizer?op=insertionSort"
+      }
+    },
+    {
+      "id": "exam-papers",
+      "title": "The Exam Papers",
+      "lines": [
+        {
+          "id": "so-e-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "divide-stack",
+          "fact": null,
+          "text": "A huge stack of exam papers is too unwieldy to sort directly.",
+          "scene": {
+            "id": "row",
+            "values": [
+              84,
+              21,
+              65,
+              47
+            ]
+          }
+        },
+        {
+          "id": "so-e-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "split-halves",
+          "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+          "text": "Divide the stack right down the middle into two smaller halves.",
+          "scene": {
+            "id": "row",
+            "values": [
+              84,
+              21,
+              65,
+              47
+            ],
+            "grey": [
+              [
+                0,
+                1
+              ],
+              [
+                2,
+                3
+              ]
+            ]
+          }
+        },
+        {
+          "id": "so-e-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "base-division",
+          "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+          "text": "Keep halving each pile until every pile has just one paper.",
+          "scene": {
+            "id": "row",
+            "values": [
+              84,
+              21,
+              65,
+              47
+            ],
+            "hi": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "note": "single items"
+          }
+        },
+        {
+          "id": "so-e-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "single-sorted",
+          "fact": null,
+          "text": "A single paper is already sorted with respect to itself.",
+          "scene": {
+            "id": "row",
+            "values": [
+              84
+            ],
+            "tags": {
+              "0": "sorted"
+            }
+          }
+        },
+        {
+          "id": "so-e-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "compare-fronts",
+          "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+          "text": "Now compare the front papers of two piles to merge them.",
+          "scene": {
+            "id": "row",
+            "values": [
+              21,
+              84,
+              47,
+              65
+            ],
+            "hi": [
+              0,
+              2
+            ]
+          }
+        },
+        {
+          "id": "so-e-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "merge-step",
+          "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+          "text": "Pick the smaller score first and append it to our merged pile.",
+          "scene": {
+            "id": "row",
+            "values": [
+              21,
+              47,
+              65,
+              84
+            ],
+            "found": [
+              0
+            ]
+          }
+        },
+        {
+          "id": "so-e-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "space-overhead",
+          "fact": "Merge sort is stable but requires O(n) auxiliary space for merging.",
+          "text": "Merging requires spare desk space proportional to the number of papers.",
+          "scene": {
+            "id": "complexity",
+            "label": "Auxiliary space",
+            "big": "O(n)",
+            "vs": "extra desk space"
+          }
+        },
+        {
+          "id": "so-e-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "stability",
+          "fact": "A sorting algorithm is stable if it preserves the relative order of records with equal keys.",
+          "text": "Equal scores keep their original relative order, making this sort stable.",
+          "scene": {
+            "id": "row",
+            "values": [
+              21,
+              47,
+              47,
+              84
+            ],
+            "hi": [
+              1,
+              2
+            ],
+            "note": "stable order"
+          }
+        },
+        {
+          "id": "so-e-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "merge-complete",
+          "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+          "text": "All papers are merged in guaranteed O(n log n) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Merge Sort",
+            "big": "O(n log n)",
+            "vs": "guaranteed"
+          }
+        },
+        {
+          "id": "so-e-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "lower-bound",
+          "fact": "Any comparison-based sorting algorithm requires Ω(n log n) comparisons in the worst case.",
+          "text": "No comparison sort can beat the theoretical lower bound of Ω(n log n).",
+          "scene": {
+            "id": "complexity",
+            "label": "Lower bound",
+            "big": "Ω(n log n)",
+            "vs": "any comparison sort"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What is the primary trade-off of merge sort compared to in-place sorts?",
+        "options": [
+          "It requires O(n) auxiliary space to merge subarrays together.",
+          "It slows down to quadratic O(n²) time on reversed arrays.",
+          "It cannot guarantee stable ordering for elements with equal keys."
+        ],
+        "answer": 0,
+        "fact": "Merge sort is stable but requires O(n) auxiliary space for merging.",
+        "why": [
+          "Merging two sorted subarrays requires a temporary buffer of size n, costing linear extra space.",
+          "Merge sort always runs in O(n log n) time, even when the input array is reversed.",
+          "Merge sort preserves the relative order of equal elements, so it is a stable sorting algorithm."
+        ],
+        "see": "visualizer?op=mergeSort"
+      }
+    },
+    {
+      "id": "librarian",
+      "title": "The Librarian",
+      "lines": [
+        {
+          "id": "so-l-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "messy-shelf",
+          "fact": null,
+          "text": "A shelf of books sits in complete disarray after a busy afternoon.",
+          "scene": {
+            "id": "row",
+            "values": [
+              53,
+              12,
+              89,
+              34
+            ]
+          }
+        },
+        {
+          "id": "so-l-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "find-minimum",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "The librarian decides to scan the shelf to find the minimum book.",
+          "scene": {
+            "id": "row",
+            "values": [
+              53,
+              12,
+              89,
+              34
+            ],
+            "hi": [
+              1
+            ],
+            "tags": {
+              "1": "min"
+            }
+          }
+        },
+        {
+          "id": "so-l-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "scan-suffix",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "Scan through all unsorted books on the right to confirm the smallest.",
+          "scene": {
+            "id": "row",
+            "values": [
+              53,
+              12,
+              89,
+              34
+            ],
+            "hi": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        },
+        {
+          "id": "so-l-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "swap-min",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "Swap that smallest book directly into the first shelf position.",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              53,
+              89,
+              34
+            ],
+            "swap": [
+              0,
+              1
+            ]
+          }
+        },
+        {
+          "id": "so-l-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "lock-position",
+          "fact": null,
+          "text": "The first position is now finalized and never needs touching again.",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              53,
+              89,
+              34
+            ],
+            "tags": {
+              "0": "sorted"
+            }
+          }
+        },
+        {
+          "id": "so-l-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "repeat-scan",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "Repeat the scan on the remaining unsorted suffix of the shelf.",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              53,
+              89,
+              34
+            ],
+            "hi": [
+              1,
+              2,
+              3
+            ]
+          }
+        },
+        {
+          "id": "so-l-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "in-place",
+          "fact": "An in-place sorting algorithm uses O(1) auxiliary memory beyond the input array.",
+          "text": "Swapping elements directly on the shelf needs only O(1) auxiliary memory.",
+          "scene": {
+            "id": "complexity",
+            "label": "Selection Sort Memory",
+            "big": "O(1)",
+            "vs": "in-place shelf"
+          }
+        },
+        {
+          "id": "so-l-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "quadratic-cost",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "Even if already sorted, selection sort still scans every pair in O(n²).",
+          "scene": {
+            "id": "complexity",
+            "label": "Comparisons",
+            "big": "O(n²)",
+            "vs": "always quadratic"
+          }
+        },
+        {
+          "id": "so-l-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "shelf-ordered",
+          "fact": "Sorting rearranges elements into ascending or descending order based on a comparison key.",
+          "text": "Every book is placed in ascending order across the entire shelf.",
+          "scene": {
+            "id": "row",
+            "values": [
+              12,
+              34,
+              53,
+              89
+            ],
+            "tags": {
+              "0": "12",
+              "1": "34",
+              "2": "53",
+              "3": "89"
+            }
+          }
+        },
+        {
+          "id": "so-l-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "summary-complexity",
+          "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+          "text": "Selection sort takes O(n²) time because it always scans the full suffix.",
+          "scene": {
+            "id": "complexity",
+            "label": "Selection Sort",
+            "big": "O(n²)",
+            "vs": "every suffix scanned"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why does selection sort run in O(n²) time even on a sorted array?",
+        "options": [
+          "It must scan the entire unsorted suffix to find each minimum.",
+          "It splits the array into two halves at every recursive step.",
+          "It shifts all preceding elements to the right for every item."
+        ],
+        "answer": 0,
+        "fact": "Selection sort repeatedly selects the minimum element from the unsorted suffix and runs in O(n²) time.",
+        "why": [
+          "Selection sort cannot know an element is the minimum without comparing it against every item in the suffix.",
+          "Selection sort uses iterative nested loops, not recursive divide-and-conquer splits.",
+          "Insertion sort shifts elements rightward, whereas selection sort performs direct swaps into place."
+        ],
+        "see": "visualizer?op=selectionSort"
+      }
+    }
+  ]
+}

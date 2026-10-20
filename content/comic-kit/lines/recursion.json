@@ -1,0 +1,627 @@
+{
+  "topicId": "recursion",
+  "arcs": [
+    {
+      "id": "russian-dolls",
+      "title": "The Russian Dolls",
+      "lines": [
+        {
+          "id": "re-d-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "nested-doll",
+          "fact": "A recursive function is a function that calls itself directly or indirectly.",
+          "text": "A large wooden doll holds another identical doll nestled inside it.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)"
+            ],
+            "top": true,
+            "note": "outer doll"
+          }
+        },
+        {
+          "id": "re-d-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "recursive-step",
+          "fact": "The recursive case breaks the input into smaller subproblems and calls the function again.",
+          "text": "To solve the big doll, we must first unpack the smaller doll inside.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)",
+              "doll(2)"
+            ],
+            "top": true,
+            "note": "smaller doll"
+          }
+        },
+        {
+          "id": "re-d-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-push",
+          "fact": "Each function call allocates an activation frame on the call stack to store parameters and local variables.",
+          "text": "Each doll opened pushes a new activation frame onto the call stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)",
+              "doll(2)",
+              "doll(1)"
+            ],
+            "top": true,
+            "note": "stack grows"
+          }
+        },
+        {
+          "id": "re-d-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "base-doll",
+          "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+          "text": "Finally we reach the tiny solid doll that cannot be opened.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)",
+              "doll(2)",
+              "doll(1)",
+              "doll(0)"
+            ],
+            "top": true,
+            "hi": [
+              3
+            ],
+            "note": "solid doll"
+          }
+        },
+        {
+          "id": "re-d-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "base-return",
+          "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+          "text": "That tiny solid figurine is our base case, returning an immediate value.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)",
+              "doll(2)",
+              "doll(1)"
+            ],
+            "outgoing": "doll(0)=1",
+            "top": true,
+            "note": "base answer"
+          }
+        },
+        {
+          "id": "re-d-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-pop",
+          "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+          "text": "Each doll uses the inner answer, closes up, and pops off the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "doll(3)"
+            ],
+            "outgoing": "doll(1)=1",
+            "top": true,
+            "note": "popping frames"
+          }
+        },
+        {
+          "id": "re-d-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "stack-overflow",
+          "fact": "Without a reachable base case, infinite recursion exhausts stack memory and causes a stack overflow.",
+          "text": "Dolls that never reach a solid base case exhaust memory in stack overflow.",
+          "scene": {
+            "id": "complexity",
+            "label": "No base case",
+            "big": "Stack overflow",
+            "vs": "infinite depth"
+          }
+        },
+        {
+          "id": "re-d-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "linear-cost",
+          "fact": "Calculating factorial recursively has a recurrence of T(n) = T(n - 1) + O(1), running in O(n) time and O(n) stack space.",
+          "text": "Linear nesting with n calls takes O(n) time and O(n) stack memory.",
+          "scene": {
+            "id": "complexity",
+            "label": "Factorial recurrence",
+            "big": "O(n)",
+            "vs": "stack space"
+          }
+        },
+        {
+          "id": "re-d-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "clean-return",
+          "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+          "text": "All nested dolls have returned, leaving the call stack completely empty.",
+          "scene": {
+            "id": "stack",
+            "values": [],
+            "note": "empty stack"
+          }
+        },
+        {
+          "id": "re-d-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "iterative-alternative",
+          "fact": "Every recursive algorithm can also be implemented iteratively using an explicit stack or loop.",
+          "text": "Any recursive nesting can alternatively be rewritten using an explicit loop.",
+          "scene": {
+            "id": "complexity",
+            "label": "Equivalence",
+            "big": "O(n)",
+            "vs": "iterative loop"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What happens if a recursive function does not define a reachable base case?",
+        "options": [
+          "The call stack exhausts memory and triggers a stack overflow.",
+          "The function switches automatically into an optimized loop.",
+          "It returns null immediately without executing any frames."
+        ],
+        "answer": 0,
+        "fact": "Without a reachable base case, infinite recursion exhausts stack memory and causes a stack overflow.",
+        "why": [
+          "Every recursive call consumes a new activation frame until stack memory is exhausted, throwing an overflow.",
+          "Compilers cannot guess a missing base case; infinite calls continue allocating until memory is exhausted.",
+          "Execution does not stop with null; calls pile up continuously until the program crashes."
+        ]
+      }
+    },
+    {
+      "id": "line-query",
+      "title": "The Line Query",
+      "lines": [
+        {
+          "id": "re-q-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "line-problem",
+          "fact": "A recursive function is a function that calls itself directly or indirectly.",
+          "text": "You stand in a long line and wonder how many people are ahead.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hi": [
+              3
+            ],
+            "tags": {
+              "3": "you"
+            }
+          }
+        },
+        {
+          "id": "re-q-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "ask-subproblem",
+          "fact": "The recursive case breaks the input into smaller subproblems and calls the function again.",
+          "text": "Instead of walking forward, you tap the person directly ahead and ask.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hi": [
+              2,
+              3
+            ],
+            "note": "ask ahead"
+          }
+        },
+        {
+          "id": "re-q-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "chain-delegation",
+          "fact": "Each function call allocates an activation frame on the call stack to store parameters and local variables.",
+          "text": "That person turns around and asks the person ahead of them too.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "person(4)",
+              "person(3)"
+            ],
+            "top": true,
+            "note": "waiting for reply"
+          }
+        },
+        {
+          "id": "re-q-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "stack-growth",
+          "fact": "Each function call allocates an activation frame on the call stack to store parameters and local variables.",
+          "text": "The question propagates forward, building up waiting callers on the stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "person(4)",
+              "person(3)",
+              "person(2)"
+            ],
+            "top": true,
+            "note": "pending questions"
+          }
+        },
+        {
+          "id": "re-q-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "front-base",
+          "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+          "text": "The person at the front sees nobody ahead: that is the base case.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "person(4)",
+              "person(3)",
+              "person(2)",
+              "person(1)"
+            ],
+            "top": true,
+            "hi": [
+              3
+            ],
+            "note": "front: zero ahead"
+          }
+        },
+        {
+          "id": "re-q-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "return-one",
+          "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+          "text": "The front person answers zero, so the second person computes zero plus one.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "person(4)",
+              "person(3)",
+              "person(2)"
+            ],
+            "outgoing": "0+1=1",
+            "top": true
+          }
+        },
+        {
+          "id": "re-q-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "resume-caller",
+          "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+          "text": "Each caller resumes upon receiving their answer, adding one before passing back.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "person(4)"
+            ],
+            "outgoing": "2+1=3",
+            "top": true
+          }
+        },
+        {
+          "id": "re-q-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "tail-call",
+          "fact": "Tail recursion occurs when the recursive call is the very last operation performed before returning.",
+          "text": "If the return is the last action, tail call optimization could reuse frames.",
+          "scene": {
+            "id": "complexity",
+            "label": "Tail recursion",
+            "big": "O(1) space",
+            "vs": "stack reuse"
+          }
+        },
+        {
+          "id": "re-q-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "answer-received",
+          "fact": "The recursive case breaks the input into smaller subproblems and calls the function again.",
+          "text": "The answer reaches you cleanly: exactly three people stood ahead of you.",
+          "scene": {
+            "id": "row",
+            "values": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "tags": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        },
+        {
+          "id": "re-q-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "compiler-opt",
+          "fact": "Some compilers can optimize tail-recursive calls to run in O(1) auxiliary stack space like a loop.",
+          "text": "Some compilers optimize tail recursion into O(1) auxiliary stack space.",
+          "scene": {
+            "id": "complexity",
+            "label": "Optimized space",
+            "big": "O(1)",
+            "vs": "tail call"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "What role does the call stack play during recursive question forwarding?",
+        "options": [
+          "It stores parameters and return addresses for each pending invocation.",
+          "It sorts all inputs into ascending numerical order automatically.",
+          "It replaces the code with an iterative database query."
+        ],
+        "answer": 0,
+        "fact": "Each function call allocates an activation frame on the call stack to store parameters and local variables.",
+        "why": [
+          "Every function call requires memory to hold its arguments and know where to return once finished.",
+          "The call stack only manages function execution state and does not sort any values.",
+          "The call stack is in-memory execution bookkeeping, not an external database engine."
+        ]
+      }
+    },
+    {
+      "id": "mirror-chamber",
+      "title": "The Hall of Mirrors",
+      "lines": [
+        {
+          "id": "re-m-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "branch-reflection",
+          "fact": "A recursive function is a function that calls itself directly or indirectly.",
+          "text": "Stand between angled mirrors and one image splits into two reflections.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2
+            ]
+          }
+        },
+        {
+          "id": "re-m-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "binary-tree",
+          "fact": "Tree and graph traversals naturally lend themselves to recursive formulations.",
+          "text": "Each reflection branches into two further reflections, creating a growing tree.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0
+            ]
+          }
+        },
+        {
+          "id": "re-m-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "branching-calls",
+          "fact": "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time.",
+          "text": "Branching functions like naive Fibonacci spawn two recursive calls per step.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2
+            ],
+            "hi": [
+              1,
+              2
+            ],
+            "note": "fib(4) calls fib(3), fib(2)"
+          }
+        },
+        {
+          "id": "re-m-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "tree-leaves",
+          "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+          "text": "The tree deepens until reaching base cases like zero and one.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0
+            ],
+            "hi": [
+              4,
+              5,
+              6
+            ],
+            "note": "base leaves"
+          }
+        },
+        {
+          "id": "re-m-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "leaves-stop",
+          "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+          "text": "Every branch reaches a base case leaf and stops splitting further.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0
+            ],
+            "found": [
+              4,
+              5,
+              6
+            ]
+          }
+        },
+        {
+          "id": "re-m-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "combine-upward",
+          "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+          "text": "Leaf answers combine upward through parent nodes back to the root.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2
+            ],
+            "order": {
+              "0": 3,
+              "1": 1,
+              "2": 2
+            },
+            "note": "bottom up"
+          }
+        },
+        {
+          "id": "re-m-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "overlapping-work",
+          "fact": null,
+          "text": "Notice that subproblems repeat, causing redundant work across branches.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0
+            ],
+            "hi": [
+              3,
+              2
+            ],
+            "note": "fib(2) repeated"
+          }
+        },
+        {
+          "id": "re-m-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "exponential-growth",
+          "fact": "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time.",
+          "text": "Branching twice at every step produces an explosive O(2ⁿ) time complexity.",
+          "scene": {
+            "id": "complexity",
+            "label": "Branching cost",
+            "big": "O(2ⁿ)",
+            "vs": "exponential tree"
+          }
+        },
+        {
+          "id": "re-m-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "natural-tree",
+          "fact": "Tree and graph traversals naturally lend themselves to recursive formulations.",
+          "text": "Tree structures naturally map onto recursive divide and conquer logic.",
+          "scene": {
+            "id": "tree",
+            "nodes": [
+              4,
+              3,
+              2,
+              2,
+              1,
+              1,
+              0
+            ],
+            "path": [
+              0,
+              1,
+              3
+            ]
+          }
+        },
+        {
+          "id": "re-m-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "tree-complexity",
+          "fact": "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time.",
+          "text": "Without memoization, branching recursion leads to exponential O(2ⁿ) calls.",
+          "scene": {
+            "id": "complexity",
+            "label": "Naive Fibonacci",
+            "big": "O(2ⁿ)",
+            "vs": "memoize for O(n)"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why does naive recursive Fibonacci run in exponential O(2ⁿ) time?",
+        "options": [
+          "Each step spawns two subproblems, causing identical subtrees to repeat.",
+          "The call stack memory is limited to two frames total.",
+          "Binary search cannot divide numbers that are odd."
+        ],
+        "answer": 0,
+        "fact": "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time.",
+        "why": [
+          "Doubling calls at every level creates an exponential tree of 2ⁿ nodes with repeated recalculations.",
+          "The stack depth for naive Fibonacci is O(n), not capped at two frames.",
+          "Binary search is an unrelated search algorithm and has no role in Fibonacci."
+        ]
+      }
+    }
+  ]
+}

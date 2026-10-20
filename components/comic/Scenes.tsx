@@ -1132,6 +1132,228 @@ function Tree({
   );
 }
 
+// --- graph -----------------------------------------------------------------------
+
+interface GraphProps {
+  nodes?: number[];
+  edges?: [number, number][];
+  directed?: boolean;
+  weights?: number[];
+  hi?: number[];
+  visited?: number[];
+  path?: number[];
+  order?: Record<string | number, number> | number[];
+  note?: string;
+}
+
+function Graph({
+  nodes = [],
+  edges = [],
+  directed = false,
+  weights,
+  hi = [],
+  visited = [],
+  path = [],
+  order,
+  note,
+  palette,
+  isActive = true,
+}: GraphProps & P) {
+  const [inspected, setInspected] = useState<number | null>(null);
+
+  const n = nodes.length;
+  const cx = 160;
+  const cy = 84;
+  const rx = 105;
+  const ry = 46;
+
+  const coords = nodes.map((_, i) => {
+    const deg = -90 + (i * 360) / (n || 1);
+    const rad = (deg * Math.PI) / 180;
+    return {
+      x: cx + rx * Math.cos(rad),
+      y: cy + ry * Math.sin(rad),
+    };
+  });
+
+  const getOrder = (i: number): number | undefined => {
+    if (!order) return undefined;
+    if (Array.isArray(order)) return order[i];
+    return (order as Record<string, number>)[String(i)] ?? (order as Record<string, number>)[i];
+  };
+
+  const isEdgeInPath = (u: number, v: number): boolean => {
+    if (path.length < 2) return false;
+    for (let k = 0; k < path.length - 1; k++) {
+      if ((path[k] === u && path[k + 1] === v) || (path[k] === v && path[k + 1] === u)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  return (
+    <svg
+      viewBox="0 0 320 160"
+      className={`w-full h-full ${isActive ? "scene-pop" : ""}`}
+      preserveAspectRatio="xMidYMid meet"
+      onClick={() => setInspected(null)}
+    >
+      <defs>
+        <marker id={`graph-arrow-${palette.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill={palette.accent} />
+        </marker>
+        <marker id={`graph-arrow-ink-${palette.id}`} viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0 0 L10 5 L0 10 Z" fill={palette.ink} />
+        </marker>
+      </defs>
+
+      {note && (
+        <g transform="translate(16 12) rotate(-3)">
+          <rect width={note.length * 8 + 18} height="24" fill={palette.soft} stroke={palette.ink} strokeWidth="2" />
+          <text x="9" y="16" fontSize="12" fontWeight="700" fill={palette.ink} fontFamily={FONT}>
+            {note}
+          </text>
+        </g>
+      )}
+
+      {edges.map(([u, v], idx) => {
+        if (u >= n || v >= n || u < 0 || v < 0) return null;
+        const p1 = coords[u];
+        const p2 = coords[v];
+        if (!p1 || !p2) return null;
+        const dx = p2.x - p1.x;
+        const dy = p2.y - p1.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist === 0) return null;
+        const ux = dx / dist;
+        const uy = dy / dist;
+        const R = 14;
+        const x2 = directed ? p2.x - ux * (R + 2) : p2.x;
+        const y2 = directed ? p2.y - uy * (R + 2) : p2.y;
+        const isPathEdge = isEdgeInPath(u, v);
+        const strokeColor = isPathEdge ? palette.accent : palette.ink;
+        const marker = directed
+          ? `url(#${isPathEdge ? "graph-arrow" : "graph-arrow-ink"}-${palette.id})`
+          : undefined;
+
+        return (
+          <line
+            key={`edge-${u}-${v}-${idx}`}
+            x1={p1.x}
+            y1={p1.y}
+            x2={x2}
+            y2={y2}
+            stroke={strokeColor}
+            strokeWidth={isPathEdge ? "3.5" : "2"}
+            markerEnd={marker}
+          />
+        );
+      })}
+
+      {weights &&
+        edges.map(([u, v], idx) => {
+          const w = weights[idx];
+          if (w === undefined || u >= n || v >= n || u < 0 || v < 0) return null;
+          const p1 = coords[u];
+          const p2 = coords[v];
+          if (!p1 || !p2) return null;
+          const mx = (p1.x + p2.x) / 2;
+          const my = (p1.y + p2.y) / 2;
+          const wStr = String(w);
+          const badgeW = Math.max(16, wStr.length * 7 + 8);
+          return (
+            <g key={`weight-${u}-${v}-${idx}`}>
+              <rect
+                x={mx - badgeW / 2}
+                y={my - 7}
+                width={badgeW}
+                height="14"
+                rx="3"
+                fill={palette.paper}
+                stroke={palette.ink}
+                strokeWidth="1"
+              />
+              <text
+                x={mx}
+                y={my + 3.5}
+                textAnchor="middle"
+                fontSize="9"
+                fontWeight="700"
+                fill={palette.ink}
+                fontFamily={FONT}
+              >
+                {w}
+              </text>
+            </g>
+          );
+        })}
+
+      {nodes.map((v, i) => {
+        const pt = coords[i];
+        if (!pt) return null;
+        const isHi = hi.includes(i);
+        const isVisited = visited.includes(i);
+        const isInspected = inspected === i;
+        const fill = isHi ? palette.accent : isVisited ? palette.soft : "#FFFFFF";
+        const txtColor = isHi ? palette.paper : palette.ink;
+        const ord = getOrder(i);
+
+        return (
+          <g
+            key={i}
+            style={{ cursor: "pointer" }}
+            onMouseEnter={() => setInspected(i)}
+            onMouseLeave={() => setInspected((c) => (c === i ? null : c))}
+            onClick={(e) => {
+              e.stopPropagation();
+              setInspected((c) => (c === i ? null : i));
+            }}
+          >
+            <title>{`node ${v}`}</title>
+            <circle
+              cx={pt.x}
+              cy={pt.y}
+              r="14"
+              fill={fill}
+              stroke={isInspected ? palette.accent : palette.ink}
+              strokeWidth={isInspected ? "4" : "2.5"}
+            />
+            <text
+              x={pt.x}
+              y={pt.y + 4}
+              textAnchor="middle"
+              fontSize="11"
+              fontWeight="700"
+              fill={txtColor}
+              fontFamily={FONT}
+            >
+              {v}
+            </text>
+
+            {ord !== undefined && (
+              <g>
+                <circle cx={pt.x + 12} cy={pt.y - 11} r="7" fill={palette.ink} />
+                <text
+                  x={pt.x + 12}
+                  y={pt.y - 8}
+                  textAnchor="middle"
+                  fontSize="8"
+                  fontWeight="700"
+                  fill={palette.paper}
+                  fontFamily={FONT}
+                >
+                  {ord}
+                </text>
+              </g>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 export function Scene({ spec, palette, isActive = true }: { spec: SceneSpec; palette: KitPalette; isActive?: boolean }) {
   const s = spec as Record<string, unknown>;
   switch (spec.id) {
@@ -1153,6 +1375,8 @@ export function Scene({ spec, palette, isActive = true }: { spec: SceneSpec; pal
       return <Queue {...(s as unknown as QueueProps)} palette={palette} isActive={isActive} />;
     case "tree":
       return <Tree {...(s as unknown as TreeProps)} palette={palette} isActive={isActive} />;
+    case "graph":
+      return <Graph {...(s as unknown as GraphProps)} palette={palette} isActive={isActive} />;
     default:
       return null;
   }

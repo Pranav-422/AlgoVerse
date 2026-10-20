@@ -1,0 +1,34 @@
+{
+  "id": "graphs-pool-friend-network",
+  "authoring": "generated",
+  "model": "gemini-3.8-flash-high (Antigravity CLI)",
+  "promptUsed": "Picked by the Antigravity CLI from this topic's dialogue bank and the comic kit, following SELECTION_RULES; validated by scripts/check-comic-kit.mts.",
+  "selection": {
+    "layout": "hero-5",
+    "palette": "violet-night",
+    "design": "bold-ink",
+    "theme": "library",
+    "panels": [
+      {
+        "line": "gr-f-s1",
+        "pose": "explain"
+      },
+      {
+        "line": "gr-f-1",
+        "pose": "think"
+      },
+      {
+        "line": "gr-f-2",
+        "pose": "point"
+      },
+      {
+        "line": "gr-f-3",
+        "pose": "surprised"
+      },
+      {
+        "line": "gr-f-p1",
+        "pose": "cheer"
+      }
+    ]
+  }
+}

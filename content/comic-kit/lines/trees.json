@@ -476,7 +476,12 @@
           "Exactly one child per level of height."
         ],
         "answer": 0,
-        "fact": "In a binary tree, every node has at most two children, called left and right."
+        "fact": "In a binary tree, every node has at most two children, called left and right.",
+        "why": [
+          "In a binary tree, every node has at most two children: left and right.",
+          "General trees permit any number of children, but binary trees limit each node to two.",
+          "Binary tree nodes can have zero, one, or two children regardless of level."
+        ]
       }
     },
     {
@@ -1017,7 +1022,12 @@
           "All nodes are stored in contiguous array memory."
         ],
         "answer": 1,
-        "fact": "Searching a balanced binary search tree takes O(log n) time by discarding half the remaining nodes at each step."
+        "fact": "Searching a balanced binary search tree takes O(log n) time by discarding half the remaining nodes at each step.",
+        "why": [
+          "BST search walks down from the root along a single path, not level by level.",
+          "Comparing against each node rules out an entire subtree, halving remaining candidates each step.",
+          "Binary search tree nodes are linked by pointers, not packed into contiguous array memory."
+        ]
       }
     },
     {
@@ -1631,7 +1641,12 @@
           "Values are grouped level by level from root to leaves."
         ],
         "answer": 1,
-        "fact": "An inorder traversal of a binary search tree produces values in sorted ascending order."
+        "fact": "An inorder traversal of a binary search tree produces values in sorted ascending order.",
+        "why": [
+          "Inorder traversal follows key order (left, root, right), not the historical order of insertion.",
+          "Visiting left subtree, root, then right subtree yields keys in sorted ascending order.",
+          "Level-by-level output comes from breadth-first traversal, not depth-first inorder traversal."
+        ]
       }
     },
     {
@@ -1797,7 +1812,12 @@
           "Linked List"
         ],
         "answer": 1,
-        "fact": "Level-order traversal visits nodes level by level using a queue and takes O(n) time."
+        "fact": "Level-order traversal visits nodes level by level using a queue and takes O(n) time.",
+        "why": [
+          "A stack processes nodes in LIFO order, resulting in depth-first traversal rather than level-order.",
+          "A queue provides FIFO ordering, ensuring nodes are visited level by level from root down.",
+          "A plain linked list lacks the FIFO discipline needed to track nodes level by level."
+        ]
       }
     }
   ]

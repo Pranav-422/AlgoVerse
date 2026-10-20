@@ -1,0 +1,30 @@
+{
+  "id": "sorting-pool-card-hand",
+  "authoring": "generated",
+  "model": "gemini-3.8-flash-high (Antigravity CLI)",
+  "promptUsed": "Picked by the Antigravity CLI from this topic's dialogue bank and the comic kit, following SELECTION_RULES; validated by scripts/check-comic-kit.mts.",
+  "selection": {
+    "layout": "strip-4",
+    "palette": "amber-paper",
+    "design": "bold-ink",
+    "theme": "library",
+    "panels": [
+      {
+        "line": "so-c-s1",
+        "pose": "explain"
+      },
+      {
+        "line": "so-c-1",
+        "pose": "point"
+      },
+      {
+        "line": "so-c-4",
+        "pose": "think"
+      },
+      {
+        "line": "so-c-p1",
+        "pose": "cheer"
+      }
+    ]
+  }
+}

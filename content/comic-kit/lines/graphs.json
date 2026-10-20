@@ -1,0 +1,986 @@
+{
+  "topicId": "graphs",
+  "arcs": [
+    {
+      "id": "metro-map",
+      "title": "The Metro Map",
+      "lines": [
+        {
+          "id": "gr-m-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "vertices-edges",
+          "fact": "A graph G = (V, E) consists of a set of vertices V and a set of edges E.",
+          "text": "Think of subway stations as vertices and transit tracks as edges.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "note": "metro stations"
+          }
+        },
+        {
+          "id": "gr-m-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "bfs-concept",
+          "fact": "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time.",
+          "text": "To find the fewest train hops, explore stations radiating outward level by level.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "hi": [
+              0
+            ],
+            "note": "start station"
+          }
+        },
+        {
+          "id": "gr-m-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "bfs-queue",
+          "fact": "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time.",
+          "text": "Breadth-first search places unvisited neighbor stations into a FIFO queue.",
+          "scene": {
+            "id": "queue",
+            "values": [
+              1,
+              2
+            ],
+            "front": 0,
+            "rear": 1,
+            "note": "frontier stations"
+          }
+        },
+        {
+          "id": "gr-m-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "mark-visited",
+          "fact": "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time.",
+          "text": "Dequeue each station, visit all its tracks, and mark it visited.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "visited": [
+              0,
+              1
+            ],
+            "hi": [
+              1
+            ]
+          }
+        },
+        {
+          "id": "gr-m-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "avoid-loops",
+          "fact": null,
+          "text": "Tracking visited stations prevents wandering in endless loops.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "visited": [
+              0,
+              1,
+              2
+            ]
+          }
+        },
+        {
+          "id": "gr-m-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "shortest-hops",
+          "fact": "BFS finds the shortest path in terms of edge count in an unweighted graph.",
+          "text": "The first time BFS touches our destination gives the shortest path.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "path": [
+              0,
+              1,
+              3
+            ],
+            "visited": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        },
+        {
+          "id": "gr-m-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "bfs-complexity",
+          "fact": "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time.",
+          "text": "Exploring all stations and tracks costs O(V + E) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "BFS traversal",
+            "big": "O(V + E)",
+            "vs": "all vertices and edges"
+          }
+        },
+        {
+          "id": "gr-m-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "undirected",
+          "fact": "An undirected edge connects two vertices symmetrically, while a directed edge goes in one direction.",
+          "text": "If tracks allow two-way travel, every connection is an undirected edge.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "note": "two-way tracks"
+          }
+        },
+        {
+          "id": "gr-m-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "destination-reached",
+          "fact": "BFS finds the shortest path in terms of edge count in an unweighted graph.",
+          "text": "You reach your stop via the fewest subway transfers possible.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "path": [
+              0,
+              1,
+              3
+            ]
+          }
+        },
+        {
+          "id": "gr-m-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "connected-graph",
+          "fact": "A graph is connected if there is a path between every pair of vertices.",
+          "text": "A graph where every station can reach every other station is connected.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                3
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "visited": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "note": "fully connected"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why does breadth-first search guarantee the shortest path in an unweighted graph?",
+        "options": [
+          "It explores vertices in order of increasing distance from the starting source.",
+          "It sorts all vertices by numerical label before traversing any tracks.",
+          "It always explores as deeply as possible down a single line first."
+        ],
+        "answer": 0,
+        "fact": "BFS finds the shortest path in terms of edge count in an unweighted graph.",
+        "why": [
+          "Because edges have uniform weight, expanding level by level ensures the target is discovered in minimum hops.",
+          "BFS discovers vertices by queue order of distance, not by sorting vertex numbers.",
+          "Exploring as deep as possible is depth-first search, which does not guarantee shortest paths."
+        ]
+      }
+    },
+    {
+      "id": "friend-network",
+      "title": "The Friend Network",
+      "lines": [
+        {
+          "id": "gr-f-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "social-graph",
+          "fact": "A graph G = (V, E) consists of a set of vertices V and a set of edges E.",
+          "text": "In social networks, people are vertices and friendships form edges between them.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "directed": true,
+            "note": "social network"
+          }
+        },
+        {
+          "id": "gr-f-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "directed-edge",
+          "fact": "An undirected edge connects two vertices symmetrically, while a directed edge goes in one direction.",
+          "text": "Following someone does not mean they follow back: that is a directed edge.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "directed": true,
+            "hi": [
+              0,
+              1
+            ],
+            "note": "one-way follow"
+          }
+        },
+        {
+          "id": "gr-f-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "adj-list",
+          "fact": "An adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory.",
+          "text": "Store each person's friends in a list to avoid wasting memory.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "directed": true,
+            "note": "adjacency list"
+          }
+        },
+        {
+          "id": "gr-f-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "adj-space",
+          "fact": "An adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory.",
+          "text": "An adjacency list stores only actual connections, taking O(V + E) space.",
+          "scene": {
+            "id": "complexity",
+            "label": "Adjacency List Space",
+            "big": "O(V + E)",
+            "vs": "sparse graph friendly"
+          }
+        },
+        {
+          "id": "gr-f-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "matrix-lookup",
+          "fact": "In an adjacency matrix of size V × V, checking if an edge exists takes O(1) time.",
+          "text": "Alternatively, a full grid table checks if two people are connected in O(1).",
+          "scene": {
+            "id": "complexity",
+            "label": "Matrix lookup",
+            "big": "O(1)",
+            "vs": "instant lookup"
+          }
+        },
+        {
+          "id": "gr-f-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "matrix-waste",
+          "fact": "An adjacency matrix requires O(V²) memory, which can be wasteful for sparse graphs.",
+          "text": "However, that grid matrix requires O(V²) space, wasting memory on empty cells.",
+          "scene": {
+            "id": "complexity",
+            "label": "Adjacency Matrix Space",
+            "big": "O(V²)",
+            "vs": "wasted on sparse"
+          }
+        },
+        {
+          "id": "gr-f-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "tree-graph",
+          "fact": "A tree is a connected undirected graph with no cycles and exactly V − 1 edges.",
+          "text": "A tree is an undirected connected graph with no cycles and V − 1 edges.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                2
+              ],
+              [
+                0,
+                3
+              ]
+            ],
+            "note": "tree: 3 edges, 4 nodes"
+          }
+        },
+        {
+          "id": "gr-f-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "detect-cycle",
+          "fact": "A cycle is a path of edges that starts and ends at the same vertex.",
+          "text": "Following connections from friend to friend until returning home forms a cycle.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                2,
+                3
+              ]
+            ],
+            "directed": true,
+            "path": [
+              0,
+              1,
+              2,
+              0
+            ],
+            "note": "cycle detected"
+          }
+        },
+        {
+          "id": "gr-f-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "efficient-lists",
+          "fact": "An adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory.",
+          "text": "Adjacency lists keep massive social networks light and efficient.",
+          "scene": {
+            "id": "complexity",
+            "label": "Sparse Graph",
+            "big": "O(V + E)",
+            "vs": "scalable storage"
+          }
+        },
+        {
+          "id": "gr-f-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "storage-choice",
+          "fact": "An adjacency matrix requires O(V²) memory, which can be wasteful for sparse graphs.",
+          "text": "Choose matrices for dense graphs, but lists whenever edges are sparse.",
+          "scene": {
+            "id": "complexity",
+            "label": "Storage Trade-off",
+            "big": "O(V + E) vs O(V²)",
+            "vs": "sparse vs dense"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "Why are adjacency lists preferred over adjacency matrices for large sparse graphs?",
+        "options": [
+          "They allocate memory only for existing edges, taking O(V + E) space.",
+          "They guarantee O(1) time to check if any edge exists.",
+          "They convert directed edges into symmetric undirected connections."
+        ],
+        "answer": 0,
+        "fact": "An adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory.",
+        "why": [
+          "Adjacency lists store only existing edges, saving substantial memory over a V × V matrix.",
+          "Adjacency matrices provide O(1) edge lookups, whereas adjacency lists take time proportional to vertex degree.",
+          "Adjacency lists represent directed and undirected graphs faithfully without altering edge directions."
+        ]
+      }
+    },
+    {
+      "id": "city-roads",
+      "title": "The City Roads",
+      "lines": [
+        {
+          "id": "gr-r-s1",
+          "role": "setup",
+          "level": "basic",
+          "concept": "road-map",
+          "fact": "A graph G = (V, E) consists of a set of vertices V and a set of edges E.",
+          "text": "Intersections are vertices and roads connecting them are edges.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "note": "city road map"
+          }
+        },
+        {
+          "id": "gr-r-s2",
+          "role": "setup",
+          "level": "basic",
+          "concept": "weighted-edges",
+          "fact": "A weighted graph assigns a numerical weight or cost to each edge.",
+          "text": "Toll amounts or travel distances assign numerical weights to each road.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "weights": [
+              4,
+              8,
+              2,
+              7,
+              3
+            ],
+            "note": "weighted roads"
+          }
+        },
+        {
+          "id": "gr-r-1",
+          "role": "step",
+          "level": "basic",
+          "concept": "dfs-drive",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "Depth-first search picks an avenue and drives as deep as possible.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "path": [
+              0,
+              1,
+              2
+            ],
+            "hi": [
+              2
+            ],
+            "note": "drive deep"
+          }
+        },
+        {
+          "id": "gr-r-2",
+          "role": "step",
+          "level": "basic",
+          "concept": "dfs-stack",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "Each visited intersection is pushed onto an explicit stack or call stack.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "corner(0)",
+              "corner(1)",
+              "corner(2)"
+            ],
+            "top": true,
+            "note": "dfs stack"
+          }
+        },
+        {
+          "id": "gr-r-3",
+          "role": "step",
+          "level": "basic",
+          "concept": "dfs-backtrack",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "When hitting a dead end or visited node, backtrack to the previous intersection.",
+          "scene": {
+            "id": "stack",
+            "values": [
+              "corner(0)",
+              "corner(1)"
+            ],
+            "outgoing": "corner(2)",
+            "top": true,
+            "note": "backtracking"
+          }
+        },
+        {
+          "id": "gr-r-4",
+          "role": "step",
+          "level": "basic",
+          "concept": "block-cycle",
+          "fact": "A cycle is a path of edges that starts and ends at the same vertex.",
+          "text": "Driving around a block and returning to our starting intersection forms a cycle.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "path": [
+              0,
+              1,
+              2,
+              3,
+              0
+            ],
+            "note": "city block cycle"
+          }
+        },
+        {
+          "id": "gr-r-5",
+          "role": "step",
+          "level": "detail",
+          "concept": "dfs-time",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "Traversing all reachable city streets with DFS takes O(V + E) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "DFS exploration",
+            "big": "O(V + E)",
+            "vs": "all intersections and roads"
+          }
+        },
+        {
+          "id": "gr-r-6",
+          "role": "step",
+          "level": "detail",
+          "concept": "dfs-vs-bfs",
+          "fact": null,
+          "text": "Unlike BFS, depth-first search does not guarantee finding the shortest path.",
+          "scene": {
+            "id": "complexity",
+            "label": "Path quality",
+            "big": "No shortest guarantee",
+            "vs": "deep vs broad"
+          }
+        },
+        {
+          "id": "gr-r-p1",
+          "role": "payoff",
+          "level": "basic",
+          "concept": "all-streets-seen",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "DFS explores every hidden alleyway before heading back to home base.",
+          "scene": {
+            "id": "graph",
+            "nodes": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "edges": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              [
+                3,
+                0
+              ],
+              [
+                1,
+                3
+              ]
+            ],
+            "visited": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        },
+        {
+          "id": "gr-r-p2",
+          "role": "payoff",
+          "level": "detail",
+          "concept": "traversal-cost",
+          "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+          "text": "Both BFS and DFS visit all connected vertices in linear O(V + E) time.",
+          "scene": {
+            "id": "complexity",
+            "label": "Graph Traversal",
+            "big": "O(V + E)",
+            "vs": "linear scan"
+          }
+        }
+      ],
+      "quiz": {
+        "q": "How does depth-first search determine which direction to explore?",
+        "options": [
+          "It follows each branch as deep as possible before backtracking.",
+          "It explores all immediate neighbors level by level using a queue.",
+          "It sorts vertices by edge weight before visiting any node."
+        ],
+        "answer": 0,
+        "fact": "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time.",
+        "why": [
+          "DFS advances deeply down a single path until reaching a dead end, then backtracks.",
+          "Level-by-level exploration using a queue describes breadth-first search, not depth-first search.",
+          "Standard DFS does not sort by edge weights; that strategy is used in Dijkstra or Prim."
+        ]
+      }
+    }
+  ]
+}

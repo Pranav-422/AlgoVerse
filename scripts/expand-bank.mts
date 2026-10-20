@@ -200,7 +200,7 @@ for (const topicId of topics) {
       `TASK: write ONE new arc — a short story with a fresh everyday analogy and fresh example values:`,
       `- 2–3 setup lines (at least one basic), 6–8 step lines in story order (each with a beat; give 2 beats an alternative line with the same beat, placed right after it), 2–3 payoff lines (at least one basic)`,
       `- at least 4 step lines must be level "basic"`,
-      `- a quiz: {"q": "≤ 25 words", "options": [three answers], "answer": 0|1|2, "fact": "one Core-facts bullet copied exactly"}`,
+      `- a quiz: {"q": "≤ 25 words", "options": [three answers], "answer": 0|1|2, "fact": "one Core-facts bullet copied exactly", "why": [one line per option: why it is right, or the misconception it traps]}`,
       ``,
       `OUTPUT — strict JSON only: {"id": "kebab-case", "title": "Short Title", "lines": [LINE, ...], "quiz": {...}}`,
     ].join("\n");

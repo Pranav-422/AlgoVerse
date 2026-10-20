@@ -1,0 +1,30 @@
+{
+  "id": "recursion-pool-line-query",
+  "authoring": "generated",
+  "model": "gemini-3.8-flash-high (Antigravity CLI)",
+  "promptUsed": "Picked by the Antigravity CLI from this topic's dialogue bank and the comic kit, following SELECTION_RULES; validated by scripts/check-comic-kit.mts.",
+  "selection": {
+    "layout": "strip-4",
+    "palette": "amber-paper",
+    "design": "sketch",
+    "theme": "warehouse",
+    "panels": [
+      {
+        "line": "re-q-s1",
+        "pose": "explain"
+      },
+      {
+        "line": "re-q-1",
+        "pose": "think"
+      },
+      {
+        "line": "re-q-3",
+        "pose": "point"
+      },
+      {
+        "line": "re-q-p1",
+        "pose": "cheer"
+      }
+    ]
+  }
+}

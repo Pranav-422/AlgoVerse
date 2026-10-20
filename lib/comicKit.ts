@@ -338,6 +338,12 @@ export function lintBank(bank: DialogueBank, kit: Kit, coreFacts: string[]): str
       if (!coreFacts.some((f) => f.trim() === q.fact.trim())) {
         errs.push(`arc ${arc.id}: quiz fact "${q.fact}" not found verbatim in core facts`);
       }
+      if (!Array.isArray(q.why) || q.why.length !== 3 || q.why.some((w) => typeof w !== "string" || !w.trim())) {
+        errs.push(`arc ${arc.id}: quiz needs "why": 3 non-empty explanations, one per option`);
+      } else {
+        for (const [i, w] of q.why.entries())
+          if (w.split(/\s+/).filter(Boolean).length > 25) errs.push(`arc ${arc.id}: why[${i}] is over 25 words`);
+      }
     }
     for (const l of arc.lines) {
       if (ids.has(l.id)) errs.push(`${l.id}: duplicate id`);

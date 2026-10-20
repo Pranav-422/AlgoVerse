@@ -476,11 +476,17 @@
         "q": "Why does reaching the k-th node of a linked list take O(k) time?",
         "options": [
           "Pointers must be followed sequentially starting from the head node.",
-          "Each pointer lookup requires computing a complex memory hash.",
-          "All nodes must be sorted before traversing the chain."
+          "The address can be computed with pointer arithmetic like an array.",
+          "A binary search jumps directly to the target node in O(log n)."
         ],
         "answer": 0,
-        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+        "why": [
+          "Reaching the k-th node requires walking through k pointers one by one starting from head.",
+          "Nodes are scattered in non-contiguous memory, so addresses cannot be computed using pointer arithmetic.",
+          "Binary search requires random access by index, but linked lists must be traversed sequentially."
+        ],
+        "see": "visualizer?op=traverse"
       }
     },
     {
@@ -922,7 +928,13 @@
           "Traverse to the tail node and connect it back to the new head."
         ],
         "answer": 1,
-        "fact": "To insert at the head, point the new node's next to head, then update head to the new node."
+        "fact": "To insert at the head, point the new node's next to head, then update head to the new node.",
+        "why": [
+          "Linked list nodes do not shift in memory — only pointer references are updated.",
+          "Linking the new node to current head and updating the head pointer runs in O(1).",
+          "Inserting at the head only touches the head pointer; the tail does not need updating."
+        ],
+        "see": "visualizer?op=insertBegin"
       }
     },
     {
@@ -1358,7 +1370,13 @@
           "By copying all node values into a temporary stack array."
         ],
         "answer": 0,
-        "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)."
+        "fact": "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n).",
+        "why": [
+          "Three pointers (prev, curr, next) redirect each node's next link in one pass in O(n).",
+          "Singly linked lists have no backward pointers, making repeated end-to-end value swaps inefficient.",
+          "Copying values to an auxiliary stack requires O(n) extra space instead of in-place reversal."
+        ],
+        "see": "visualizer?op=reverse"
       }
     },
     {
@@ -1565,10 +1583,16 @@
         "options": [
           "Because nodes are not contiguous.",
           "Because pointers must be followed from the head.",
-          "Because the head pointer is null."
+          "Because binary search must locate the target node along the chain."
         ],
         "answer": 1,
-        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+        "why": [
+          "Non-contiguous memory explains why indexing is impossible, but following pointers causes the O(k) time.",
+          "To reach the k-th node, you must start at head and step through k pointers.",
+          "Binary search requires random access, which linked lists do not support."
+        ],
+        "see": "visualizer?op=traverse"
       }
     },
     {
@@ -1773,10 +1797,16 @@
         "options": [
           "Memory is fragmented",
           "Pointers must be followed from the head",
-          "Nodes are stored in a stack"
+          "Pointer arithmetic calculates each step in memory"
         ],
         "answer": 1,
-        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head."
+        "fact": "Access to the k-th node is O(k) because pointers must be followed from the head.",
+        "why": [
+          "Fragmented memory prevents direct address calculation, but traversing pointers causes the O(k) time.",
+          "Each element is reached by traversing pointers sequentially from the head node.",
+          "Pointer arithmetic requires contiguous memory, but linked list nodes are scattered arbitrarily."
+        ],
+        "see": "visualizer?op=traverse"
       }
     }
   ]
