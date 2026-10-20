@@ -2,6 +2,9 @@
 import { runArray, ARRAY_PARAMS, type ArrayOp } from "../lib/viz/arrayEngine.ts";
 import { runList, LIST_PARAMS, type ListOp } from "../lib/viz/listEngine.ts";
 import { runStack, runQueue, STACK_PARAMS, QUEUE_PARAMS, type StackOp, type QueueOp } from "../lib/viz/stackQueueEngine.ts";
+import { runTree, TREE_PARAMS, type TreeOp } from "../lib/viz/treeEngine.ts";
+import { runGraph, GRAPH_PARAMS, type GraphOp } from "../lib/viz/graphEngine.ts";
+import { runRecursion, RECURSION_PARAMS, type RecursionOp } from "../lib/viz/recursionEngine.ts";
 import { REAL_CODE, REAL_LANGS } from "../lib/viz/realCode.ts";
 import type { Ask } from "../lib/viz/types.ts";
 
@@ -94,6 +97,22 @@ const ce = runQueue("circularEnqueue", [10, 20, 30], { value: 40 }).frames.at(-1
 check(ce.rear === 0 && ce.slots[0]?.value === 40 && ce.count === 4, `circular enqueue wraps (rear=${ce.rear})`);
 const cd = runQueue("circularDequeue", [10, 20, 30]).frames.at(-1)!;
 check(cd.front === 4 && cd.count === 2, `circular dequeue (front=${cd.front})`);
+
+// --- Trees, Graphs, Recursion ---
+const bstInput = [50, 30, 70, 20, 40, 60, 80];
+for (const op of Object.keys(TREE_PARAMS) as TreeOp[]) {
+  for (const input of [bstInput, [5], []]) {
+    common(`tree.${op}(${input})`, runTree(op, input, { value: 60 }));
+  }
+}
+
+for (const op of Object.keys(GRAPH_PARAMS) as GraphOp[]) {
+  common(`graph.${op}`, runGraph(op, { from: 0, to: 4 }));
+}
+
+for (const op of Object.keys(RECURSION_PARAMS) as RecursionOp[]) {
+  common(`recursion.${op}`, runRecursion(op, { n: 4, value: 2, values: [1, 2, 3], text: "racecar" }));
+}
 
 console.log(failures ? `${failures} check(s) failed` : "all engine checks passed");
 process.exit(failures ? 1 : 0);

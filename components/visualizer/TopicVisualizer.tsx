@@ -12,6 +12,9 @@ const VISUALIZERS = {
   sorting: dynamic(() => import("./ArrayVisualizer").then((m) => m.ArrayVisualizer), { ssr: false, loading: Loading }),
   "linked-lists": dynamic(() => import("./LinkedListVisualizer").then((m) => m.LinkedListVisualizer), { ssr: false, loading: Loading }),
   "stacks-queues": dynamic(() => import("./StackQueueVisualizer").then((m) => m.StackQueueVisualizer), { ssr: false, loading: Loading }),
+  trees: dynamic(() => import("./TreeVisualizer").then((m) => m.TreeVisualizer), { ssr: false, loading: Loading }),
+  graphs: dynamic(() => import("./GraphVisualizer").then((m) => m.GraphVisualizer), { ssr: false, loading: Loading }),
+  recursion: dynamic(() => import("./RecursionVisualizer").then((m) => m.RecursionVisualizer), { ssr: false, loading: Loading }),
 } as const;
 
 /** `initialOp` (from ?op= in the URL) opens that operation, e.g. from a quiz's "see it step by step" link. */

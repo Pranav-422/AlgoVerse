@@ -114,3 +114,41 @@ export interface QueueFrame extends BaseFrame {
   moved: ("front" | "rear")[];
   alert?: { text: string; tone: "ok" | "error" };
 }
+
+
+// --- Tree ----------------------------------------------------------------------
+
+export interface TreeNode {
+  id: string;
+  value: number;
+  left: string | null;
+  right: string | null;
+}
+
+export interface TreeFrame extends BaseFrame {
+  nodes: TreeNode[];
+  root: string | null;
+  marks: Record<string, Mark>;
+  tags: Tag[];
+  output: number[];
+}
+
+// --- Graph ---------------------------------------------------------------------
+
+export interface GraphFrame extends BaseFrame {
+  vertices: number[];
+  edges: [number, number][];
+  marks: Record<string, Mark>;
+  frontier: number[];
+  output: number[];
+  tags: Tag[];
+}
+
+// --- Recursion -----------------------------------------------------------------
+
+export interface RecursionFrame extends BaseFrame {
+  stack: { call: string; local?: string }[];
+  result: string | null;
+  output: string[];
+  marks: Record<string, Mark>;
+}
