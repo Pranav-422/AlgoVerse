@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { notFound } from "next/navigation";
-import { getTopic } from "@/lib/knowledge";
+import { getAllTopics, getTopic } from "@/lib/knowledge";
 import { VideoStage, type Chapter, type ChapterOp } from "../VideoStage";
 
 interface VideoMeta {
@@ -18,15 +18,7 @@ interface VideoMeta {
 }
 
 export function generateStaticParams() {
-  return [
-    { slug: "arrays" },
-    { slug: "linked-lists" },
-    { slug: "stacks-queues" },
-    { slug: "trees" },
-    { slug: "graphs" },
-    { slug: "sorting" },
-    { slug: "recursion" },
-  ];
+  return getAllTopics().map((t) => ({ slug: t.id }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {

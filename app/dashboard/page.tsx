@@ -34,11 +34,11 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
   const progress = getProgress(user.id);
   const prefs = getPreferences(user.id);
   const quiz = quizMastery(user.id);
-  const masteryFor = (id: string) => {
-    const total = loadBank(id)?.arcs.length ?? 0;
-    const q = quiz[id] ?? { answered: 0, correct: 0 };
-    return { ...q, total };
-  };
+  // Each bank is read from disk once per request; the map and cards look totals up many times.
+  const mastery = Object.fromEntries(
+    topics.map((t) => [t.id, { ...(quiz[t.id] ?? { answered: 0, correct: 0 }), total: loadBank(t.id)?.arcs.length ?? 0 }]),
+  );
+  const masteryFor = (id: string) => mastery[id];
   const ready = topics.filter((t) => t.status !== "soon");
   const openedTotal = ready.reduce((n, t) => n + (progress[t.id]?.filter((f) => t.formats.includes(f)).length ?? 0), 0);
   const availableTotal = ready.reduce((n, t) => n + t.formats.length, 0);

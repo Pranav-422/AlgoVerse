@@ -105,7 +105,7 @@ export function ComicQuiz({ quiz, palette, record }: Props) {
             {quiz.why[quiz.answer]}
           </p>
           {record && (
-            <Link href={`/topics/${record.topicId}/${quiz.see ?? ""}`} className="inline-flex items-center gap-1 font-bold underline underline-offset-2">
+            <Link href={`/topics/${record.topicId}${quiz.see ? `/${quiz.see}` : ""}`} className="inline-flex items-center gap-1 font-bold underline underline-offset-2">
               {quiz.see ? "See it step by step" : "Re-read the brief"} <ArrowRight size={12} />
             </Link>
           )}
