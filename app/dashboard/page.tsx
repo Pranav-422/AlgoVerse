@@ -2,12 +2,13 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight } from "lucide-react";
 import { requireUser } from "@/lib/session";
-import { getProgress, getPreferences, quizMastery } from "@/lib/db";
+import { getProgress, getPreferences, quizMastery, reviewQueue } from "@/lib/db";
 import { loadBank } from "@/lib/comicKit";
 import { getAllTopics, pad2, type Format } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { TopicCard } from "@/components/shared/TopicCard";
+import { LearningMap } from "@/components/shared/LearningMap";
 import { SearchBox } from "./SearchBox";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Motion";
 
@@ -68,6 +69,20 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
     }
   }
 
+  const understood = topics.reduce((acc, t) => ({ correct: acc.correct + masteryFor(t.id).correct, total: acc.total + masteryFor(t.id).total }), { correct: 0, total: 0 });
+  const reviews = reviewQueue(user.id);
+  const unopened = ready.flatMap((t) =>
+    FORMAT_ORDER.filter((f) => t.formats.includes(f) && !progress[t.id]?.includes(f)).map((f) => ({
+      label: `${pad2(t.index)} ${t.name} — ${f}`,
+      href: `/topics/${t.id}${FORMAT_PATH[f]}`,
+    })),
+  );
+  const nextUp = [
+    ...(reviews.due.length ? [{ label: `Review ${reviews.due.length} question${reviews.due.length === 1 ? "" : "s"} you missed`, detail: "due today", href: "/review" }] : []),
+    ...unopened,
+    ...(!reviews.due.length && reviews.later.length ? [{ label: `${reviews.later.length} question${reviews.later.length === 1 ? "" : "s"} scheduled for review`, href: "/review" }] : []),
+  ].slice(0, 4);
+
   return (
     <div className="min-h-screen flex flex-col bg-dots">
       <AppHeader email={user.email} active="topics" crumbs={[{ label: "Dashboard" }]}>
@@ -95,12 +110,19 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
                 step-by-step visualizer. Take them in order, or jump straight to the one you need.
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <div className="border-2 border-ink rounded p-3 min-w-[120px] bg-cream">
                 <p className="label !text-[9px]">Formats opened</p>
                 <p className="font-head font-extrabold text-3xl mt-1">
                   {openedTotal}
                   <span className="text-outline text-lg">/{availableTotal}</span>
+                </p>
+              </div>
+              <div className="border-2 border-ink rounded p-3 min-w-[120px] bg-violet-light" title="Check-yourself questions answered correctly">
+                <p className="label !text-[9px]">Understood</p>
+                <p className="font-head font-extrabold text-3xl mt-1">
+                  {understood.correct}
+                  <span className="text-outline text-lg">/{understood.total}</span>
                 </p>
               </div>
               <div className="border-2 border-ink rounded p-3 min-w-[120px] bg-amber-light">
@@ -125,6 +147,10 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
           </div>
         </section>
 
+        </Reveal>
+
+        <Reveal>
+          <LearningMap topics={topics} progress={progress} masteryFor={masteryFor} nextId={next?.topic.id} nextUp={nextUp} />
         </Reveal>
 
         {/* Learning style */}

@@ -4,6 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import Database from "better-sqlite3";
 import type { Format } from "./knowledge";
+import { nextReview, type ReviewState } from "./learning";
 
 // SQLite, created on first run. Single file, no server to run at demo time.
 
@@ -72,6 +73,23 @@ function open(): Database.Database {
       correct     INTEGER NOT NULL,
       answered_at INTEGER NOT NULL,
       PRIMARY KEY (user_id, topic_id, arc_id)
+    );
+    CREATE TABLE IF NOT EXISTS reviews (
+      user_id     TEXT NOT NULL,
+      topic_id    TEXT NOT NULL,
+      arc_id      TEXT NOT NULL,
+      box         INTEGER NOT NULL,   -- right answers in a row since the last miss (lib/learning.ts)
+      due_at      INTEGER NOT NULL,
+      PRIMARY KEY (user_id, topic_id, arc_id)
+    );
+    CREATE TABLE IF NOT EXISTS checks (
+      user_id     TEXT NOT NULL,
+      topic_id    TEXT NOT NULL,
+      phase       TEXT NOT NULL,      -- 'pre' (before learning) | 'post' (after)
+      score       INTEGER NOT NULL,
+      total       INTEGER NOT NULL,
+      taken_at    INTEGER NOT NULL,
+      PRIMARY KEY (user_id, topic_id, phase)
     );
     CREATE TABLE IF NOT EXISTS preferences (
       user_id     TEXT PRIMARY KEY,
@@ -287,13 +305,62 @@ export function feedbackCounts(): { category: string; n: number }[] {
 
 // --- quiz results --------------------------------------------------------------
 
-export function recordQuiz(userId: string, topicId: string, arcId: string, correct: boolean) {
+/** Records the answer and moves the question along its spaced-review schedule. */
+export function recordQuiz(userId: string, topicId: string, arcId: string, correct: boolean, now = Date.now()) {
+  const db = open();
+  db.prepare(
+    `INSERT INTO quiz_results (user_id, topic_id, arc_id, correct, answered_at) VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT (user_id, topic_id, arc_id) DO UPDATE SET correct = excluded.correct, answered_at = excluded.answered_at`,
+  ).run(userId, topicId, arcId, correct ? 1 : 0, now);
+  const key = [userId, topicId, arcId];
+  const prev = db.prepare("SELECT box, due_at FROM reviews WHERE user_id = ? AND topic_id = ? AND arc_id = ?").get(...key) as ReviewState | undefined;
+  const next = nextReview(prev ?? null, correct, now);
+  if (next)
+    db.prepare(
+      `INSERT INTO reviews (user_id, topic_id, arc_id, box, due_at) VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT (user_id, topic_id, arc_id) DO UPDATE SET box = excluded.box, due_at = excluded.due_at`,
+    ).run(...key, next.box, next.due_at);
+  else if (prev) db.prepare("DELETE FROM reviews WHERE user_id = ? AND topic_id = ? AND arc_id = ?").run(...key);
+}
+
+/** Questions on the learner's review schedule, soonest first, split into due now and later. */
+export function reviewQueue(userId: string, now = Date.now()) {
+  const rows = open().prepare("SELECT topic_id, arc_id, box, due_at FROM reviews WHERE user_id = ? ORDER BY due_at").all(userId) as {
+    topic_id: string;
+    arc_id: string;
+    box: number;
+    due_at: number;
+  }[];
+  return { due: rows.filter((r) => r.due_at <= now), later: rows.filter((r) => r.due_at > now), now };
+}
+
+// --- before / after checks -------------------------------------------------------
+
+export type CheckPhase = "pre" | "post";
+export type CheckScore = { score: number; total: number };
+
+/** The first "pre" check counts (a retake is no longer before learning); the latest "post" counts. */
+export function recordCheck(userId: string, topicId: string, phase: CheckPhase, score: number, total: number) {
+  const onConflict = phase === "pre" ? "DO NOTHING" : "DO UPDATE SET score = excluded.score, total = excluded.total, taken_at = excluded.taken_at";
   open()
+    .prepare(`INSERT INTO checks (user_id, topic_id, phase, score, total, taken_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT (user_id, topic_id, phase) ${onConflict}`)
+    .run(userId, topicId, phase, score, total, Date.now());
+}
+
+export function getChecks(userId: string, topicId: string): Partial<Record<CheckPhase, CheckScore>> {
+  const rows = open().prepare("SELECT phase, score, total FROM checks WHERE user_id = ? AND topic_id = ?").all(userId, topicId) as ({ phase: CheckPhase } & CheckScore)[];
+  return Object.fromEntries(rows.map((r) => [r.phase, { score: r.score, total: r.total }]));
+}
+
+/** Per topic, over learners who took both checks: how many, and their mean score before and after (0–1). */
+export function checkGains(): { topic_id: string; learners: number; pre: number; post: number }[] {
+  return open()
     .prepare(
-      `INSERT INTO quiz_results (user_id, topic_id, arc_id, correct, answered_at) VALUES (?, ?, ?, ?, ?)
-       ON CONFLICT (user_id, topic_id, arc_id) DO UPDATE SET correct = excluded.correct, answered_at = excluded.answered_at`,
+      `SELECT a.topic_id, COUNT(*) AS learners, AVG(1.0 * a.score / a.total) AS pre, AVG(1.0 * b.score / b.total) AS post
+       FROM checks a JOIN checks b ON b.user_id = a.user_id AND b.topic_id = a.topic_id AND b.phase = 'post'
+       WHERE a.phase = 'pre' GROUP BY a.topic_id ORDER BY a.topic_id`,
     )
-    .run(userId, topicId, arcId, correct ? 1 : 0, Date.now());
+    .all() as { topic_id: string; learners: number; pre: number; post: number }[];
 }
 
 /** topicId → { answered, correct } */

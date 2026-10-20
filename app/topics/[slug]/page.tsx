@@ -1,17 +1,20 @@
 import Link from "next/link";
 import { Globe, ArrowRight } from "lucide-react";
-import { loadTopicPage } from "@/lib/topicPage";
+import { loadTopicPage, checkQuestions } from "@/lib/topicPage";
+import { getChecks } from "@/lib/db";
 import { pad2 } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { FormatList } from "@/components/shared/FormatList";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { ExpressiveSummary } from "./ExpressiveSummary";
+import { TopicCheck } from "./TopicCheck";
 
 export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
   const { slug } = await props.params;
   const { user, topic, opened, related, crumbs } = await loadTopicPage(slug, "brief");
   const nextFormat = topic.formats.includes("comic") ? "comic" : "visualizer";
+  const checks = getChecks(user.id, topic.id);
 
   return (
     <div className="min-h-screen flex flex-col bg-dots">
@@ -29,7 +32,7 @@ export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
           <div className="relative">
             <div className="flex gap-2">
               <span className="tag !bg-ink !text-white">Topic {pad2(topic.index)} {"//"} 07</span>
-              <span className="tag !bg-amber-mid">{topic.status === "complete" ? "All four formats" : "Brief + visualizer"}</span>
+              <span className="tag !bg-amber-mid">{topic.formats.length === 4 ? "All four formats" : topic.formats.join(" + ")}</span>
             </div>
             <h1 className="font-head font-extrabold text-[64px] leading-none uppercase tracking-tight mt-4">
               {topic.name}
@@ -41,6 +44,13 @@ export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
 
         <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
           <div className="space-y-8">
+            <TopicCheck
+              topicId={topic.id}
+              questions={checkQuestions(topic.id).map(({ q, options }) => ({ q, options }))}
+              pre={checks.pre}
+              post={checks.post}
+              canPre={opened.every((f) => f === "brief")}
+            />
             <ExpressiveSummary topicId={topic.id} summary={topic.summary} />
 
             {/* Real world */}

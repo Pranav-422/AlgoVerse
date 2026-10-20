@@ -1,6 +1,7 @@
 // Prepare the demo account in the local database.
 //   npm run seed:demo
-// Creates demo@srm.edu with a learning style, some progress, one quiz answer, and the
+// Creates demo@srm.edu with a learning style, some progress, two quiz answers (one missed two
+// days ago, so it is due on the review page), and the
 // Arrays comic regeneration count at 2 — so on stage one regeneration still works and the
 // next one shows the limit message with its reset time, in under a minute.
 import { findOrCreateUser, markProgress, savePreferences, checkAndIncrementAttempt, recordQuiz } from "../lib/db.ts";
@@ -12,6 +13,7 @@ markProgress(user.id, "arrays", "brief");
 markProgress(user.id, "arrays", "visualizer");
 markProgress(user.id, "linked-lists", "brief");
 recordQuiz(user.id, "arrays", "access", true);
+recordQuiz(user.id, "linked-lists", "insert-head", false, Date.now() - 2 * 86_400_000);
 
 // Bring the Arrays cap to exactly 2 used (works from any starting state inside the window).
 let r = checkAndIncrementAttempt(user.id, "arrays");

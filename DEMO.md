@@ -5,12 +5,12 @@ Target: 8–10 minutes. Practise it twice on the demo laptop and network.
 ## Before the review (day before)
 
 1. `npm install`, then put the Gemini key in `.env.local`: `GEMINI_API_KEY=...`
-2. `npm run check` → must print `all engine checks passed`, `comic kit OK`, `no banned words`.
+2. `npm run check` → must print `all engine checks passed`, `comic kit OK`, `learning helpers OK`, `no banned words`.
 3. `npm run experiment` (≈10 min) → fills the experiment table on **/insights** with real numbers.
 4. Generate a few comics and rewrites while signed in, so **/insights** has real traffic.
 5. Render the video: `npm run build && npx next start -p 3300`, then in a second terminal `node scripts/render-video.mjs`
    (needs ffmpeg: `winget install Gyan.FFmpeg`). Output: `public/video/arrays.mp4`.
-6. `npm run seed:demo` → demo@srm.edu with a learning style and **1** Arrays regeneration left.
+6. `npm run seed:demo` → demo@srm.edu with a learning style, one missed quiz question due on `/review`, and **1** Arrays regeneration left.
 7. Record a 3-minute screen capture of the full path as a backup in case the network fails.
 
 ## Gemini free tier — plan around it
@@ -26,10 +26,10 @@ Target: 8–10 minutes. Practise it twice on the demo laptop and network.
 | # | Time | Show | Say (one line) |
 |---|------|------|----------------|
 | 1 | 0:00 | Landing → sign in as `demo@srm.edu` | "One topic, four formats, one source of facts." |
-| 2 | 0:40 | Dashboard: learning style, progress, quiz mastery | "The app knows how this learner likes to learn." |
+| 2 | 0:40 | Dashboard: learning map (glowing path, mastery, next up), the due review | "Progress is what you understood, not what you opened — and missed questions come back after 1, 3 and 7 days." |
 | 3 | 1:10 | Arrays brief → **Make it more expressive** → open *How this was generated* | "Gemini rewrites the summary; the fact guard checks every number and Big-O against the knowledge file." |
 | 4 | 2:10 | **Explain in Hinglish** | "Same guard, different language." |
-| 5 | 2:40 | Visualizer: Binary search, step back/forward, pseudocode line | "Frames come from our own deterministic engine — no model involved, so it is always correct." |
+| 5 | 2:40 | Visualizer: Binary search with **Predict on** (guess mid before it is shown), comparison counter vs linear search, C/Python toggle | "The learner predicts each step before seeing it; frames come from our own deterministic engine, so it is always correct." |
 | 6 | 3:40 | Comic: deck, swipe, page view, read-aloud, quiz at the end | "A comic is assembled from a prepared kit: layouts, palettes, poses and a fact-linked dialogue bank." |
 | 7 | 4:40 | Press **too complex** → Regenerate → open the trace | "Gemini only returns ids. We rule-check them; feedback becomes a hard rule — 4 panels, basic lines only." |
 | 8 | 5:40 | Press Regenerate again → limit message with reset time | "Three regenerations per topic per day; free-tier honest." |

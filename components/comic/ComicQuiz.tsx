@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Check, X, RotateCcw, HelpCircle } from "lucide-react";
+import Link from "next/link";
+import { Check, X, RotateCcw, HelpCircle, ArrowRight } from "lucide-react";
 import type { ComicQuiz as ComicQuizType, KitPalette } from "@/lib/comic";
 
 interface Props {
@@ -91,6 +92,25 @@ export function ComicQuiz({ quiz, palette, record }: Props) {
           );
         })}
       </div>
+
+      {/* Comics saved before explanations existed have no `why`. */}
+      {answered && !isCorrect && quiz.why?.[picked] && (
+        <div className="mt-3 border-2 border-err rounded bg-[#FDEEEE] px-3 py-2 font-mono text-[12px] space-y-1.5">
+          <p>
+            <span className="font-bold text-err uppercase text-[10px] mr-1.5">Why not {String.fromCharCode(65 + picked)}</span>
+            {quiz.why[picked]}
+          </p>
+          <p>
+            <span className="font-bold text-ok uppercase text-[10px] mr-1.5">Why {String.fromCharCode(65 + quiz.answer)}</span>
+            {quiz.why[quiz.answer]}
+          </p>
+          {record && (
+            <Link href={`/topics/${record.topicId}/${quiz.see ?? ""}`} className="inline-flex items-center gap-1 font-bold underline underline-offset-2">
+              {quiz.see ? "See it step by step" : "Re-read the brief"} <ArrowRight size={12} />
+            </Link>
+          )}
+        </div>
+      )}
 
       {answered && (
         <div className="mt-3 pt-3 border-t border-outline-soft flex flex-col sm:flex-row sm:items-center justify-between gap-2">

@@ -5,7 +5,7 @@ name: Recursion
 oneLine: Solving a problem by breaking it into smaller instances of the same problem.
 palette: violet
 status: partial
-formats: brief
+formats: brief, comic
 related: stacks-queues, trees, sorting
 ---
 

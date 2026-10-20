@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { requireUser } from "@/lib/session";
-import { allGenerations, feedbackCounts } from "@/lib/db";
+import { allGenerations, feedbackCounts, checkGains } from "@/lib/db";
+import { getAllTopics } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { OutcomeBar, CountBars, type Segment } from "./Charts";
@@ -59,6 +60,9 @@ export default async function InsightsPage() {
   const segments: Segment[] = OUTCOMES.map((o) => ({ ...o, value: count(o.key) }));
   const byKind = Object.entries(KIND_LABEL).map(([k, label]) => ({ label, value: rows.filter((r) => r.kind === k).length }));
   const experiment = loadExperiment();
+  const gains = checkGains();
+  const topicName = new Map(getAllTopics().map((t) => [t.id, t.name]));
+  const pctOf = (x: number) => Math.round(x * 100);
 
   const tiles = [
     { label: "Generations logged", value: String(total), sub: `${modelRows.length} reached the model` },
@@ -163,6 +167,53 @@ export default async function InsightsPage() {
             </section>
           </>
         )}
+
+        <section className="box overflow-hidden">
+          <div className="px-5 py-3 border-b-2 border-ink bg-cream">
+            <h2 className="font-head font-bold text-lg">Does it teach? Before vs after</h2>
+            <p className="font-mono text-[11px] text-muted">
+              Learners answer the same questions on a topic before opening its other formats, and again afterwards. Mean score over learners who took both.
+            </p>
+          </div>
+          {gains.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full font-mono text-[12px]">
+                <thead>
+                  <tr className="text-left label !text-[10px] border-b border-outline-soft">
+                    <th className="px-4 py-2">Topic</th>
+                    <th className="px-4 py-2 text-right">Learners</th>
+                    <th className="px-4 py-2 text-right">Before</th>
+                    <th className="px-4 py-2 text-right">After</th>
+                    <th className="px-4 py-2 text-right">Change</th>
+                    <th className="px-4 py-2 w-[34%]">Before / after</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {gains.map((g) => (
+                    <tr key={g.topic_id} className="border-b border-dashed border-outline-soft">
+                      <td className="px-4 py-2">{topicName.get(g.topic_id) ?? g.topic_id}</td>
+                      <td className="px-4 py-2 text-right">{g.learners}</td>
+                      <td className="px-4 py-2 text-right">{pctOf(g.pre)}%</td>
+                      <td className="px-4 py-2 text-right">{pctOf(g.post)}%</td>
+                      <td className="px-4 py-2 text-right font-bold">
+                        {pctOf(g.post) - pctOf(g.pre) >= 0 ? "+" : ""}
+                        {pctOf(g.post) - pctOf(g.pre)} pts
+                      </td>
+                      <td className="px-4 py-2 space-y-1" aria-hidden>
+                        <div className="h-1.5 bg-outline-soft" style={{ width: `${pctOf(g.pre)}%` }} />
+                        <div className="h-1.5 bg-ok" style={{ width: `${pctOf(g.post)}%` }} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="p-5 font-mono text-[12px] text-muted">
+              No learner has taken both checks yet. Answer the check at the top of a topic page, open its formats, then retake it.
+            </p>
+          )}
+        </section>
 
         <ExperimentPanel result={experiment} />
       </main>

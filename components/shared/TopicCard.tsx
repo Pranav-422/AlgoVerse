@@ -26,6 +26,8 @@ export function TopicCard({
 
   const statusTag = soon ? (
     <span className="tag">soon</span>
+  ) : mastery && mastery.total > 0 && mastery.correct === mastery.total ? (
+    <span className="tag !bg-ok !text-white">✓ understood</span>
   ) : done > 0 ? (
     <span className="tag !bg-amber-mid">● in progress</span>
   ) : (
