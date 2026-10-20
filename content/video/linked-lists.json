@@ -1,0 +1,71 @@
+{
+  "title": "Linked Lists: pointers over contiguous memory",
+  "file": "/video/linked-lists.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 40,
+      "title": "Chaining nodes: traversal from head to null",
+      "facts": [
+        "stores a value and a pointer to the next node",
+        "last node's next pointer is null"
+      ],
+      "op": {
+        "id": "traverse",
+        "values": [12, 99, 37]
+      }
+    },
+    {
+      "t": 40,
+      "end": 85,
+      "title": "Instant prepend: inserting at the head",
+      "facts": [
+        "Insertion at the head is O(1)",
+        "point the new node's next to head"
+      ],
+      "op": {
+        "id": "insertBegin",
+        "values": [12, 99, 37],
+        "value": 42
+      }
+    },
+    {
+      "t": 85,
+      "end": 130,
+      "title": "Linear search: following pointer chains",
+      "facts": [
+        "Searching for a value is O(n)",
+        "pointers must be followed from the head"
+      ],
+      "op": {
+        "id": "search",
+        "values": [42, 12, 99, 37],
+        "value": 99
+      }
+    },
+    {
+      "t": 130,
+      "end": 180,
+      "title": "In-place reversal with three pointers",
+      "facts": [
+        "Reversing a singly linked list in place uses three pointers (prev, curr, next) and is O(n)"
+      ],
+      "op": {
+        "id": "reverse",
+        "values": [42, 12, 99, 37]
+      }
+    },
+    {
+      "t": 180,
+      "end": 220,
+      "title": "Summary and complexity comparison",
+      "facts": [
+        "Insertion at the head is O(1)",
+        "Access to the k-th node is O(k)",
+        "Searching for a value is O(n)"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/linked-lists: our own visualizer engine + facts from content/knowledge/linked-lists.md"
+}

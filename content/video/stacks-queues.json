@@ -1,0 +1,78 @@
+{
+  "title": "Stacks & Queues: LIFO and FIFO disciplines",
+  "file": "/video/stacks-queues.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 45,
+      "title": "Stack: LIFO push to the top",
+      "facts": [
+        "A stack follows Last In, First Out (LIFO)",
+        "Push adds an element to the top of the stack in O(1)"
+      ],
+      "op": {
+        "id": "push",
+        "engine": "stack",
+        "values": [10, 20],
+        "value": 30
+      }
+    },
+    {
+      "t": 45,
+      "end": 90,
+      "title": "Stack: popping from the top",
+      "facts": [
+        "Pop removes the top element of the stack in O(1)",
+        "Popping an empty stack is an underflow"
+      ],
+      "op": {
+        "id": "pop",
+        "engine": "stack",
+        "values": [10, 20, 30]
+      }
+    },
+    {
+      "t": 90,
+      "end": 135,
+      "title": "Queue: FIFO enqueue at the rear",
+      "facts": [
+        "A queue follows First In, First Out (FIFO)",
+        "Enqueue adds an element at the rear in O(1)"
+      ],
+      "op": {
+        "id": "enqueue",
+        "engine": "queue",
+        "values": [10, 20],
+        "value": 30
+      }
+    },
+    {
+      "t": 135,
+      "end": 180,
+      "title": "Queue: circular wrap-around",
+      "facts": [
+        "Dequeue removes the element at the front in O(1)",
+        "circular queue computes the next index as (index + 1) mod capacity"
+      ],
+      "op": {
+        "id": "circularEnqueue",
+        "engine": "queue",
+        "values": [10, 20, 30],
+        "value": 40
+      }
+    },
+    {
+      "t": 180,
+      "end": 225,
+      "title": "Summary of LIFO and FIFO operations",
+      "facts": [
+        "Push adds an element to the top of the stack in O(1)",
+        "Pop removes the top element of the stack in O(1)",
+        "Enqueue adds an element at the rear in O(1)",
+        "Dequeue removes the element at the front in O(1)"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/stacks-queues: our own visualizer engine + facts from content/knowledge/stacks-queues.md"
+}

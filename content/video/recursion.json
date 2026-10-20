@@ -1,0 +1,70 @@
+{
+  "title": "Recursion: base cases and the call stack",
+  "file": "/video/recursion.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 45,
+      "title": "Factorial: the base case and call stack",
+      "facts": [
+        "base case is a stopping condition",
+        "Each function call allocates an activation frame on the call stack"
+      ],
+      "op": {
+        "id": "factorial",
+        "n": 4
+      }
+    },
+    {
+      "t": 45,
+      "end": 95,
+      "title": "Fibonacci: exponential branching calls",
+      "facts": [
+        "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time",
+        "Returning from a recursive call pops its frame off the call stack"
+      ],
+      "op": {
+        "id": "fibonacci",
+        "n": 4
+      }
+    },
+    {
+      "t": 95,
+      "end": 145,
+      "title": "Tower of Hanoi: divide and conquer recursion",
+      "facts": [
+        "recursive case breaks the input into smaller subproblems",
+        "Each function call allocates an activation frame on the call stack"
+      ],
+      "op": {
+        "id": "hanoi",
+        "n": 3
+      }
+    },
+    {
+      "t": 145,
+      "end": 185,
+      "title": "Palindrome: shrinking inward recursively",
+      "facts": [
+        "recursive function is a function that calls itself directly or indirectly",
+        "Returning from a recursive call pops its frame off the call stack and resumes the caller"
+      ],
+      "op": {
+        "id": "isPalindrome",
+        "text": "radar"
+      }
+    },
+    {
+      "t": 185,
+      "end": 230,
+      "title": "Recursion summary and stack limits",
+      "facts": [
+        "Without a reachable base case, infinite recursion exhausts stack memory and causes a stack overflow",
+        "Calculating factorial recursively has a recurrence of T(n) = T(n - 1) + O(1), running in O(n) time and O(n) stack space",
+        "Naive recursive Fibonacci makes two branching calls per step, resulting in exponential O(2ⁿ) time"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/recursion: our own visualizer engine + facts from content/knowledge/recursion.md"
+}

@@ -1,0 +1,70 @@
+{
+  "title": "Sorting: ordering data and comparing costs",
+  "file": "/video/sorting.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 50,
+      "title": "Insertion sort: building a sorted prefix",
+      "facts": [
+        "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time",
+        "in-place sorting algorithm uses O(1) auxiliary memory"
+      ],
+      "op": {
+        "id": "insertionSort",
+        "values": [38, 27, 43, 3, 9]
+      }
+    },
+    {
+      "t": 50,
+      "end": 110,
+      "title": "Merge sort: divide and conquer",
+      "facts": [
+        "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time",
+        "Merge sort is stable but requires O(n) auxiliary space"
+      ],
+      "op": {
+        "id": "mergeSort",
+        "values": [38, 27, 43, 3, 9, 82]
+      }
+    },
+    {
+      "t": 110,
+      "end": 165,
+      "title": "Quicksort: partitioning around a pivot",
+      "facts": [
+        "Quicksort partitions elements around a pivot value and achieves O(n log n) average time",
+        "Quicksort can degrade to O(n²) worst-case time when an unbalanced pivot is chosen repeatedly"
+      ],
+      "op": {
+        "id": "quickSort",
+        "values": [38, 27, 43, 3, 9, 82]
+      }
+    },
+    {
+      "t": 165,
+      "end": 210,
+      "title": "Bubble sort: floating elements to the end",
+      "facts": [
+        "Bubble sort repeatedly compares and swaps adjacent out-of-order elements and runs in O(n²) worst-case time"
+      ],
+      "op": {
+        "id": "bubbleSort",
+        "values": [25, 14, 33, 8]
+      }
+    },
+    {
+      "t": 210,
+      "end": 255,
+      "title": "Sorting complexities and trade-offs",
+      "facts": [
+        "Any comparison-based sorting algorithm requires Ω(n log n) comparisons in the worst case",
+        "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time",
+        "Quicksort partitions elements around a pivot value and achieves O(n log n) average time",
+        "Insertion sort shifts elements to place the next item into an already sorted prefix and runs in O(n²) worst-case time"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/sorting: our own visualizer engine + facts from content/knowledge/sorting.md"
+}

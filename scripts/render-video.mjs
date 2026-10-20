@@ -1,21 +1,24 @@
-// Render the pre-rendered Arrays video from our own app.
+// Render a pre-rendered lesson video from our own app.
 //
 //   1. start the app:      npm run build && npx next start -p 3300
-//   2. render:             node scripts/render-video.mjs [fps]      (default fps 8)
+//   2. render:             node scripts/render-video.mjs <topic> [fps]      (default topic arrays, fps 8)
 //
 // Needs Chrome and ffmpeg on PATH (Windows: `winget install Gyan.FFmpeg`).
-// It opens /render/arrays-video?record=1, steps a deterministic clock with window.__seek(t),
-// screenshots every frame and encodes public/video/arrays.mp4.
+// It opens /render/video/<topic>?record=1, steps a deterministic clock with window.__seek(t),
+// screenshots every frame and encodes public/video/<topic>.mp4.
 
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-const FPS = Number(process.argv[2] ?? 8);
+const arg2 = process.argv[2];
+const arg3 = process.argv[3];
+const TOPIC = arg2 && isNaN(Number(arg2)) ? arg2 : "arrays";
+const FPS = Number((arg2 && !isNaN(Number(arg2)) ? arg2 : arg3) ?? 8);
 const BASE = process.env.RENDER_BASE ?? "http://localhost:3300";
 const CHROME = process.env.CHROME ?? "C:/Program Files/Google/Chrome/Application/chrome.exe";
-const OUT = path.join("public", "video", "arrays.mp4");
+const OUT = path.join("public", "video", `${TOPIC}.mp4`);
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "algoverse-video-"));
 const port = 9444;
 
@@ -62,7 +65,7 @@ const send = (method, params = {}) =>
 
 await send("Page.enable");
 await send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 720, deviceScaleFactor: 1, mobile: false });
-await send("Page.navigate", { url: `${BASE}/render/arrays-video?record=1` });
+await send("Page.navigate", { url: `${BASE}/render/video/${TOPIC}?record=1` });
 await sleep(4000);
 const dur = (await send("Runtime.evaluate", { expression: "window.__duration", returnByValue: true })).result.result.value;
 if (!dur) {

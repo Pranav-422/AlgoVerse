@@ -1,0 +1,71 @@
+{
+  "title": "Trees: hierarchical branching and fast search",
+  "file": "/video/trees.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 45,
+      "title": "Binary search tree: inserting by key",
+      "facts": [
+        "binary search tree property states",
+        "Inserting a node in a binary search tree follows the search path"
+      ],
+      "op": {
+        "id": "insert",
+        "values": [50, 30, 70, 20, 40],
+        "value": 60
+      }
+    },
+    {
+      "t": 45,
+      "end": 90,
+      "title": "Searching in a BST: halving choices",
+      "facts": [
+        "Searching a balanced binary search tree takes O(log n) time",
+        "discarding half the remaining nodes at each step"
+      ],
+      "op": {
+        "id": "search",
+        "values": [50, 30, 70, 20, 40, 60, 80],
+        "value": 40
+      }
+    },
+    {
+      "t": 90,
+      "end": 135,
+      "title": "Inorder traversal: producing sorted order",
+      "facts": [
+        "Inorder traversal visits left subtree, current node, then right subtree",
+        "produces values in sorted ascending order"
+      ],
+      "op": {
+        "id": "inorder",
+        "values": [50, 30, 70, 20, 40, 60, 80]
+      }
+    },
+    {
+      "t": 135,
+      "end": 180,
+      "title": "Level-order traversal: breadth by breadth",
+      "facts": [
+        "Level-order traversal visits nodes level by level using a queue and takes O(n) time"
+      ],
+      "op": {
+        "id": "levelOrder",
+        "values": [50, 30, 70, 20, 40, 60, 80]
+      }
+    },
+    {
+      "t": 180,
+      "end": 220,
+      "title": "Tree summary and complexity properties",
+      "facts": [
+        "Searching a balanced binary search tree takes O(log n) time",
+        "Inorder traversal visits all n nodes in O(n) time",
+        "If a binary search tree becomes completely skewed, its height becomes n and search takes O(n) time"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/trees: our own visualizer engine + facts from content/knowledge/trees.md"
+}

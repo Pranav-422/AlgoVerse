@@ -5,7 +5,7 @@ name: Graphs
 oneLine: A network of vertices connected by edges, with arbitrary relationships.
 palette: violet
 status: partial
-formats: brief, comic
+formats: brief, comic, video, visualizer
 related: linked-lists, trees, recursion
 ---
 

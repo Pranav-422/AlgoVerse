@@ -1,0 +1,70 @@
+{
+  "title": "Graphs: networks, traversals, and shortest paths",
+  "file": "/video/graphs.mp4",
+  "chapters": [
+    {
+      "t": 0,
+      "end": 45,
+      "title": "Breadth-first search: exploring layer by layer",
+      "facts": [
+        "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time",
+        "graph G = (V, E) consists of a set of vertices V and a set of edges E"
+      ],
+      "op": {
+        "id": "bfs",
+        "from": 0
+      }
+    },
+    {
+      "t": 45,
+      "end": 95,
+      "title": "Depth-first search: following paths to the end",
+      "facts": [
+        "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time"
+      ],
+      "op": {
+        "id": "dfs",
+        "from": 0
+      }
+    },
+    {
+      "t": 95,
+      "end": 140,
+      "title": "Shortest path on unweighted graphs",
+      "facts": [
+        "BFS finds the shortest path in terms of edge count in an unweighted graph"
+      ],
+      "op": {
+        "id": "shortestPath",
+        "from": 0,
+        "to": 5
+      }
+    },
+    {
+      "t": 140,
+      "end": 180,
+      "title": "Representing graphs: adjacency list vs matrix",
+      "facts": [
+        "adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory",
+        "checking if an edge exists takes O(1) time"
+      ],
+      "op": {
+        "id": "hasEdge",
+        "from": 0,
+        "to": 1
+      }
+    },
+    {
+      "t": 180,
+      "end": 220,
+      "title": "Graph summary and traversal costs",
+      "facts": [
+        "adjacency list stores an array of linked lists or dynamic arrays, using O(V + E) memory",
+        "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time",
+        "Depth-first search (DFS) uses recursion or a stack to explore as deep as possible along each branch in O(V + E) time"
+      ],
+      "op": null
+    }
+  ],
+  "madeWith": "Rendered by scripts/render-video.mjs from /render/video/graphs: our own visualizer engine + facts from content/knowledge/graphs.md"
+}

@@ -5,7 +5,7 @@ name: Stacks & Queues
 oneLine: Two disciplined lines — last in first out, and first in first out.
 palette: teal
 status: partial
-formats: brief, comic, visualizer
+formats: brief, comic, video, visualizer
 related: arrays, linked-lists, recursion
 ---
 

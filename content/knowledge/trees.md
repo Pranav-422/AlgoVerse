@@ -5,7 +5,7 @@ name: Trees
 oneLine: Hierarchical branching nodes with a single root and efficient search.
 palette: teal
 status: partial
-formats: brief, comic
+formats: brief, comic, video, visualizer
 related: linked-lists, recursion, graphs
 ---
 
