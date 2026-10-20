@@ -4,7 +4,7 @@ index: 3
 name: Stacks & Queues
 oneLine: Two disciplined lines — last in first out, and first in first out.
 palette: teal
-status: partial
+status: complete
 formats: brief, comic, video, visualizer
 related: arrays, linked-lists, recursion
 ---

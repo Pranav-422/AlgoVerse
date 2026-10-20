@@ -4,7 +4,7 @@ index: 2
 name: Linked Lists
 oneLine: A chain of nodes, each holding a value and the address of the next.
 palette: violet
-status: partial
+status: complete
 formats: brief, comic, video, visualizer
 related: arrays, stacks-queues
 ---

@@ -4,7 +4,7 @@ index: 6
 name: Sorting
 oneLine: Putting things in order, and what each method costs.
 palette: amber
-status: partial
+status: complete
 formats: brief, comic, video, visualizer
 related: arrays, recursion, trees
 ---
