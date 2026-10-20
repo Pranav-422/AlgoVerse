@@ -40,7 +40,7 @@ Open http://localhost:3000. Sign-in is mocked: any email works.
 - `content/comic-kit/` — the comic kit (layouts, palettes, designs, themes, poses) and fact-linked dialogue banks.
 - `content/comics/<topic>/*.json` — pre-made comics (hand-picked, or picked with a model and labelled so in the trace).
 - `lib/viz/` — the visualizer engines (our own).
-- `public/video/arrays.mp4` — the pre-rendered lesson (`scripts/render-video.mjs`).
+- `public/video/<topic>.mp4` — pre-rendered lessons, chapters in `content/video/<topic>.json` (`node scripts/render-video.mjs <topic>`).
 - `data/algoverse.db` — SQLite, created on first run (local).
 
 ## Scripts

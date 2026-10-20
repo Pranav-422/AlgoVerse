@@ -8,8 +8,8 @@ Target: 8–10 minutes. Practise it twice on the demo laptop and network.
 2. `npm run check` → must print `all engine checks passed`, `comic kit OK`, `learning helpers OK`, `no banned words`.
 3. `npm run experiment` (≈10 min) → fills the experiment table on **/insights** with real numbers.
 4. Generate a few comics and rewrites while signed in, so **/insights** has real traffic.
-5. Render the video: `npm run build && npx next start -p 3300`, then in a second terminal `node scripts/render-video.mjs`
-   (needs ffmpeg: `winget install Gyan.FFmpeg`). Output: `public/video/arrays.mp4`.
+5. Render the video: `npm run build && npx next start -p 3300`, then in a second terminal `node scripts/render-video.mjs <topic>` for each topic
+   (needs ffmpeg: `winget install Gyan.FFmpeg`). Output: `public/video/<topic>.mp4`.
 6. `npm run seed:demo` → demo@srm.edu with a learning style, one missed quiz question due on `/review`, and **1** Arrays regeneration left.
 7. Record a 3-minute screen capture of the full path as a backup in case the network fails.
 
