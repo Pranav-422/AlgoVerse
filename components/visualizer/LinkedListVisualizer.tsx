@@ -5,9 +5,9 @@ import { runList, LIST_PARAMS, type ListOp } from "@/lib/viz/listEngine";
 import { VisualizerShell, Field, parseValues, type OpInfo } from "./VisualizerShell";
 import { LinkedListCanvas } from "./LinkedListCanvas";
 
-export function LinkedListVisualizer({ ops }: { ops: OpInfo[] }) {
+export function LinkedListVisualizer({ ops, initialOp }: { ops: OpInfo[]; initialOp?: string }) {
   const known = ops.filter((o) => o.id in LIST_PARAMS);
-  const [op, setOp] = useState<ListOp>("insertBegin");
+  const [op, setOp] = useState<ListOp>(known.some((o) => o.id === initialOp) ? (initialOp as ListOp) : "insertBegin");
   const [valuesText, setValuesText] = useState("10, 20, 30, 40");
   const [indexText, setIndexText] = useState("2");
   const [valueText, setValueText] = useState("5");

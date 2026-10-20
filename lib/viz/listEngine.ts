@@ -1,4 +1,4 @@
-import type { ListFrame, ListNode, Mark, Program, Tag } from "./types";
+import { ask, type Ask, type ListFrame, type ListNode, type Mark, type Program, type Tag } from "./types";
 
 // AlgoVerse singly-linked-list engine. Keeps a real next-pointer map and records a frame
 // after every pointer read or write, so the canvas can show exactly which link changed.
@@ -15,6 +15,11 @@ class List {
   head: string | null = null;
   lifted = new Set<string>();
   frames: ListFrame[] = [];
+  private pending?: Ask;
+  /** Ask the learner to predict the next frame before it is shown. */
+  askNext(a: Ask | undefined) {
+    this.pending = a;
+  }
 
   constructor(values: number[]) {
     const ns = values.map(newNode);
@@ -56,7 +61,9 @@ class List {
       changed,
       note,
       lines,
+      ...(this.pending && { ask: this.pending }),
     });
+    this.pending = undefined;
   }
 
   /** Re-lay the row in head → tail order (used after the structure changed). */
@@ -113,6 +120,7 @@ function insertBegin(L: List, value: number): string[] {
   L.next[n.id] = null;
   L.lifted.add(n.id);
   L.snap(`Create a new node ${value} at ${n.addr}. It is not linked to anything yet.`, [1], { [n.id]: "fresh" });
+  L.askNext(ask("Which pointer do you write first?", "node.next = head", ["head = node"]));
   L.next[n.id] = L.head;
   L.snap(`node.next = head: the new node now points at ${L.val(L.head)} (${L.addr(L.head)}).`, [2], { [n.id]: "fresh" }, [], [n.id]);
   L.head = n.id;
@@ -168,6 +176,7 @@ function insertAt(L: List, pos: number, value: number): string[] {
   L.next[n.id] = null;
   L.lifted.add(n.id);
   L.snap(`Create node ${value} at ${n.addr}.`, [3], { [prev]: "focus", [n.id]: "fresh" }, [{ name: "prev", at: prev }]);
+  L.askNext(ask("Which pointer do you write first?", "node.next = prev.next", ["prev.next = node"]));
   L.next[n.id] = L.next[prev];
   L.snap(`node.next = prev.next: the new node points at ${L.val(L.next[n.id])}. Order matters — do this first or the rest of the list is lost.`, [4], { [prev]: "focus", [n.id]: "fresh" }, [{ name: "prev", at: prev }], [n.id]);
   L.next[prev] = n.id;
@@ -238,6 +247,7 @@ function reverse(L: List): string[] {
   while (curr) {
     const nxt: string | null = L.next[curr];
     L.snap(`Save next = ${L.val(nxt)} before we overwrite curr.next.`, [2, 3], { ...done, [curr]: "focus" }, [...tags(), ...(nxt ? [{ name: "next", at: nxt }] : [])]);
+    L.askNext(ask(`curr is ${L.val(curr)}. Where will curr.next point now?`, String(L.val(prev)), [String(L.val(nxt)), "NULL"]));
     L.next[curr] = prev;
     L.snap(`curr.next = prev: ${L.val(curr)} now points ${prev ? `back at ${L.val(prev)}` : "at NULL"}.`, [4], { ...done, [curr]: "swap" }, tags(), [curr]);
     done[curr] = "done";

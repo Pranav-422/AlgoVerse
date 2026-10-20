@@ -14,7 +14,8 @@ const VISUALIZERS = {
   "stacks-queues": dynamic(() => import("./StackQueueVisualizer").then((m) => m.StackQueueVisualizer), { ssr: false, loading: Loading }),
 } as const;
 
-export function TopicVisualizer({ topicId, ops }: { topicId: string; ops: OpInfo[] }) {
+/** `initialOp` (from ?op= in the URL) opens that operation, e.g. from a quiz's "see it step by step" link. */
+export function TopicVisualizer({ topicId, ops, initialOp }: { topicId: string; ops: OpInfo[]; initialOp?: string }) {
   const V = VISUALIZERS[topicId as keyof typeof VISUALIZERS];
-  return V ? <V ops={ops} /> : null;
+  return V ? <V ops={ops} initialOp={initialOp} /> : null;
 }

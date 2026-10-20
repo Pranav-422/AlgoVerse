@@ -10,6 +10,7 @@ const SUPPORTED = ["arrays", "linked-lists", "stacks-queues", "sorting"];
 
 export default async function VisualizerPage(props: PageProps<"/topics/[slug]/visualizer">) {
   const { slug } = await props.params;
+  const { op } = await props.searchParams;
   const { user, topic, available, related, crumbs } = await loadTopicPage(slug, "visualizer");
   const ready = available && SUPPORTED.includes(topic.id);
 
@@ -22,10 +23,10 @@ export default async function VisualizerPage(props: PageProps<"/topics/[slug]/vi
             <span className="tag !bg-ink !text-white">Visualizer {"//"} {topic.name}</span>
             <h1 className="font-head font-extrabold text-4xl uppercase mt-3">Step through {topic.name}</h1>
           </div>
-          <p className="font-mono text-[11px] text-outline">← → step · space play/pause</p>
+          <p className="font-mono text-[11px] text-outline">← → step · space play/pause · 1–3 answer a prediction</p>
         </div>
 
-        {ready ? <TopicVisualizer topicId={topic.id} ops={topic.operations} /> : <NotBuilt format="Visualizer" topic={topic.name} />}
+        {ready ? <TopicVisualizer topicId={topic.id} ops={topic.operations} initialOp={typeof op === "string" ? op : undefined} /> : <NotBuilt format="Visualizer" topic={topic.name} />}
 
         <HowGenerated
           provenance={{

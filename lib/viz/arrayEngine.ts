@@ -1,4 +1,4 @@
-import type { ArrayFrame, Cell, Mark, Program, Tag } from "./types";
+import { ask, type Ask, type ArrayFrame, type Cell, type Mark, type Program, type Tag } from "./types";
 
 // AlgoVerse array engine. Each operation records frames as it runs the real algorithm.
 
@@ -9,11 +9,19 @@ export const makeArray = (values: number[]) => values.map(cell);
 class Recorder {
   frames: ArrayFrame[] = [];
   cells: Cell[];
+  /** Element comparisons so far, so the cost of an algorithm shows up as a count. */
+  compares = 0;
+  private pending?: Ask;
   constructor(cells: Cell[]) {
     this.cells = cells;
   }
+  /** Ask the learner to predict the next frame before it is shown. */
+  askNext(a: Ask | undefined) {
+    this.pending = a;
+  }
   snap(note: string, lines: number[], marks: Record<string, Mark> = {}, tags: Tag[] = []) {
-    this.frames.push({ cells: this.cells.map((c) => ({ ...c })), marks, tags, note, lines });
+    this.frames.push({ cells: this.cells.map((c) => ({ ...c })), marks, tags, note, lines, compares: this.compares, ...(this.pending && { ask: this.pending }) });
+    this.pending = undefined;
   }
   id(i: number) {
     return this.cells[i].id;
@@ -49,6 +57,7 @@ function access(r: Recorder, i: number): string[] {
     return ["if i < 0 or i >= n: error", "addr = base + i * size", "return memory[addr]"];
   }
   r.snap(`We want a[${i}]. First check that ${i} is a valid index (0 … ${n - 1}).`, [1]);
+  r.askNext(ask(`How many elements must be checked to read a[${i}]?`, "None: compute its address", [i + 1, n]));
   r.snap(`Compute the address: base + ${i} × size. No searching — one multiplication, one addition.`, [2], r.m([[i, "focus"]]), [
     { name: "i", at: i },
   ]);
@@ -61,9 +70,12 @@ function access(r: Recorder, i: number): string[] {
 function linearSearch(r: Recorder, target: number): string[] {
   const n = r.cells.length;
   r.snap(`Look for ${target} by checking each element from the left.`, [1]);
+  const at = r.cells.findIndex((c) => c.value === target);
+  r.askNext(ask(`How many comparisons will it take to ${at < 0 ? `learn that ${target} is missing` : `find ${target}`}?`, at < 0 ? n : at + 1, [1, n, Math.ceil(n / 2)]));
   const seen: [number, Mark][] = [];
   for (let i = 0; i < n; i++) {
     const hit = v(r.cells[i]) === target;
+    r.compares++;
     r.snap(`Is a[${i}] = ${v(r.cells[i])} equal to ${target}? ${hit ? "Yes." : "No."}`, [1, 2], r.m([...seen, [i, hit ? "found" : "compare"]]), [
       { name: "i", at: i },
     ]);
@@ -102,12 +114,16 @@ function binarySearch(r: Recorder, target: number): string[] {
   while (lo <= hi) {
     const mid = Math.floor((lo + hi) / 2);
     looks++;
+    r.compares++;
     const tags = [
       { name: "lo", at: lo },
       { name: "mid", at: mid },
       { name: "hi", at: hi },
     ];
+    r.askNext(ask(`The range is ${lo} … ${hi}. Which index is mid?`, mid, [mid - 1, mid + 1].filter((k) => k >= lo && k <= hi)));
     r.snap(`Middle of ${lo} … ${hi} is index ${mid}, holding ${v(r.cells[mid])}.`, [2, 3], r.m([...outside(), [mid, "compare"]]), tags);
+    const outcomes = ["Found it", "Search the right half", "Search the left half"];
+    r.askNext(ask(`a[${mid}] = ${v(r.cells[mid])} and the target is ${target}. What happens next?`, outcomes[v(r.cells[mid]) === target ? 0 : v(r.cells[mid]) < target ? 1 : 2], outcomes));
     if (v(r.cells[mid]) === target) {
       r.snap(`${v(r.cells[mid])} = ${target}. Found at index ${mid} in ${looks} look${looks > 1 ? "s" : ""} — O(log n).`, [4], r.m([...outside(), [mid, "found"]]), tags);
       return code;
@@ -134,6 +150,7 @@ function insert(r: Recorder, at: number, value: number): string[] {
   const gap = cell(null);
   r.cells.push(gap);
   r.snap(`Insert ${value} at index ${at}. First open one empty slot at the end.`, [1], { [gap.id]: "fresh" });
+  r.askNext(ask(`How many elements must shift right to make room at index ${at}?`, n - at, [0, n - at - 1, n - at + 1].filter((k) => k >= 0)));
   let moved = 0;
   for (let k = r.cells.length - 1; k > at; k--) {
     [r.cells[k - 1], r.cells[k]] = [r.cells[k], r.cells[k - 1]];
@@ -159,6 +176,7 @@ function remove(r: Recorder, at: number): string[] {
     return code;
   }
   r.snap(`Delete a[${at}] = ${v(r.cells[at])}.`, [1], r.m([[at, "gone"]]), [{ name: "i", at }]);
+  r.askNext(ask(`How many elements must shift left to close the gap?`, n - 1 - at, [0, n - at, n - 2 - at].filter((k) => k >= 0)));
   const gap = cell(null);
   r.cells[at] = gap;
   r.snap(`Its slot is now empty. Everything to the right must shift left to close the gap.`, [1], {}, [{ name: "i", at }]);
@@ -195,7 +213,9 @@ function bubbleSort(r: Recorder): string[] {
       ];
       const a = v(r.cells[j]);
       const b = v(r.cells[j + 1]);
+      r.compares++;
       r.snap(`Compare a[${j}] = ${a} with a[${j + 1}] = ${b}.`, [3, 4], r.m([...settled, [j, "compare"], [j + 1, "compare"]]), tags);
+      r.askNext(ask(`${a} then ${b}: swap them or keep them?`, a > b ? "Swap" : "Keep", ["Swap", "Keep"]));
       if (a > b) {
         [r.cells[j], r.cells[j + 1]] = [r.cells[j + 1], r.cells[j]];
         swapped = true;
@@ -225,6 +245,7 @@ function selectionSort(r: Recorder): string[] {
     ]);
     for (let j = i + 1; j < n; j++) {
       const smaller = v(r.cells[j]) < v(r.cells[min]);
+      r.compares++;
       r.snap(
         `Is ${v(r.cells[j])} smaller than the current min ${v(r.cells[min])}? ${smaller ? "Yes — new min." : "No."}`,
         [3, 4],
@@ -237,6 +258,7 @@ function selectionSort(r: Recorder): string[] {
       );
       if (smaller) min = j;
     }
+    r.askNext(ask(`Scan finished. Which value goes into index ${i}?`, v(r.cells[min]), [v(r.cells[i]), v(r.cells[n - 1])]));
     if (min !== i) [r.cells[i], r.cells[min]] = [r.cells[min], r.cells[i]];
     done.push([i, "done"]);
     r.snap(min !== i ? `Swap the min into index ${i}.` : `a[${i}] is already the smallest — no swap needed.`, [5], r.m(done), [{ name: "i", at: i }]);
@@ -253,11 +275,16 @@ function insertionSort(r: Recorder): string[] {
   for (let i = 1; i < n; i++) {
     let j = i;
     r.snap(`Take a[${i}] = ${v(r.cells[i])} and slide it left into place.`, [1, 2], r.m([...prefix(i), [i, "focus"]]), [{ name: "i", at: i }]);
+    let land = i;
+    while (land > 0 && v(r.cells[land - 1]) > v(r.cells[i])) land--;
+    r.askNext(ask(`Which index will ${v(r.cells[i])} end up at?`, land, [land - 1, land + 1].filter((k) => k >= 0 && k <= i)));
     while (j > 0 && v(r.cells[j - 1]) > v(r.cells[j])) {
+      r.compares++;
       r.snap(`${v(r.cells[j - 1])} > ${v(r.cells[j])}: swap them.`, [3, 4], r.m([...prefix(i + 1), [j - 1, "compare"], [j, "swap"]]), [{ name: "j", at: j }]);
       [r.cells[j - 1], r.cells[j]] = [r.cells[j], r.cells[j - 1]];
       j--;
     }
+    if (j > 0) r.compares++; // the comparison that stopped the slide
     r.snap(`${v(r.cells[j])} is in place. Sorted prefix is now indices 0 … ${i}.`, [3], r.m(prefix(i + 1)), [{ name: "j", at: j }]);
   }
   r.snap(`Sorted. Worst case (reverse order) shifts every element — O(n²).`, [], r.m(prefix(n)));
@@ -319,6 +346,8 @@ function mergeSort(r: Recorder): string[] {
     let b = 0;
     while (a < left.length && b < right.length) {
       const takeLeft = v(left[a]) <= v(right[b]);
+      r.compares++;
+      r.askNext(ask(`The fronts are ${v(left[a])} and ${v(right[b])}. Which is taken next?`, takeLeft ? v(left[a]) : v(right[b]), [v(left[a]), v(right[b])]));
       r.snap(`Compare fronts: ${v(left[a])} and ${v(right[b])}. Take ${takeLeft ? v(left[a]) : v(right[b])}.`, [5, 6], {
         ...r.m(range(lo, hi, "out")),
         [left[a].id]: "compare",
@@ -360,6 +389,7 @@ function quickSort(r: Recorder): string[] {
     r.snap(`Pivot is the last element of ${lo} … ${hi}: ${v(pivot)}.`, [2, 3], r.m(placed, { [pivot.id]: "focus" }), [{ name: "pivot", at: hi }]);
     for (let j = lo; j < hi; j++) {
       const less = v(r.cells[j]) < v(pivot);
+      r.compares++;
       r.snap(`Is ${v(r.cells[j])} < pivot ${v(pivot)}? ${less ? "Yes — move it into the left part." : "No — leave it."}`, [4, 5], r.m([...placed, [j, "compare"]], { [pivot.id]: "focus" }), [
         { name: "i", at: Math.max(i, lo) },
         { name: "j", at: j },
@@ -375,6 +405,7 @@ function quickSort(r: Recorder): string[] {
         }
       }
     }
+    r.askNext(ask(`Partition done. Which index does the pivot ${v(pivot)} land at?`, i + 1, [i, i + 2].filter((k) => k >= lo && k <= hi)));
     [r.cells[i + 1], r.cells[hi]] = [r.cells[hi], r.cells[i + 1]];
     placed.push([i + 1, "done"]);
     r.snap(`Put the pivot ${v(pivot)} at index ${i + 1}. Everything left is smaller, everything right is larger.`, [6], r.m(placed), [{ name: "pivot", at: i + 1 }]);

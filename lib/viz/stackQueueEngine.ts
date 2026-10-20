@@ -1,4 +1,4 @@
-import type { Cell, Mark, Program, QueueFrame, StackFrame } from "./types";
+import { ask, type Ask, type Cell, type Mark, type Program, type QueueFrame, type StackFrame } from "./types";
 
 // AlgoVerse stack and queue engines (array-backed, fixed capacity).
 
@@ -19,6 +19,11 @@ class Stack {
   get top() {
     return this.items.length - 1;
   }
+  private pending?: Ask;
+  /** Ask the learner to predict the next frame before it is shown. */
+  askNext(a: Ask | undefined) {
+    this.pending = a;
+  }
   snap(note: string, lines: number[], marks: Record<string, Mark> = {}, extra: Partial<StackFrame> = {}) {
     this.frames.push({
       items: this.items.map((c) => ({ ...c })),
@@ -27,8 +32,10 @@ class Stack {
       marks,
       note,
       lines,
+      ...(this.pending && { ask: this.pending }),
       ...extra,
     });
+    this.pending = undefined;
   }
 }
 
@@ -60,6 +67,7 @@ function pop(S: Stack) {
     return null;
   }
   const c = S.items[S.top];
+  S.askNext(ask("Pop: which value comes out?", c.value!, [S.items[0].value!, S.items[S.top - 1]?.value ?? c.value!]));
   S.snap(`Read stack[${S.top}] = ${c.value}. Last in, first out.`, [2], { [c.id]: "gone" });
   S.items.pop();
   S.aside = c;
@@ -100,6 +108,7 @@ function balanced(S: Stack, text: string): string[] {
       }
       const opener = String.fromCharCode(top.value as number);
       const ok = opener === pairs[ch];
+      S.askNext(ask(`'${ch}' arrives and the top of the stack is '${opener}'. Do they match?`, ok ? "Yes — pop it" : "No — not balanced", ["Yes — pop it", "No — not balanced"]));
       S.snap(`'${ch}' closes. Pop the top '${opener}' — ${ok ? "they match." : "they do not match."}`, [3, 4], { [top.id]: ok ? "found" : "gone" }, {
         input: { text: t, at: i, result: ok ? undefined : "fail" },
       });
@@ -196,6 +205,11 @@ class Queue {
     }
     if (circular && this.rear < 0) this.rear = (this.rear + capacity) % capacity;
   }
+  private pending?: Ask;
+  /** Ask the learner to predict the next frame before it is shown. */
+  askNext(a: Ask | undefined) {
+    this.pending = a;
+  }
   snap(note: string, lines: number[], marks: Record<string, Mark> = {}, moved: ("front" | "rear")[] = [], alert?: QueueFrame["alert"]) {
     this.frames.push({
       slots: this.slots.map((c) => (c ? { ...c } : null)),
@@ -208,7 +222,9 @@ class Queue {
       alert,
       note,
       lines,
+      ...(this.pending && { ask: this.pending }),
     });
+    this.pending = undefined;
   }
 }
 
@@ -248,10 +264,12 @@ export function runQueue(op: QueueOp, values: number[], p: { value?: number } = 
   } else if (op === "dequeue" || op === "peekFront") {
     const isPeek = op === "peekFront";
     code = isPeek ? ["if queue is empty: error", "return queue[front]"] : ["if queue is empty: underflow", "value = queue[front]", "front = front + 1", "return value"];
+    Q.snap(`${isPeek ? "Peek" : "Dequeue"}. Is the queue empty? count = ${Q.count}.`, [1]);
     if (Q.count === 0) {
       Q.snap(`The queue is empty.`, [1], {}, [], { text: "EMPTY", tone: "error" });
     } else {
       const c = Q.slots[Q.front]!;
+      Q.askNext(ask(isPeek ? "Peek: which value is returned?" : "Dequeue: which value leaves?", c.value!, [Q.slots[Q.rear]?.value ?? c.value!, Q.slots[Q.front + 1]?.value ?? c.value!]));
       Q.snap(`The front item is ${c.value} at index ${Q.front}. First in, first out.`, [1, 2], { [c.id]: isPeek ? "found" : "gone" });
       if (!isPeek) {
         Q.slots[Q.front] = null;
@@ -272,6 +290,7 @@ export function runQueue(op: QueueOp, values: number[], p: { value?: number } = 
       } else {
         const next = (Q.rear + 1) % capacity;
         const old = Q.rear;
+        Q.askNext(ask(`rear is ${old} and the capacity is ${capacity}. Which index does rear move to?`, next, [old + 1, 0, old]));
         Q.rear = next;
         Q.snap(`rear = (${old} + 1) mod ${capacity} = ${next}.${next < old ? " It wraps round to the start — freed slots get reused." : ""}`, [2], {}, ["rear"]);
         const c = cell(value);

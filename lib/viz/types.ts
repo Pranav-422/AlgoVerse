@@ -20,11 +20,25 @@ export interface Tag {
   at: number | string;
 }
 
+/** A prediction the learner makes before this frame is shown (predict mode). */
+export interface Ask {
+  q: string;
+  options: string[];
+  answer: number;
+}
+
+/** Build an Ask from the right answer and some wrong ones: deduplicated, in a stable sorted order. */
+export function ask(q: string, right: string | number, wrong: (string | number)[]): Ask | undefined {
+  const options = [...new Set([right, ...wrong].map(String))].sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+  return options.length > 1 ? { q, options, answer: options.indexOf(String(right)) } : undefined;
+}
+
 export interface BaseFrame {
   /** One sentence shown under the canvas. */
   note: string;
   /** 1-based pseudocode lines active in this frame. */
   lines: number[];
+  ask?: Ask;
 }
 
 export interface Program<F extends BaseFrame> {
@@ -45,6 +59,8 @@ export interface ArrayFrame extends BaseFrame {
   cells: Cell[];
   marks: Record<string, Mark>;
   tags: Tag[];
+  /** Element comparisons made so far. */
+  compares: number;
 }
 
 // --- Linked list ---------------------------------------------------------------

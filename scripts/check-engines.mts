@@ -2,6 +2,8 @@
 import { runArray, ARRAY_PARAMS, type ArrayOp } from "../lib/viz/arrayEngine.ts";
 import { runList, LIST_PARAMS, type ListOp } from "../lib/viz/listEngine.ts";
 import { runStack, runQueue, STACK_PARAMS, QUEUE_PARAMS, type StackOp, type QueueOp } from "../lib/viz/stackQueueEngine.ts";
+import { REAL_CODE, REAL_LANGS } from "../lib/viz/realCode.ts";
+import type { Ask } from "../lib/viz/types.ts";
 
 let failures = 0;
 const check = (cond: boolean, msg: string) => {
@@ -11,10 +13,15 @@ const check = (cond: boolean, msg: string) => {
   }
 };
 
-function common(name: string, prog: { frames: { note: string; lines: number[] }[]; code: string[] }) {
+function common(name: string, prog: { frames: { note: string; lines: number[]; ask?: Ask }[]; code: string[] }) {
   check(prog.frames.length > 0, `${name}: has frames`);
+  check(!prog.frames[0]?.ask, `${name}: the first frame is shown before anything can be predicted`);
   for (const [i, f] of prog.frames.entries()) {
     check(!!f.note, `${name}#${i}: note`);
+    if (f.ask) {
+      const { options, answer } = f.ask;
+      check(options.length > 1 && new Set(options).size === options.length && answer >= 0 && answer < options.length, `${name}#${i}: well-formed prediction`);
+    }
     for (const l of f.lines) check(l >= 1 && l <= prog.code.length, `${name}#${i}: line ${l} within ${prog.code.length}`);
   }
 }
@@ -39,6 +46,19 @@ check(JSON.stringify(vals(runArray("delete", values, { index: 1 }))) === "[5,9,1
 check(runArray("binarySearch", values, { value: 7 }).frames.at(-1)!.note.includes("Found"), "binary search finds 7");
 check(runArray("binarySearch", values, { value: 4 }).frames.at(-1)!.note.includes("not in"), "binary search misses 4");
 check(runArray("bubbleSort", values).frames[0].cells.map((c) => c.value).join() === "5,2,9,1,7", "first frame is the input");
+
+// Comparison counts: linear search checks 5 elements to find 7; binary search looks twice in [1,2,5,7,9].
+check(runArray("linearSearch", values, { value: 7 }).frames.at(-1)!.compares === 5, "linear search counts 5 comparisons");
+check(runArray("binarySearch", values, { value: 7 }).frames.at(-1)!.compares === 2, "binary search counts 2 comparisons");
+check(runArray("bubbleSort", [1, 2, 3]).frames.at(-1)!.compares === 2, "bubble sort stops after one clean pass");
+// Predictions: every main operation asks something, and "which index is mid?" is answered by the mid tag.
+for (const op of ["access", "linearSearch", "binarySearch", "insert", "delete", "bubbleSort", "selectionSort", "insertionSort", "mergeSort", "quickSort"] as ArrayOp[])
+  check(runArray(op, values, { index: 2, value: 7 }).frames.some((f) => f.ask), `${op} has a prediction`);
+for (const f of runArray("binarySearch", [1, 3, 5, 7, 9, 11, 13], { value: 11 }).frames)
+  if (f.ask?.q.includes("mid")) check(f.ask.options[f.ask.answer] === String(f.tags.find((t) => t.name === "mid")?.at), `mid prediction matches: ${f.ask.q}`);
+// Real code is written line for line against the pseudocode.
+for (const op of Object.keys(ARRAY_PARAMS) as ArrayOp[])
+  for (const lang of REAL_LANGS) check(REAL_CODE[op][lang].length === runArray(op, values).code.length, `${op}: ${lang} has one line per pseudocode line`);
 
 const order = (f: { head: string | null; next: Record<string, string | null>; nodes: { id: string; value: number }[] }) => {
   const out: number[] = [];

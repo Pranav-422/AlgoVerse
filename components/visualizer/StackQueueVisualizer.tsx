@@ -7,12 +7,13 @@ import { StackCanvas, QueueCanvas } from "./StackQueueCanvas";
 
 type Mode = "stack" | "queue";
 
-export function StackQueueVisualizer({ ops }: { ops: OpInfo[] }) {
+export function StackQueueVisualizer({ ops, initialOp }: { ops: OpInfo[]; initialOp?: string }) {
   const stackOps = ops.filter((o) => o.tags.includes("stack") && o.id in STACK_PARAMS);
   const queueOps = ops.filter((o) => o.tags.includes("queue") && o.id in QUEUE_PARAMS);
-  const [mode, setMode] = useState<Mode>("stack");
-  const [stackOp, setStackOp] = useState<StackOp>("push");
-  const [queueOp, setQueueOp] = useState<QueueOp>("enqueue");
+  const startsInQueue = queueOps.some((o) => o.id === initialOp);
+  const [mode, setMode] = useState<Mode>(startsInQueue ? "queue" : "stack");
+  const [stackOp, setStackOp] = useState<StackOp>(stackOps.some((o) => o.id === initialOp) ? (initialOp as StackOp) : "push");
+  const [queueOp, setQueueOp] = useState<QueueOp>(startsInQueue ? (initialOp as QueueOp) : "enqueue");
   const [valuesText, setValuesText] = useState("10, 20, 30");
   const [valueText, setValueText] = useState("40");
   const [text, setText] = useState("{[()()]}");
