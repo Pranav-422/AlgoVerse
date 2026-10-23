@@ -10,9 +10,14 @@ interface Props {
   palette: KitPalette;
   /** When set, answers are recorded for the learner's mastery score. */
   record?: { topicId: string; arcId: string };
+  /** Called once, with the first answer only (a retry does not change it). */
+  onAnswer?: (correct: boolean) => void;
+  /** For the "see it" link when answers are not recorded. */
+  topicId?: string;
 }
 
-export function ComicQuiz({ quiz, palette, record }: Props) {
+export function ComicQuiz({ quiz, palette, record, onAnswer, topicId = record?.topicId }: Props) {
+  const [first, setFirst] = useState(true);
   const [picked, setPicked] = useState<number | null>(null);
 
   const answered = picked !== null;
@@ -74,6 +79,8 @@ export function ComicQuiz({ quiz, palette, record }: Props) {
               onClick={() => {
                 if (picked !== null) return;
                 setPicked(i);
+                if (first) onAnswer?.(i === quiz.answer);
+                setFirst(false);
                 if (record)
                   void fetch("/api/quiz", {
                     method: "POST",
@@ -104,8 +111,8 @@ export function ComicQuiz({ quiz, palette, record }: Props) {
             <span className="font-bold text-ok uppercase text-[10px] mr-1.5">Why {String.fromCharCode(65 + quiz.answer)}</span>
             {quiz.why[quiz.answer]}
           </p>
-          {record && (
-            <Link href={`/topics/${record.topicId}${quiz.see ? `/${quiz.see}` : ""}`} className="inline-flex items-center gap-1 font-bold underline underline-offset-2">
+          {topicId && (
+            <Link href={`/topics/${topicId}${quiz.see ? `/${quiz.see}` : ""}`} className="inline-flex items-center gap-1 font-bold underline underline-offset-2">
               {quiz.see ? "See it step by step" : "Re-read the brief"} <ArrowRight size={12} />
             </Link>
           )}

@@ -6,6 +6,8 @@ import { pad2 } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { FormatList } from "@/components/shared/FormatList";
+import { QuizCard } from "@/components/shared/QuizCard";
+import { loadQuizBank } from "@/lib/comicKit";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { ExpressiveSummary } from "./ExpressiveSummary";
 import { TopicCheck } from "./TopicCheck";
@@ -85,6 +87,7 @@ export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
 
           <aside className="space-y-6 lg:sticky lg:top-24">
             <FormatList topic={topic} opened={opened} current="brief" />
+            <QuizCard topicId={topic.id} total={loadQuizBank(topic.id).length} />
             {topic.operations.length > 0 && (
               <section className="box overflow-hidden">
                 <div className="px-4 py-2.5 border-b-2 border-ink bg-cream label !text-ink font-bold">

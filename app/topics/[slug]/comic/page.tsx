@@ -6,11 +6,14 @@ import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { NotBuilt } from "@/components/shared/NotBuilt";
+import { FormatList } from "@/components/shared/FormatList";
+import { QuizCard } from "@/components/shared/QuizCard";
+import { loadQuizBank } from "@/lib/comicKit";
 import { ComicViewer } from "@/components/comic/ComicViewer";
 
 export default async function ComicPage(props: PageProps<"/topics/[slug]/comic">) {
   const { slug } = await props.params;
-  const { user, topic, available, related, crumbs } = await loadTopicPage(slug, "comic");
+  const { user, topic, available, opened, related, crumbs } = await loadTopicPage(slug, "comic");
   const prefs = getPreferences(user.id);
   // Show the pre-made comic that best matches the learner's stated preferences first.
   const fit = (n: number, layout: string) =>
@@ -29,17 +32,25 @@ export default async function ComicPage(props: PageProps<"/topics/[slug]/comic">
           <span className="tag !bg-ink !text-white">Comic // {topic.name}</span>
           <h1 className="font-head font-extrabold text-4xl uppercase mt-3">{topic.name}, panel by panel</h1>
         </div>
-        {available && pool.length > 0 ? (
-          <ComicViewer
-            topicId={topic.id}
-            pool={pool}
-            initialGenerated={generated}
-            initialRemaining={cap.remaining}
-            initialResetsAt={cap.resetsAt}
-          />
-        ) : (
-          <NotBuilt format="Comic" topic={topic.name} />
-        )}
+        <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
+          <div className="min-w-0">
+            {available && pool.length > 0 ? (
+              <ComicViewer
+                topicId={topic.id}
+                pool={pool}
+                initialGenerated={generated}
+                initialRemaining={cap.remaining}
+                initialResetsAt={cap.resetsAt}
+              />
+            ) : (
+              <NotBuilt format="Comic" topic={topic.name} />
+            )}
+          </div>
+          <aside className="space-y-6 lg:sticky lg:top-24">
+            <FormatList topic={topic} opened={opened} current="comic" />
+            <QuizCard topicId={topic.id} total={loadQuizBank(topic.id).length} />
+          </aside>
+        </div>
         <RelatedTopics topics={related} />
       </main>
       <AppFooter />

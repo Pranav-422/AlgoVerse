@@ -45,7 +45,7 @@ export const SELECTION_RULES = [
   "Panel 1 is a setup line, the last panel is a payoff line, the panels between are step lines",
   "Step lines keep the order they have in the bank",
   "No line is used twice, and at most one line per beat",
-  "A plain regenerate (no feedback) must use a different arc than the previous comic",
+  "A plain regenerate (no feedback) must use a different arc, layout, palette and design than the previous comic",
   "Panel count equals the chosen layout's panel count",
   "Every id must exist in the kit",
 ];
@@ -103,7 +103,9 @@ export function checkSelection(
       const same = sel.panels.map((p) => p.pose).join() === previous.panels.map((p) => p.pose).join();
       if (same || new Set(sel.panels.map((p) => p.pose)).size < 3) errs.push("feedback 'character' needs a new pose sequence with 3+ poses");
     }
-    if (!feedback && JSON.stringify(sel) === JSON.stringify(previous)) errs.push("selection is identical to the previous comic");
+    // A plain regenerate must look clearly new, not a recolour of the same strip.
+    if (!feedback && (sel.layout === previous.layout || sel.palette === previous.palette || sel.design === previous.design))
+      errs.push("a plain regenerate needs a different layout, palette and design than the previous comic");
     // A plain regenerate must tell a different story when the bank has more than one.
     const prevArc = idx.get(previous.panels[0]?.line)?.arc.id;
     if (!feedback && bank.arcs.length > 1 && prevArc && lines[0].arc.id === prevArc) errs.push("a plain regenerate must use a different arc than the previous comic");
@@ -248,6 +250,8 @@ export function fallbackPick(
     let layouts = kit.layouts;
     if (feedback === "too complex") layouts = layouts.filter((l) => l.spans.length === 4);
     if (feedback === "pacing" && previous) layouts = layouts.filter((l) => l.spans.length !== previous.panels.length);
+    const fresh = !feedback && previous;
+    if (fresh) layouts = layouts.filter((l) => l.id !== previous.layout);
     // Honour preferences for the first half of the attempts, then relax them.
     const layout = pick(attempt < 100 ? preferredLayouts(layouts, prefs) : layouts);
     const n = layout.spans.length;
@@ -280,8 +284,8 @@ export function fallbackPick(
       l.role === "payoff" ? (rand() < 0.7 ? "cheer" : "explain") : i === 0 ? pick(["explain", "think"]) : pick(["point", "explain", "think", "surprised"]);
     const sel: Selection = {
       layout: layout.id,
-      palette: pick(kit.palettes).id,
-      design: pick(kit.designs).id,
+      palette: pick(fresh ? kit.palettes.filter((p) => p.id !== previous.palette) : kit.palettes).id,
+      design: pick(fresh ? kit.designs.filter((d) => d.id !== previous.design) : kit.designs).id,
       theme: pick(kit.themes).id,
       panels: lines.map((l, i) => ({ line: l.id, pose: poseFor(l, i) })),
     };

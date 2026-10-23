@@ -1,0 +1,111 @@
+{
+  "questions": [
+    {
+      "q": "What distinguishes a directed edge from an undirected edge in a graph?",
+      "options": [
+        "A directed edge always carries a numerical traversal cost.",
+        "An undirected edge is symmetric, while a directed edge goes one way.",
+        "A directed edge connects a vertex back to itself exclusively."
+      ],
+      "answer": 1,
+      "fact": "An undirected edge connects two vertices symmetrically, while a directed edge goes in one direction.",
+      "why": [
+        "Numerical costs define weighted graphs, not the direction of edges.",
+        "Undirected edges allow traversal both ways; directed edges permit one-way travel.",
+        "Connecting a vertex to itself is a self-loop, not a directed edge."
+      ]
+    },
+    {
+      "q": "What defines a cycle in a graph?",
+      "options": [
+        "A path traversing every graph vertex exactly once.",
+        "A disconnected subgraph containing no undirected edges.",
+        "A path of edges that starts and ends at the same vertex."
+      ],
+      "answer": 2,
+      "fact": "A cycle is a path of edges that starts and ends at the same vertex.",
+      "why": [
+        "Visiting every vertex once describes a Hamiltonian path, not a cycle.",
+        "A disconnected subgraph has no bearing on cyclical edge paths.",
+        "A cycle begins and ends at the identical vertex via edge traversal."
+      ]
+    },
+    {
+      "q": "How fast can you check whether an edge exists between two vertices in an adjacency matrix?",
+      "options": [
+        "O(1) time by inspecting row u and column v.",
+        "O(V) time by iterating across all edges in the graph.",
+        "O(E) time by scanning through all connected neighbour lists."
+      ],
+      "answer": 0,
+      "fact": "In an adjacency matrix of size V × V, checking if an edge exists takes O(1) time.",
+      "why": [
+        "Direct indexing into matrix cell [u][v] resolves in constant O(1) time.",
+        "No iteration is needed because the row and column give direct coordinates.",
+        "Scanning neighbour lists applies to adjacency lists, not an adjacency matrix."
+      ],
+      "see": "visualizer?op=hasEdge"
+    },
+    {
+      "q": "Why can an adjacency matrix be inefficient for storing large sparse graphs?",
+      "options": [
+        "Checking adjacency between vertices takes linear O(V) lookup time.",
+        "It requires O(V²) memory regardless of how few edges exist.",
+        "It cannot represent graphs containing directed or weighted edges."
+      ],
+      "answer": 1,
+      "fact": "An adjacency matrix requires O(V²) memory, which can be wasteful for sparse graphs.",
+      "why": [
+        "Matrix lookup is O(1), not O(V); memory is the primary inefficiency.",
+        "A V × V matrix allocates memory for every pair even with few edges.",
+        "Adjacency matrices easily represent directed and weighted graphs with numbers."
+      ]
+    },
+    {
+      "q": "Which data structure does breadth-first search use to explore neighbours level by level?",
+      "options": [
+        "A call stack storing unvisited vertices via recursion.",
+        "A binary search tree ordering vertices by key.",
+        "A queue that processes vertices in FIFO order."
+      ],
+      "answer": 2,
+      "fact": "Breadth-first search (BFS) uses a queue to explore neighbours level by level in O(V + E) time.",
+      "why": [
+        "A call stack is used by depth-first search, not breadth-first search.",
+        "A binary search tree does not manage traversal ordering in BFS.",
+        "A FIFO queue ensures vertices closer to the source are processed first."
+      ],
+      "see": "visualizer?op=bfs"
+    },
+    {
+      "q": "When is an undirected graph considered connected?",
+      "options": [
+        "When there is a path between every pair of vertices.",
+        "When every vertex has an edge connecting to every other vertex.",
+        "When the total number of edges is strictly greater than V."
+      ],
+      "answer": 0,
+      "fact": "A graph is connected if there is a path between every pair of vertices.",
+      "why": [
+        "A connected graph ensures every vertex can reach every other vertex.",
+        "Edges between all pairs defines a complete graph, not merely connected.",
+        "A connected graph needs only V − 1 edges, like in a tree."
+      ]
+    },
+    {
+      "q": "What defines a tree in graph theory?",
+      "options": [
+        "Any directed graph where vertices have at most two incoming edges.",
+        "A connected undirected graph with no cycles and exactly V − 1 edges.",
+        "A complete graph containing cycles between all adjacent vertices."
+      ],
+      "answer": 1,
+      "fact": "A tree is a connected undirected graph with no cycles and exactly V − 1 edges.",
+      "why": [
+        "Trees are undirected and acyclic; edge direction does not define general trees.",
+        "A tree connects all vertices without cycles using exactly V − 1 edges.",
+        "A complete graph contains many cycles, which violates the tree property."
+      ]
+    }
+  ]
+}

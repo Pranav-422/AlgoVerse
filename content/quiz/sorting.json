@@ -1,0 +1,113 @@
+{
+  "questions": [
+    {
+      "q": "What does it mean for a sorting algorithm to be stable?",
+      "options": [
+        "It runs in guaranteed O(n log n) worst-case time.",
+        "It preserves the relative order of records with equal keys.",
+        "It operates without allocating any additional memory on heap."
+      ],
+      "answer": 1,
+      "fact": "A sorting algorithm is stable if it preserves the relative order of records with equal keys.",
+      "why": [
+        "O(n log n) complexity is an efficiency metric, not stability.",
+        "Stability guarantees that identical keys retain their initial relative order.",
+        "Sorting without additional memory defines in-place sorting, not stability."
+      ]
+    },
+    {
+      "q": "What defines an in-place sorting algorithm?",
+      "options": [
+        "It sorts an array in linear O(n) time.",
+        "It never swaps elements during its execution passes.",
+        "It uses O(1) auxiliary memory beyond the input array."
+      ],
+      "answer": 2,
+      "fact": "An in-place sorting algorithm uses O(1) auxiliary memory beyond the input array.",
+      "why": [
+        "In-place refers to auxiliary memory usage, not time complexity.",
+        "Many in-place sorts like quicksort and bubble sort perform swaps.",
+        "In-place algorithms require at most constant extra memory to rearrange items."
+      ]
+    },
+    {
+      "q": "How does bubble sort order elements, and what is its worst-case complexity?",
+      "options": [
+        "It repeatedly compares and swaps adjacent out-of-order elements in O(n²).",
+        "It divides arrays recursively into halves in O(n log n).",
+        "It selects the global minimum element in O(n) time."
+      ],
+      "answer": 0,
+      "fact": "Bubble sort repeatedly compares and swaps adjacent out-of-order elements and runs in O(n²) worst-case time.",
+      "why": [
+        "Bubble sort passes through neighbours, taking quadratic time when reversed.",
+        "Dividing arrays into halves describes merge sort, not bubble sort.",
+        "Selecting the minimum element is selection sort, which takes O(n²)."
+      ],
+      "see": "visualizer?op=bubbleSort"
+    },
+    {
+      "q": "What is the worst-case time complexity of merge sort?",
+      "options": [
+        "O(n²) time when the array is sorted backwards.",
+        "O(n log n) time across all input orderings.",
+        "O(n) time when the array is already sorted."
+      ],
+      "answer": 1,
+      "fact": "Merge sort divides the array in half, recursively sorts both halves, and merges them in O(n log n) time.",
+      "why": [
+        "Merge sort never degrades to O(n²); divisions remain balanced.",
+        "Halving log n times and merging in linear time ensures O(n log n).",
+        "Merge sort always performs full splits and merges, taking O(n log n)."
+      ],
+      "see": "visualizer?op=mergeSort"
+    },
+    {
+      "q": "What strategy allows quicksort to achieve O(n log n) average time complexity?",
+      "options": [
+        "It builds a sorted prefix by shifting items right.",
+        "It compares every pair of elements using parallel threads.",
+        "It partitions elements around a pivot value."
+      ],
+      "answer": 2,
+      "fact": "Quicksort partitions elements around a pivot value and achieves O(n log n) average time.",
+      "why": [
+        "Shifting items into a prefix is insertion sort, not quicksort.",
+        "Quicksort does not compare all pairs or use parallel threads.",
+        "Partitioning puts smaller items left and larger items right of pivot."
+      ],
+      "see": "visualizer?op=quickSort"
+    },
+    {
+      "q": "When does quicksort degrade to its worst-case time complexity of O(n²)?",
+      "options": [
+        "When an unbalanced pivot is chosen repeatedly during partitioning.",
+        "When the array size is not an exact power of two.",
+        "When keys are compared using floating point arithmetic operations."
+      ],
+      "answer": 0,
+      "fact": "Quicksort can degrade to O(n²) worst-case time when an unbalanced pivot is chosen repeatedly.",
+      "why": [
+        "Unbalanced pivots reduce problem size by only one, producing O(n²) work.",
+        "Array sizes that are not powers of two do not degrade quicksort.",
+        "Floating point comparison cost is constant O(1) and does not degrade complexity."
+      ],
+      "see": "visualizer?op=partition"
+    },
+    {
+      "q": "What is the theoretical lower bound for comparison-based sorting in the worst case?",
+      "options": [
+        "Ω(n) comparisons for any input array.",
+        "Ω(n²) comparisons across all comparison algorithms.",
+        "Ω(n log n) comparisons in the worst case."
+      ],
+      "answer": 2,
+      "fact": "Any comparison-based sorting algorithm requires Ω(n log n) comparisons in the worst case.",
+      "why": [
+        "Linear comparisons are insufficient to distinguish all n! permutations.",
+        "O(n log n) algorithms like merge sort disprove an Ω(n²) lower bound.",
+        "A decision tree of n! outcomes requires a minimum height of Ω(n log n)."
+      ]
+    }
+  ]
+}

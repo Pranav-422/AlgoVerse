@@ -1,0 +1,114 @@
+{
+  "questions": [
+    {
+      "q": "In a tree data structure, what are nodes called that have no children?",
+      "options": [
+        "Root nodes of the tree.",
+        "Internal branch nodes with subtrees.",
+        "Leaves of the tree."
+      ],
+      "answer": 2,
+      "fact": "The topmost node is the root, and nodes with no children are called leaves.",
+      "why": [
+        "The root is the topmost node, not a childless node.",
+        "Internal nodes have at least one child node attached.",
+        "Nodes having zero children are termed leaf nodes or leaves."
+      ]
+    },
+    {
+      "q": "How is the height of a tree defined?",
+      "options": [
+        "The number of edges on the longest path from root to leaf.",
+        "The total number of vertices present in the entire tree structure.",
+        "The maximum number of children attached to any single internal node."
+      ],
+      "answer": 0,
+      "fact": "The height of a tree is the number of edges on the longest path from the root to a leaf.",
+      "why": [
+        "Height counts the edge hops from the root to the deepest leaf.",
+        "The total number of vertices is the size of the tree.",
+        "The maximum number of children per node is the tree's branching factor."
+      ]
+    },
+    {
+      "q": "What relationship must hold for all keys in a binary search tree?",
+      "options": [
+        "Left descendants are larger and right descendants are smaller than node.",
+        "Left descendants are smaller and right descendants are larger than the node.",
+        "All nodes at the same level must store identical numeric keys."
+      ],
+      "answer": 1,
+      "fact": "The binary search tree property states that all left descendants are smaller and all right descendants are larger than the node.",
+      "why": [
+        "This reverses the BST ordering property; left must be smaller.",
+        "For every node, all left keys are smaller and right keys larger.",
+        "Keys on the same level are not required to be identical."
+      ],
+      "see": "visualizer?op=search"
+    },
+    {
+      "q": "What is the worst-case search time complexity when a binary search tree is completely skewed?",
+      "options": [
+        "O(1) time because pointers jump directly.",
+        "O(log n) time because height stays balanced.",
+        "O(n) time because the tree behaves like one long chain."
+      ],
+      "answer": 2,
+      "fact": "If a binary search tree becomes completely skewed, its height becomes n and search takes O(n) time.",
+      "why": [
+        "Trees do not have direct index arithmetic to achieve O(1) lookup.",
+        "O(log n) requires balanced height; skewed trees have height n.",
+        "A completely skewed tree behaves like a linked list of length n."
+      ],
+      "see": "visualizer?op=search"
+    },
+    {
+      "q": "What is the time complexity of inserting a node into a balanced binary search tree?",
+      "options": [
+        "O(log n) by following the search path to an empty spot.",
+        "O(1) by placing the node directly as a new root.",
+        "O(n) because all existing elements must be shifted in memory."
+      ],
+      "answer": 0,
+      "fact": "Inserting a node in a binary search tree follows the search path to an empty spot and takes O(log n) time when balanced.",
+      "why": [
+        "Traversing the logarithmic height of a balanced tree takes O(log n) steps.",
+        "Insertion must maintain BST order, not simply replace the root.",
+        "Tree nodes are linked via pointers, so existing nodes do not shift."
+      ],
+      "see": "visualizer?op=insert"
+    },
+    {
+      "q": "In what sequence does an inorder tree traversal visit nodes?",
+      "options": [
+        "Current node, left subtree, then right subtree.",
+        "Left subtree, right subtree, then current node.",
+        "Left subtree, current node, then right subtree."
+      ],
+      "answer": 2,
+      "fact": "Inorder traversal visits left subtree, current node, then right subtree.",
+      "why": [
+        "Visiting the current node first is preorder traversal, not inorder.",
+        "Visiting the current node last is postorder traversal, not inorder.",
+        "Inorder traverses left subtree first, visits node, then right subtree."
+      ],
+      "see": "visualizer?op=inorder"
+    },
+    {
+      "q": "How do preorder and postorder tree traversals differ in visit order?",
+      "options": [
+        "Preorder visits children first, while postorder visits the current node.",
+        "Preorder visits the current node before its children, while postorder visits children first.",
+        "Preorder processes nodes level by level, while postorder traverses down branches."
+      ],
+      "answer": 1,
+      "fact": "Preorder traversal visits the current node before its children, while postorder visits children first.",
+      "why": [
+        "Preorder visits the current node first, not the children.",
+        "Preorder processes node before subtrees; postorder processes subtrees before node.",
+        "Level-by-level traversal is breadth-first search, not preorder or postorder."
+      ],
+      "see": "visualizer?op=preorder"
+    }
+  ]
+}

@@ -36,6 +36,8 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
   const [autoplay, setAutoplay] = useState(false);
   // Read-aloud uses the browser's built-in speech synthesis (not a model).
   const [voice, setVoice] = useState(false);
+  // The comic a regenerate replaced, so the kit tags can show what changed.
+  const [before, setBefore] = useState<ComicWithProvenance["comic"] | null>(null);
   const shuffleTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const autoplayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -132,6 +134,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
         setResetsAt(json.data.resetsAt);
         return;
       }
+      setBefore(current.comic);
       setGenerated({ comic: json.data.comic, provenance: json.data.provenance });
       setRemaining(json.data.remaining);
       if (json.data.remaining === 0) setResetsAt(Date.now() + 24 * 3600 * 1000);
@@ -150,6 +153,14 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
       setBusy(false);
     }
   }
+
+  const changed = (k: "arc" | "design" | "theme" | "layout" | "palette") => {
+    if (!before || current.provenance.source !== "generated") return false;
+    const v = (c: typeof before) => (k === "layout" || k === "palette" ? c[k].id : c[k]);
+    return v(before) !== v(current.comic);
+  };
+  const tagCls = (k: Parameters<typeof changed>[0]) => `tag ${changed(k) ? "!bg-amber-mid" : ""}`;
+  const newMark = (k: Parameters<typeof changed>[0]) => changed(k) && <b className="ml-1">· new</b>;
 
   const handleSwipe = useCallback(
     (d: 1 | -1) => go(d),
@@ -183,15 +194,17 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
       {/* The kit picks behind this comic */}
       <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
         <span className="label mr-1">Picked from the kit:</span>
-        <span className="tag">layout · {current.comic.layout.name} ({panels.length})</span>
-        <span className="tag">
+        {changed("arc") && <span className="tag !bg-ink !text-white">new story</span>}
+        <span className={tagCls("layout")}>layout · {current.comic.layout.name} ({panels.length}){newMark("layout")}</span>
+        <span className={tagCls("palette")}>
           palette · {current.comic.palette.name}
           {[current.comic.palette.accent, current.comic.palette.accent2, current.comic.palette.soft].map((c) => (
             <span key={c} className="inline-block w-2.5 h-2.5 rounded-full border border-ink ml-0.5" style={{ background: c }} />
           ))}
+          {newMark("palette")}
         </span>
-        <span className="tag">design · {current.comic.design}</span>
-        <span className="tag">theme · {current.comic.theme}</span>
+        <span className={tagCls("design")}>design · {current.comic.design}{newMark("design")}</span>
+        <span className={tagCls("theme")}>theme · {current.comic.theme}{newMark("theme")}</span>
 
         {/* View switcher + autoplay toggle */}
         <div className="ml-auto flex items-center gap-2">

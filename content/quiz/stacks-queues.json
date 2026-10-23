@@ -1,0 +1,114 @@
+{
+  "questions": [
+    {
+      "q": "What is the time complexity of pushing an element onto a stack?",
+      "options": [
+        "O(1) because elements are placed directly at the top.",
+        "O(n) because existing elements must shift down in memory.",
+        "O(log n) because the top position requires binary search."
+      ],
+      "answer": 0,
+      "fact": "Push adds an element to the top of the stack in O(1).",
+      "why": [
+        "Push increments the top index and writes the value in one step.",
+        "No shifting occurs because the stack grows at the top end only.",
+        "The top index is known directly, so no searching is needed."
+      ],
+      "see": "visualizer?op=push"
+    },
+    {
+      "q": "How does the peek operation on a stack behave?",
+      "options": [
+        "It removes and returns the top element from stack.",
+        "It reads the top element without removing it in O(1).",
+        "It searches the entire stack to find the maximum value."
+      ],
+      "answer": 1,
+      "fact": "Peek reads the top element without removing it in O(1).",
+      "why": [
+        "Removing the top element is the pop operation, not peek.",
+        "Peek inspects the current top element while keeping the stack unchanged.",
+        "Peek only inspects the top item, without searching through other elements."
+      ],
+      "see": "visualizer?op=peek"
+    },
+    {
+      "q": "What condition occurs when attempting to pop from an empty stack?",
+      "options": [
+        "A stack overflow condition occurs.",
+        "A segmentation fault in memory occurs.",
+        "A stack underflow condition occurs."
+      ],
+      "answer": 2,
+      "fact": "Popping an empty stack is an underflow; pushing onto a full fixed-size stack is an overflow.",
+      "why": [
+        "Overflow occurs when pushing onto a full fixed-size stack.",
+        "Underflow is the logical condition, handled before raw segmentation errors.",
+        "Attempting to remove an item from an empty stack causes underflow."
+      ],
+      "see": "visualizer?op=overflow"
+    },
+    {
+      "q": "Which data structure manages function execution contexts and local variables during execution?",
+      "options": [
+        "A call stack managing nested function frames.",
+        "A FIFO queue processing calls in arrival order.",
+        "A binary search tree indexing function symbols."
+      ],
+      "answer": 0,
+      "fact": "Function calls are managed with a call stack.",
+      "why": [
+        "The LIFO call stack pushes calls and pops when functions return.",
+        "Queues are FIFO; functions return in reverse order of invocation.",
+        "Function calls follow nested stack discipline, not tree ordering."
+      ]
+    },
+    {
+      "q": "Where does an enqueue operation insert an element, and what is its complexity?",
+      "options": [
+        "At the front of the queue in O(n) time.",
+        "At the rear of the queue in O(1) time.",
+        "At an arbitrary index in O(log n) time."
+      ],
+      "answer": 1,
+      "fact": "Enqueue adds an element at the rear in O(1).",
+      "why": [
+        "Inserting at the front violates FIFO and shifting would take O(n).",
+        "Enqueue appends at the rear pointer directly in constant O(1) time.",
+        "Queues do not support inserting at arbitrary indices."
+      ],
+      "see": "visualizer?op=enqueue"
+    },
+    {
+      "q": "From where does a dequeue operation remove an element in a queue?",
+      "options": [
+        "From the rear of the queue in O(n) time.",
+        "From the middle of the queue in O(log n).",
+        "From the front of the queue in O(1) time."
+      ],
+      "answer": 2,
+      "fact": "Dequeue removes the element at the front in O(1).",
+      "why": [
+        "Removing from the rear describes a stack pop, not queue dequeue.",
+        "Standard queues do not remove elements from middle positions.",
+        "Dequeue extracts the oldest element from the front in O(1) time."
+      ],
+      "see": "visualizer?op=dequeue"
+    },
+    {
+      "q": "What distinct capability does a deque provide over standard stacks and queues?",
+      "options": [
+        "A deque allows insertion and deletion at both ends.",
+        "It sorts all inserted elements in ascending order.",
+        "It stores elements in non-contiguous disk sectors only."
+      ],
+      "answer": 0,
+      "fact": "A deque allows insertion and deletion at both ends.",
+      "why": [
+        "A double-ended queue permits push and pop at front and rear.",
+        "Deques maintain insertion sequence rather than automatically sorting items.",
+        "Deques are in-memory structures, not restricted to disk sectors."
+      ]
+    }
+  ]
+}

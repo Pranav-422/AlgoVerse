@@ -1,0 +1,115 @@
+{
+  "questions": [
+    {
+      "q": "What two items does each node in a singly linked list store?",
+      "options": [
+        "A value and a pointer to the next node.",
+        "A value and an absolute array index offset.",
+        "A value and pointers to both adjacent nodes."
+      ],
+      "answer": 0,
+      "fact": "A linked list is made of nodes; each node stores a value and a pointer to the next node.",
+      "why": [
+        "Each singly linked node pairs payload data with a single next reference.",
+        "Linked list nodes do not use index offsets; they use pointer addresses.",
+        "Storing pointers to both neighbours defines a doubly linked list node."
+      ],
+      "see": "visualizer?op=traverse"
+    },
+    {
+      "q": "What does the next pointer of the final node in a singly linked list reference?",
+      "options": [
+        "A pointer referencing back to the head node.",
+        "Null, indicating that no further nodes follow.",
+        "The total count of elements within the list."
+      ],
+      "answer": 1,
+      "fact": "The head pointer refers to the first node; the last node's next pointer is null.",
+      "why": [
+        "Pointing back to head describes a circular list, not standard singly linked.",
+        "The terminal node points to null to signal the end of traversal.",
+        "Pointers store memory addresses, not element counters."
+      ],
+      "see": "visualizer?op=traverse"
+    },
+    {
+      "q": "How does the memory layout of a linked list differ from an array?",
+      "options": [
+        "Nodes must be allocated in strictly contiguous memory blocks.",
+        "Nodes are stored in consecutive cache lines in sorted order.",
+        "Nodes need not be contiguous in memory."
+      ],
+      "answer": 2,
+      "fact": "Nodes need not be contiguous in memory.",
+      "why": [
+        "Contiguous allocation is required by arrays, not linked lists.",
+        "Node locations are dynamically allocated without requiring cache continuity.",
+        "Each node is allocated independently on the heap and linked by pointers."
+      ]
+    },
+    {
+      "q": "What is the time complexity of inserting a new node at the head of a linked list?",
+      "options": [
+        "O(1) constant time.",
+        "O(n) linear time.",
+        "O(log n) logarithmic time."
+      ],
+      "answer": 0,
+      "fact": "Insertion at the head is O(1).",
+      "why": [
+        "Pointing new node to head and resetting head takes constant O(1) steps.",
+        "No memory shifting is needed because nodes are connected via pointers.",
+        "Head is tracked directly by a pointer, requiring no search."
+      ],
+      "see": "visualizer?op=insertBegin"
+    },
+    {
+      "q": "What is the time complexity of deleting the first node in a singly linked list?",
+      "options": [
+        "O(n) because all remaining elements must shift left.",
+        "O(1) by updating head to point to head.next.",
+        "O(log n) because the list must be rebalanced."
+      ],
+      "answer": 1,
+      "fact": "Deletion at the head is O(1).",
+      "why": [
+        "No shifting occurs; only the head pointer reference changes.",
+        "Advancing the head pointer to head.next immediately removes the first node.",
+        "Linked lists require no tree-like balancing during head removal."
+      ],
+      "see": "visualizer?op=deleteBegin"
+    },
+    {
+      "q": "Why is inserting or deleting a node at a known middle position O(n) in general?",
+      "options": [
+        "All nodes past that position must shift in physical memory.",
+        "The system must recompute hash buckets across the whole list.",
+        "You must walk from the head to find the preceding node."
+      ],
+      "answer": 2,
+      "fact": "Insertion or deletion at a known position requires walking to the node before it, so it is O(n) in general.",
+      "why": [
+        "Nodes never shift physically; only pointer references are updated.",
+        "Linked lists do not use hash buckets to store or locate nodes.",
+        "Without direct indexing, finding the preceding node requires traversing from head."
+      ],
+      "see": "visualizer?op=insertAt"
+    },
+    {
+      "q": "What is the time complexity of searching for a value in an unsorted singly linked list?",
+      "options": [
+        "O(n) because nodes must be traversed sequentially from head.",
+        "O(log n) because binary search can halve pointer references.",
+        "O(1) because pointers provide instantaneous direct access to values."
+      ],
+      "answer": 0,
+      "fact": "Searching for a value is O(n).",
+      "why": [
+        "Finding an element requires inspecting nodes one by one until matched.",
+        "Binary search cannot jump to middle nodes without random access indexing.",
+        "Pointers only allow sequential traversal, not direct access to arbitrary values."
+      ],
+      "see": "visualizer?op=search"
+    }
+  ]
+}

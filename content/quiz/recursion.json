@@ -1,0 +1,110 @@
+{
+  "questions": [
+    {
+      "q": "What is the purpose of the base case in a recursive function?",
+      "options": [
+        "To allocate additional activation frames on the call stack.",
+        "To return a result without making further recursive calls.",
+        "To divide the input into smaller subproblems for processing."
+      ],
+      "answer": 1,
+      "fact": "The base case is a stopping condition that returns a result without making further recursive calls.",
+      "why": [
+        "Allocating stack frames happens during recursive calls, not at base cases.",
+        "The base case halts recursion by returning a concrete value immediately.",
+        "Dividing input into subproblems is the responsibility of the recursive case."
+      ]
+    },
+    {
+      "q": "What happens to the call stack when a recursive call completes and returns?",
+      "options": [
+        "Its frame remains on the stack for future function calls.",
+        "All stack frames across the entire program are erased simultaneously.",
+        "Its activation frame pops off the stack and resumes caller."
+      ],
+      "answer": 2,
+      "fact": "Returning from a recursive call pops its frame off the call stack and resumes the caller.",
+      "why": [
+        "Returned frames are destroyed to free memory rather than retained.",
+        "Only the returning frame is removed; caller frames remain intact.",
+        "Popping the frame frees local variables and transfers control to caller."
+      ]
+    },
+    {
+      "q": "What are the time and auxiliary space complexities of calculating factorial recursively?",
+      "options": [
+        "O(n) time and O(n) stack space.",
+        "O(n log n) time and O(1) stack space.",
+        "O(2ⁿ) time and O(n) stack space."
+      ],
+      "answer": 0,
+      "fact": "Calculating factorial recursively has a recurrence of T(n) = T(n - 1) + O(1), running in O(n) time and O(n) stack space.",
+      "why": [
+        "Factorial makes n linear recursive calls, each adding one stack frame.",
+        "Linear recursion does not split inputs to achieve O(n log n) time.",
+        "Factorial does not branch into multiple calls, so time is not O(2ⁿ)."
+      ],
+      "see": "visualizer?op=factorial"
+    },
+    {
+      "q": "When is a recursive call considered tail recursive?",
+      "options": [
+        "When the call occurs within an iterative loop structure.",
+        "When the recursive call is the very last operation performed before returning.",
+        "When two recursive calls branch simultaneously in the function body."
+      ],
+      "answer": 1,
+      "fact": "Tail recursion occurs when the recursive call is the very last operation performed before returning.",
+      "why": [
+        "Tail recursion is a property of function calls, not while loops.",
+        "A call is tail recursive if no work remains after it returns.",
+        "Branching calls are tree recursion, not tail recursion."
+      ]
+    },
+    {
+      "q": "How can some compilers optimize a tail-recursive function?",
+      "options": [
+        "By executing multiple recursive branches in parallel threads.",
+        "By memoizing every subproblem result in a hash map.",
+        "By reusing the stack frame in O(1) auxiliary space."
+      ],
+      "answer": 2,
+      "fact": "Some compilers can optimize tail-recursive calls to run in O(1) auxiliary stack space like a loop.",
+      "why": [
+        "Tail-call optimization does not parallelize execution across threads.",
+        "Memoization caches results; tail recursion reuses existing stack frames.",
+        "Reusing the caller's frame avoids stack growth, behaving like an iterative loop."
+      ]
+    },
+    {
+      "q": "Can every recursive algorithm also be implemented iteratively?",
+      "options": [
+        "Yes, using an explicit stack or loop construct.",
+        "No, tree traversals can only run via recursion.",
+        "Only if the function performs exactly one recursive call."
+      ],
+      "answer": 0,
+      "fact": "Every recursive algorithm can also be implemented iteratively using an explicit stack or loop.",
+      "why": [
+        "Any recursion can be simulated iteratively with loops and explicit stacks.",
+        "Tree traversals can be implemented iteratively using explicit stack data structures.",
+        "Multi-branching recursion can also be converted using explicit stack tracking."
+      ]
+    },
+    {
+      "q": "What role does the recursive case perform in a recursive function?",
+      "options": [
+        "It checks whether stack memory has enough capacity left.",
+        "It breaks input into smaller subproblems and calls itself.",
+        "It immediately returns the final accumulated computation result."
+      ],
+      "answer": 1,
+      "fact": "The recursive case breaks the input into smaller subproblems and calls the function again.",
+      "why": [
+        "Operating systems manage stack capacity; functions do not poll memory size.",
+        "The recursive case reduces the problem toward the base case condition.",
+        "Returning the final result without calls is the base case role."
+      ]
+    }
+  ]
+}

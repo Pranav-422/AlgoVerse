@@ -1,0 +1,115 @@
+{
+  "questions": [
+    {
+      "q": "How are elements of a standard array arranged in computer memory?",
+      "options": [
+        "In contiguous memory cells placed one after another.",
+        "In scattered heap blocks connected by pointer links.",
+        "In alternating cache rows indexed through hashing functions."
+      ],
+      "answer": 0,
+      "fact": "An array stores elements in contiguous memory.",
+      "why": [
+        "Arrays reserve adjacent memory cells so any index is directly reachable.",
+        "Scattered blocks linked by pointers describe linked lists, not arrays.",
+        "Arrays use sequential memory addresses rather than hashed cache blocks."
+      ],
+      "see": "visualizer?op=traverse"
+    },
+    {
+      "q": "In an array of length n, what is the index of the final element?",
+      "options": [
+        "The final index is always n.",
+        "The final index is length − 1.",
+        "The final index is length + 1."
+      ],
+      "answer": 1,
+      "fact": "Indexing starts at 0; the last valid index is length − 1.",
+      "why": [
+        "Index n is out of bounds because indexing begins at zero.",
+        "Because indices count from 0, the n-th element sits at length − 1.",
+        "Length + 1 exceeds the allocated range of the array."
+      ]
+    },
+    {
+      "q": "Which formula calculates the memory address of the element at index i in an array?",
+      "options": [
+        "address(i) = base_address + i",
+        "address(i) = base_address × i + element_size",
+        "address(i) = base_address + i × element_size"
+      ],
+      "answer": 2,
+      "fact": "address(i) = base_address + i × element_size.",
+      "why": [
+        "Adding i directly ignores the byte width of each element.",
+        "Multiplying the base address corrupts the memory location.",
+        "The offset is index times element size added to base address."
+      ],
+      "see": "visualizer?op=access"
+    },
+    {
+      "q": "What is the time complexity to update a value at a known index in an array?",
+      "options": [
+        "O(1) constant time.",
+        "O(log n) logarithmic time.",
+        "O(n) linear time."
+      ],
+      "answer": 0,
+      "fact": "Updating an element at a known index is O(1).",
+      "why": [
+        "The exact address is computed immediately without shifting any other items.",
+        "No binary search is involved because the index is already known.",
+        "No elements shift when overwriting an existing slot at a known index."
+      ],
+      "see": "visualizer?op=access"
+    },
+    {
+      "q": "When inserting an element into an array, in which order must existing items shift right?",
+      "options": [
+        "From the insertion point forward toward the end.",
+        "Starting from the end backwards to avoid overwriting values.",
+        "Simultaneously using temporary memory buffers for all values."
+      ],
+      "answer": 1,
+      "fact": "When inserting, elements are shifted starting from the end so that no value is overwritten.",
+      "why": [
+        "Shifting forward would overwrite adjacent elements before they can be copied.",
+        "Starting from the end frees the next slot before moving into it.",
+        "In-place shifts do not require allocating duplicate memory buffers."
+      ],
+      "see": "visualizer?op=insert"
+    },
+    {
+      "q": "Why does deleting an element from the middle of an array take O(n) time?",
+      "options": [
+        "Memory deallocation must search each preceding element pointer.",
+        "The entire array must be reallocated into new heap space.",
+        "Later elements must shift left to close the vacated gap."
+      ],
+      "answer": 2,
+      "fact": "Deletion in the middle is O(n) because later elements must shift left.",
+      "why": [
+        "Arrays store contiguous values without individual node pointers.",
+        "Deletion happens within the existing allocation without creating a new array.",
+        "To maintain contiguous order, every subsequent element shifts left one position."
+      ],
+      "see": "visualizer?op=delete"
+    },
+    {
+      "q": "What is the worst-case time complexity of linear search on an array?",
+      "options": [
+        "O(n) because every element may need to be inspected.",
+        "O(log n) because the search range is repeatedly halved.",
+        "O(1) because direct index calculation locates the target instantly."
+      ],
+      "answer": 0,
+      "fact": "Linear search checks elements one by one and is O(n).",
+      "why": [
+        "In the worst case, the target is at the end or missing.",
+        "Halving the range requires sorted order and binary search, not linear.",
+        "Direct index lookup requires knowing the index beforehand, not searching."
+      ],
+      "see": "visualizer?op=linearSearch"
+    }
+  ]
+}
