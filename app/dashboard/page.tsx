@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/session";
 import { getProgress, getPreferences, quizMastery, reviewQueue } from "@/lib/db";
 import { loadBank } from "@/lib/comicKit";
 import { getAllTopics, pad2, type Format } from "@/lib/knowledge";
+import { weakestTopic } from "@/lib/learning";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { TopicCard } from "@/components/shared/TopicCard";
@@ -59,12 +60,19 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
     return true;
   });
 
-  // Next step: first ready topic with an unopened, available format (suggested order).
-  let next: { topic: (typeof topics)[number]; format: Format } | null = null;
-  for (const t of ready) {
+  // Next step: the topic whose quiz answers are weakest comes first, in a format not tried yet
+  // (else the visualizer, where predict mode tests each step); otherwise the suggested order.
+  let next: { topic: (typeof topics)[number]; format: Format; why: string } | null = null;
+  const weak = ready.find((t) => t.id === weakestTopic(ready.map((t) => ({ id: t.id, ...masteryFor(t.id) }))));
+  if (weak) {
+    const m = masteryFor(weak.id);
+    const f = FORMAT_ORDER.find((f) => weak.formats.includes(f) && !progress[weak.id]?.includes(f)) ?? (weak.formats.includes("visualizer") ? "visualizer" : "brief");
+    next = { topic: weak, format: f, why: `You got ${m.correct} of ${m.answered} quiz answers right here, so this comes first.` };
+  }
+  for (const t of next ? [] : ready) {
     const f = FORMAT_ORDER.find((f) => t.formats.includes(f) && !progress[t.id]?.includes(f));
     if (f) {
-      next = { topic: t, format: f };
+      next = { topic: t, format: f, why: "You haven't opened this format yet." };
       break;
     }
   }
@@ -79,7 +87,8 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
   );
   const nextUp = [
     ...(reviews.due.length ? [{ label: `Review ${reviews.due.length} question${reviews.due.length === 1 ? "" : "s"} you missed`, detail: "due today", href: "/review" }] : []),
-    ...unopened,
+    ...(weak && next ? [{ label: `Revisit ${pad2(weak.index)} ${weak.name} — ${next.format}`, detail: "weakest quiz score", href: `/topics/${weak.id}${FORMAT_PATH[next.format]}` }] : []),
+    ...unopened.filter((u) => !(weak && next && u.href === `/topics/${weak.id}${FORMAT_PATH[next.format]}`)),
     ...(!reviews.due.length && reviews.later.length ? [{ label: `${reviews.later.length} question${reviews.later.length === 1 ? "" : "s"} scheduled for review`, href: "/review" }] : []),
   ].slice(0, 4);
 
@@ -219,7 +228,7 @@ export default async function Dashboard(props: PageProps<"/dashboard">) {
               <p className="font-head font-bold text-xl mt-2">
                 {pad2(next.topic.index)} {next.topic.name} — {next.format}
               </p>
-              <p className="text-[12px] text-muted mt-1">You haven&apos;t opened this format yet.</p>
+              <p className="text-[12px] text-muted mt-1">{next.why}</p>
             </div>
             <Link href={`/topics/${next.topic.id}${FORMAT_PATH[next.format]}`} className="btn btn-amber">
               Resume: {next.topic.name} <ArrowRight size={15} />

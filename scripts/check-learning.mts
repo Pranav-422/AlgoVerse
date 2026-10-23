@@ -1,5 +1,5 @@
 // Sanity checks for the spaced-review schedule and the learning-map layout. Run: node scripts/check-learning.mts
-import { nextReview, layoutMap, REVIEW_GAPS } from "../lib/learning.ts";
+import { nextReview, layoutMap, gainsByFormat, weakestTopic, REVIEW_GAPS } from "../lib/learning.ts";
 
 let failures = 0;
 const check = (cond: boolean, msg: string) => {
@@ -40,6 +40,25 @@ check(map.edges.every((e) => e.from < e.to), "edges point to the higher-numbered
 check(node("a").col === 0 && node("b").col === 1 && node("c").col === 2, "column = longest chain of earlier topics");
 check(node("d").col === 0 && node("d").row === 1 && node("d").rows === 2, "unlinked topics sit in column 0, below");
 check(map.cols === 3, "column count");
+
+// --- gains by format ---
+const gains = gainsByFormat(
+  [
+    { pre: 0, post: 1 / 3, formats: [] },
+    { pre: 1 / 3, post: 1, formats: ["comic", "visualizer"] },
+    { pre: 0, post: 2 / 3, formats: ["visualizer"] },
+  ],
+  ["comic", "video", "visualizer"],
+);
+const g = (k: string) => gains.find((x) => x.key === k)!;
+check(gains.map((x) => x.key).join() === "brief,comic,video,visualizer", "baseline first, then one group per format");
+check(g("brief").learners === 1 && g("brief").post === 1 / 3, "brief group = learners who opened nothing else");
+check(g("visualizer").learners === 2 && Math.abs(g("visualizer").pre - 1 / 6) < 1e-9 && Math.abs(g("visualizer").post - 5 / 6) < 1e-9, "a learner counts in every format they opened");
+check(g("video").learners === 0 && g("video").post === 0, "an empty group has zero learners, not NaN");
+
+// --- weakest topic ---
+check(weakestTopic([{ id: "a", answered: 4, correct: 1 }, { id: "b", answered: 2, correct: 0 }, { id: "c", answered: 1, correct: 0 }]) === "b", "lowest share right wins; one answer is too few");
+check(weakestTopic([{ id: "a", answered: 5, correct: 4 }]) === undefined, "no weak topic when all are above the bar");
 
 console.log(failures ? `${failures} problem(s)` : "learning helpers OK");
 process.exit(failures ? 1 : 0);

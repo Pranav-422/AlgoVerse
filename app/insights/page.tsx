@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { requireUser } from "@/lib/session";
-import { allGenerations, feedbackCounts, checkGains } from "@/lib/db";
+import { allGenerations, feedbackCounts, checkGains, checkPairs } from "@/lib/db";
+import { gainsByFormat } from "@/lib/learning";
 import { getAllTopics } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
@@ -18,6 +19,13 @@ const OUTCOMES: { key: string; label: string; color: string }[] = [
   { key: "fallback", label: "Rule-based fallback", color: "#7C5CFF" },
   { key: "error", label: "Failed (original kept)", color: "#B3261E" },
 ];
+
+const GROUP_LABEL: Record<string, string> = {
+  brief: "Text brief only (baseline)",
+  comic: "Opened the comic",
+  video: "Opened the video",
+  visualizer: "Used the visualizer",
+};
 
 const KIND_LABEL: Record<string, string> = { comic: "Comic picks", expressive: "Expressive rewrite", hinglish: "Hinglish rewrite" };
 
@@ -61,6 +69,8 @@ export default async function InsightsPage() {
   const byKind = Object.entries(KIND_LABEL).map(([k, label]) => ({ label, value: rows.filter((r) => r.kind === k).length }));
   const experiment = loadExperiment();
   const gains = checkGains();
+  const pairs = checkPairs();
+  const byFormat = gainsByFormat(pairs, ["comic", "video", "visualizer"]);
   const topicName = new Map(getAllTopics().map((t) => [t.id, t.name]));
   const pctOf = (x: number) => Math.round(x * 100);
 
@@ -212,6 +222,52 @@ export default async function InsightsPage() {
             <p className="p-5 font-mono text-[12px] text-muted">
               No learner has taken both checks yet. Answer the check at the top of a topic page, open its formats, then retake it.
             </p>
+          )}
+        </section>
+
+        <section className="box overflow-hidden">
+          <div className="px-5 py-3 border-b-2 border-ink bg-cream">
+            <h2 className="font-head font-bold text-lg">Which format helped? Against a text-only baseline</h2>
+            <p className="font-mono text-[11px] text-muted">
+              Same before/after checks, grouped by what the learner opened before the after check. The baseline read only the text brief, like a
+              textbook page. A learner who opened several formats counts in each. Learners chose their own formats, so this shows association, not a
+              controlled trial.
+            </p>
+          </div>
+          {pairs.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full font-mono text-[12px]">
+                <thead>
+                  <tr className="text-left label !text-[10px] border-b border-outline-soft">
+                    <th className="px-4 py-2">Group</th>
+                    <th className="px-4 py-2 text-right">Learner-topics</th>
+                    <th className="px-4 py-2 text-right">Before</th>
+                    <th className="px-4 py-2 text-right">After</th>
+                    <th className="px-4 py-2 text-right">Change</th>
+                    <th className="px-4 py-2 text-right">vs baseline</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {byFormat.map((g) => {
+                    const change = pctOf(g.post) - pctOf(g.pre);
+                    const base = byFormat[0];
+                    const vs = g.key === "brief" || !g.learners || !base.learners ? null : change - (pctOf(base.post) - pctOf(base.pre));
+                    return (
+                      <tr key={g.key} className={`border-b border-dashed border-outline-soft ${g.key === "brief" ? "bg-cream/60" : ""}`}>
+                        <td className="px-4 py-2">{GROUP_LABEL[g.key]}</td>
+                        <td className="px-4 py-2 text-right">{g.learners}</td>
+                        <td className="px-4 py-2 text-right">{g.learners ? `${pctOf(g.pre)}%` : "—"}</td>
+                        <td className="px-4 py-2 text-right">{g.learners ? `${pctOf(g.post)}%` : "—"}</td>
+                        <td className="px-4 py-2 text-right font-bold">{g.learners ? `${change >= 0 ? "+" : ""}${change} pts` : "—"}</td>
+                        <td className="px-4 py-2 text-right">{vs === null ? "—" : `${vs >= 0 ? "+" : ""}${vs} pts`}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="p-5 font-mono text-[12px] text-muted">No learner has taken both checks yet.</p>
           )}
         </section>
 

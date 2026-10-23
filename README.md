@@ -33,6 +33,8 @@ Open http://localhost:3000. Sign-in is mocked: any email works.
 - **Quiz explanations**: every option says why it is right or which misconception it traps; a wrong answer links to that step in the visualizer.
 - **Spaced review** (`/review`): a missed question comes back after 1, 3 and 7 days (`lib/learning.ts`).
 - **Learning map** (dashboard): topics as a path; progress means questions understood, not formats opened.
+- **Weakest topic first** (dashboard): the next step goes to the topic with the lowest quiz score.
+- **Which format helped?** (`/insights`): before/after gains per format against a text-only baseline. Classroom comparison with textbook and VisuAlgo: see `EVALUATION.md`.
 
 ## Where things are
 

@@ -4,7 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import Database from "better-sqlite3";
 import type { Format } from "./knowledge";
-import { nextReview, type ReviewState } from "./learning";
+import { nextReview, type ReviewState, type CheckPair } from "./learning";
 
 // SQLite, created on first run. Single file, no server to run at demo time.
 
@@ -361,6 +361,20 @@ export function checkGains(): { topic_id: string; learners: number; pre: number;
        WHERE a.phase = 'pre' GROUP BY a.topic_id ORDER BY a.topic_id`,
     )
     .all() as { topic_id: string; learners: number; pre: number; post: number }[];
+}
+
+/** Every learner/topic with both checks, and the non-brief formats opened before the latest after check. */
+export function checkPairs(): CheckPair[] {
+  const rows = open()
+    .prepare(
+      `SELECT 1.0 * a.score / a.total AS pre, 1.0 * b.score / b.total AS post,
+         (SELECT GROUP_CONCAT(p.format) FROM progress p WHERE p.user_id = a.user_id AND p.topic_id = a.topic_id
+            AND p.format != 'brief' AND p.opened_at <= b.taken_at) AS formats
+       FROM checks a JOIN checks b ON b.user_id = a.user_id AND b.topic_id = a.topic_id AND b.phase = 'post'
+       WHERE a.phase = 'pre'`,
+    )
+    .all() as { pre: number; post: number; formats: string | null }[];
+  return rows.map((r) => ({ pre: r.pre, post: r.post, formats: r.formats ? r.formats.split(",") : [] }));
 }
 
 /** topicId → { answered, correct } */

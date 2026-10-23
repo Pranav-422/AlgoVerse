@@ -56,3 +56,34 @@ export function layoutMap(topics: MapTopic[]) {
   });
   return { nodes, edges, cols };
 }
+
+/** One learner's before/after check on one topic, with the formats (besides the brief) opened before the after check. */
+export interface CheckPair {
+  pre: number;
+  post: number;
+  formats: string[];
+}
+
+export interface GainGroup {
+  key: string;
+  learners: number;
+  pre: number;
+  post: number;
+}
+
+/**
+ * Mean before/after score per format: "brief" = learners who only read the text brief (the
+ * textbook-style baseline), then one group per format for learners who opened it before the after check.
+ */
+export function gainsByFormat(pairs: CheckPair[], formats: string[]): GainGroup[] {
+  const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0);
+  const group = (key: string, ps: CheckPair[]) => ({ key, learners: ps.length, pre: mean(ps.map((p) => p.pre)), post: mean(ps.map((p) => p.post)) });
+  return [group("brief", pairs.filter((p) => !p.formats.length)), ...formats.map((f) => group(f, pairs.filter((p) => p.formats.includes(f))))];
+}
+
+/** The topic whose quiz answers are weakest (below `below` right, at least `minAnswered` answered), or undefined. */
+export function weakestTopic(stats: { id: string; answered: number; correct: number }[], minAnswered = 2, below = 0.6) {
+  return stats
+    .filter((s) => s.answered >= minAnswered && s.correct / s.answered < below)
+    .sort((a, b) => a.correct / a.answered - b.correct / b.answered || b.answered - a.answered)[0]?.id;
+}
