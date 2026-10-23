@@ -6,9 +6,7 @@ import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { NotBuilt } from "@/components/shared/NotBuilt";
-import { FormatList } from "@/components/shared/FormatList";
-import { QuizCard } from "@/components/shared/QuizCard";
-import { loadQuizBank } from "@/lib/comicKit";
+import { TopicSidePanel } from "@/components/shared/TopicSidePanel";
 import { ComicViewer } from "@/components/comic/ComicViewer";
 
 export default async function ComicPage(props: PageProps<"/topics/[slug]/comic">) {
@@ -46,10 +44,7 @@ export default async function ComicPage(props: PageProps<"/topics/[slug]/comic">
               <NotBuilt format="Comic" topic={topic.name} />
             )}
           </div>
-          <aside className="space-y-6 lg:sticky lg:top-24">
-            <FormatList topic={topic} opened={opened} current="comic" />
-            <QuizCard topicId={topic.id} total={loadQuizBank(topic.id).length} />
-          </aside>
+          <TopicSidePanel topic={topic} opened={opened} current="comic" />
         </div>
         <RelatedTopics topics={related} />
       </main>

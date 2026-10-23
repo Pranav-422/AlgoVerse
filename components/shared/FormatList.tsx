@@ -9,7 +9,7 @@ const ITEMS: { key: Format; label: string; sub: string; path: string; icon: type
   { key: "visualizer", label: "Visualizer", sub: "Step through the algorithm", path: "/visualizer", icon: Activity },
 ];
 
-export function FormatList({ topic, opened, current }: { topic: Topic; opened: Format[]; current: Format }) {
+export function FormatList({ topic, opened, current }: { topic: Topic; opened: Format[]; current?: Format }) {
   return (
     <section className="box overflow-hidden">
       <div className="flex justify-between items-center px-4 py-2.5 border-b-2 border-ink bg-cream">

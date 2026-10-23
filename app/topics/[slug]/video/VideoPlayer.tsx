@@ -16,7 +16,7 @@ export function VideoPlayer({ src, chapters, hasFile }: { src: string; chapters:
   const active = chapters.reduce((acc, c, i) => (time >= c.t ? i : acc), 0);
 
   return (
-    <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
+    <div className="grid lg:grid-cols-[260px_1fr] gap-6 items-start">
       <div className="box p-3">
         <div className="relative aspect-video bg-ink rounded-sm overflow-hidden border-2 border-ink">
           {hasFile ? (
@@ -33,7 +33,7 @@ export function VideoPlayer({ src, chapters, hasFile }: { src: string; chapters:
               <p className="font-head font-extrabold text-2xl">Video file not added yet</p>
               <p className="font-mono text-[12px] text-muted max-w-[460px]">
                 The lesson is pre-rendered outside the app. Put the file at <code className="bg-cream px-1">public{src}</code>{" "}
-                and it plays here with the chapter markers on the right.
+                and it plays here with the chapter markers beside it.
               </p>
             </div>
           )}
@@ -41,7 +41,7 @@ export function VideoPlayer({ src, chapters, hasFile }: { src: string; chapters:
         </div>
       </div>
 
-      <aside className="box overflow-hidden">
+      <aside className="box overflow-hidden lg:order-first">
         <div className="px-4 py-2.5 border-b-2 border-ink bg-cream flex justify-between">
           <span className="label !text-ink font-bold">Chapter markers</span>
           <span className="font-mono text-[10px] text-outline">{chapters.length} sections</span>

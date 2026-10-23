@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { SignOutButton } from "./SignOutButton";
+import { BackButton } from "./BackButton";
 
 export interface Crumb {
   label: string;
@@ -12,7 +13,7 @@ interface Props {
   crumbs?: Crumb[];
   /** Topic slug — enables the per-format nav. */
   topic?: { slug: string; formats: string[] };
-  active?: "topics" | "brief" | "comic" | "video" | "visualizer" | "insights" | "consistency";
+  active?: "topics" | "brief" | "comic" | "video" | "visualizer" | "quiz" | "insights" | "consistency";
   children?: React.ReactNode;
 }
 
@@ -32,11 +33,11 @@ export function AppHeader({ email, crumbs, topic, active, children }: Props) {
   return (
     <>
       <header className="sticky top-0 z-50 bg-card border-b-2 border-ink">
-        <div className="h-16 w-full max-w-[1440px] mx-auto px-6 lg:px-8 flex items-center justify-between gap-4">
+        <div className="min-h-16 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap md:flex-nowrap items-center justify-between gap-x-4 gap-y-2">
           <Logo href="/dashboard" />
-          <div className="flex-1 max-w-lg mx-auto">{children}</div>
-          <div className="flex items-center gap-3 shrink-0">
-            <nav className="flex items-center gap-1.5 font-mono text-[12px] font-semibold">
+          {children && <div className="flex-1 max-w-lg mx-auto max-md:order-last max-md:basis-full">{children}</div>}
+          <div className="flex items-center gap-3 min-w-0 max-md:basis-full max-md:order-2">
+            <nav className="flex items-center gap-1.5 font-mono text-[12px] font-semibold min-w-0 overflow-x-auto whitespace-nowrap [&>*]:shrink-0 max-md:flex-1">
               <Link href="/dashboard" className={linkCls(active === "topics")}>
                 Topics
               </Link>
@@ -66,13 +67,18 @@ export function AppHeader({ email, crumbs, topic, active, children }: Props) {
                     </span>
                   ),
                 )}
+              {topic && (
+                <Link href={`/topics/${topic.slug}/quiz`} className={linkCls(active === "quiz")}>
+                  Quiz
+                </Link>
+              )}
             </nav>
-            <div className="h-6 w-px bg-outline-soft" />
+            <div className="h-6 w-px bg-outline-soft max-md:hidden" />
             <div className="flex items-center gap-2 border-2 border-ink rounded bg-card pl-1 pr-2 py-0.5 shadow-comic-sm">
               <span className="w-7 h-7 rounded bg-ink text-amber-mid font-mono font-bold text-xs flex items-center justify-center uppercase">
                 {email[0]}
               </span>
-              <span className="font-mono text-[11px] max-w-[140px] truncate" title={email}>
+              <span className="font-mono text-[11px] max-w-[140px] truncate max-sm:hidden" title={email}>
                 {email.startsWith("guest-") ? "guest" : email}
               </span>
               <SignOutButton />
@@ -82,7 +88,8 @@ export function AppHeader({ email, crumbs, topic, active, children }: Props) {
       </header>
       {crumbs && (
         <div className="w-full bg-cream border-b-2 border-ink">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-2 flex items-center gap-2 font-mono text-[11px] text-muted uppercase tracking-wider">
+          <div className="max-w-[1440px] mx-auto px-6 lg:px-8 py-2 flex items-center gap-2 overflow-x-auto whitespace-nowrap font-mono text-[11px] text-muted uppercase tracking-wider">
+            {crumbs.length > 1 && <BackButton fallback={crumbs.at(-2)?.href ?? "/dashboard"} />}
             {crumbs.map((c, i) => (
               <span key={i} className="flex items-center gap-2">
                 {i > 0 && <span className="text-outline-soft">/</span>}

@@ -4,6 +4,7 @@ import { AppFooter } from "@/components/shared/AppFooter";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { NotBuilt } from "@/components/shared/NotBuilt";
 import { HowGenerated } from "@/components/shared/HowGenerated";
+import { TopicSidePanel } from "@/components/shared/TopicSidePanel";
 import { TopicVisualizer } from "@/components/visualizer/TopicVisualizer";
 
 const SUPPORTED = ["arrays", "linked-lists", "stacks-queues", "sorting", "trees", "graphs", "recursion"];
@@ -11,7 +12,7 @@ const SUPPORTED = ["arrays", "linked-lists", "stacks-queues", "sorting", "trees"
 export default async function VisualizerPage(props: PageProps<"/topics/[slug]/visualizer">) {
   const { slug } = await props.params;
   const { op } = await props.searchParams;
-  const { user, topic, available, related, crumbs } = await loadTopicPage(slug, "visualizer");
+  const { user, topic, available, opened, related, crumbs } = await loadTopicPage(slug, "visualizer");
   const ready = available && SUPPORTED.includes(topic.id);
 
   return (
@@ -26,7 +27,12 @@ export default async function VisualizerPage(props: PageProps<"/topics/[slug]/vi
           <p className="font-mono text-[11px] text-outline">← → step · space play/pause · 1–3 answer a prediction</p>
         </div>
 
-        {ready ? <TopicVisualizer topicId={topic.id} ops={topic.operations} initialOp={typeof op === "string" ? op : undefined} /> : <NotBuilt format="Visualizer" topic={topic.name} />}
+        <div className="grid xl:grid-cols-[1fr_280px] gap-8 items-start">
+          <div className="min-w-0">
+            {ready ? <TopicVisualizer topicId={topic.id} ops={topic.operations} initialOp={typeof op === "string" ? op : undefined} /> : <NotBuilt format="Visualizer" topic={topic.name} />}
+          </div>
+          <TopicSidePanel topic={topic} opened={opened} current="visualizer" />
+        </div>
 
         <HowGenerated
           provenance={{

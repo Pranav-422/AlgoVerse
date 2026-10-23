@@ -260,11 +260,11 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
           }}
         />
       ) : (
-        <div className="grid grid-cols-[56px_1fr_56px] items-center gap-4">
-          <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3" aria-label="Previous panel">
+        <div className="grid sm:grid-cols-[56px_1fr_56px] items-center gap-4">
+          <button onClick={() => go(-1)} disabled={busy || index === 0} className="btn btn-light !p-3 max-sm:hidden" aria-label="Previous panel">
             <ChevronLeft size={20} />
           </button>
-          <div className="max-w-[780px] w-full mx-auto pr-6 pb-3">
+          <div className="max-w-[780px] w-full mx-auto sm:pr-6 pb-3">
             {/* Progress bar */}
             <div className="w-full h-1.5 bg-outline-soft rounded-full mb-2 overflow-hidden">
               <div
@@ -289,7 +289,7 @@ export function ComicViewer({ topicId, pool, initialGenerated, initialRemaining,
           <button
             onClick={() => go(1)}
             disabled={busy || index === panels.length - 1}
-            className="btn btn-light !p-3"
+            className="btn btn-light !p-3 max-sm:hidden"
             aria-label="Next panel"
           >
             <ChevronRight size={20} />
