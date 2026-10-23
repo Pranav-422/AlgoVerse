@@ -4,7 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import Database from "better-sqlite3";
 import type { Format } from "./knowledge";
-import { nextReview, type ReviewState, type CheckPair } from "./learning";
+import { nextReview, pickArm, type ReviewState, type CheckPair, type StudyArm } from "./learning";
 
 // SQLite, created on first run. Single file, no server to run at demo time.
 
@@ -97,6 +97,11 @@ function open(): Database.Database {
       style       TEXT NOT NULL,      -- 'visual' | 'worded'
       pace        TEXT NOT NULL,      -- 'step' | 'story'
       updated_at  INTEGER NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS study (
+      user_id   TEXT PRIMARY KEY,
+      arm       TEXT NOT NULL,          -- 'text' | 'visualgo' | 'algoverse'
+      joined_at INTEGER NOT NULL
     );
     CREATE TABLE IF NOT EXISTS progress (
       user_id   TEXT NOT NULL,
@@ -375,6 +380,42 @@ export function checkPairs(): CheckPair[] {
     )
     .all() as { pre: number; post: number; formats: string | null }[];
   return rows.map((r) => ({ pre: r.pre, post: r.post, formats: r.formats ? r.formats.split(",") : [] }));
+}
+
+// --- classroom study -------------------------------------------------------------
+
+export function getArm(userId: string): StudyArm | null {
+  const row = open().prepare("SELECT arm FROM study WHERE user_id = ?").get(userId) as { arm: StudyArm } | undefined;
+  return row?.arm ?? null;
+}
+
+/** Puts the learner in the smallest group (random among ties); joining twice keeps the first group. */
+export function joinStudy(userId: string): StudyArm {
+  const db = open();
+  db.transaction(() => {
+    const counts = Object.fromEntries(
+      (db.prepare("SELECT arm, COUNT(*) AS n FROM study GROUP BY arm").all() as { arm: StudyArm; n: number }[]).map((r) => [r.arm, r.n]),
+    );
+    db.prepare("INSERT INTO study (user_id, arm, joined_at) VALUES (?, ?, ?) ON CONFLICT DO NOTHING").run(userId, pickArm(counts, Math.random()), Date.now());
+  })();
+  return getArm(userId)!;
+}
+
+export function leaveStudy(userId: string) {
+  open().prepare("DELETE FROM study WHERE user_id = ?").run(userId);
+}
+
+/** Per group: learner-topics whose "before" check came after joining, with mean before/after scores (0–1). */
+export function studyGains(): { arm: StudyArm; learners: number; pre: number; post: number }[] {
+  return open()
+    .prepare(
+      `SELECT s.arm, COUNT(*) AS learners, AVG(1.0 * a.score / a.total) AS pre, AVG(1.0 * b.score / b.total) AS post
+       FROM study s
+       JOIN checks a ON a.user_id = s.user_id AND a.phase = 'pre' AND a.taken_at >= s.joined_at
+       JOIN checks b ON b.user_id = a.user_id AND b.topic_id = a.topic_id AND b.phase = 'post'
+       GROUP BY s.arm`,
+    )
+    .all() as { arm: StudyArm; learners: number; pre: number; post: number }[];
 }
 
 /** topicId → { answered, correct } */

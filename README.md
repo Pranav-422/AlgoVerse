@@ -34,7 +34,8 @@ Open http://localhost:3000. Sign-in is mocked: any email works.
 - **Spaced review** (`/review`): a missed question comes back after 1, 3 and 7 days (`lib/learning.ts`).
 - **Learning map** (dashboard): topics as a path; progress means questions understood, not formats opened.
 - **Weakest topic first** (dashboard): the next step goes to the topic with the lowest quiz score.
-- **Which format helped?** (`/insights`): before/after gains per format against a text-only baseline. Classroom comparison with textbook and VisuAlgo: see `EVALUATION.md`.
+- **Which format helped?** (`/insights`): before/after gains per format against a text-only baseline.
+- **Classroom study** (`/study`): random, balanced groups (text only, VisuAlgo, AlgoVerse) take the same before/after check; results on `/insights`. Steps in `EVALUATION.md`.
 
 ## Where things are
 

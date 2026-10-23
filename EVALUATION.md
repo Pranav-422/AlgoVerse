@@ -26,24 +26,16 @@ Limit: learners pick their own formats, so the format table shows association, n
 
 ## 4. Classroom comparison (conventional teaching and existing tools)
 
-Run once per topic with one class. About 30 minutes.
+Built into the app at `/study`. Run once per topic with one class, about 30 minutes.
 
-1. Every student signs in and takes the **before** check on the topic page. Do not open anything else yet.
-2. Split the class at random (roll number odd / even) into three groups:
-   - **A, conventional**: read only the AlgoVerse text brief, or the same section of the course textbook.
-   - **B, existing tool**: study the topic on VisuAlgo (visualgo.net) for the same time. Do not open other AlgoVerse formats.
-   - **C, AlgoVerse**: use the comic, video and visualizer.
-3. Same time limit for all groups (15 minutes).
-4. Every student takes the **after** check on the topic page.
-5. Read `/insights`. Group C appears in the format rows. Groups A and B both land in the *text brief only* row, so note their emails per group and compare their before/after scores from the `checks` table:
+1. Every student signs in, opens `/study` and presses **Join the study**. The server puts each student in the smallest of three groups (random among ties), so the groups stay balanced:
+   - **Text only (conventional)**: reads the topic brief, like a textbook page.
+   - **VisuAlgo (existing tool)**: reads the brief, then studies the topic on VisuAlgo (the brief shows a button to the matching module).
+   - **AlgoVerse**: reads the brief, then uses the comic, video and visualizer.
+2. Every student opens the topic and takes the **before** check.
+3. Give all groups the same time (15 minutes). In the study the comic, video and visualizer redirect to the brief until the before check is saved; for the text and VisuAlgo groups, until the after check is saved.
+4. Every student takes the **after** check. In the study it cannot be retaken, so later format use does not change the score.
+5. Read `/insights` → *Classroom study*: learner-topics, mean before, after and change per group. Only checks started after joining count.
+6. With fewer than about 20 students per group, report the numbers without claiming a significant difference.
 
-   ```sql
-   SELECT u.email, a.score AS before, b.score AS after
-   FROM checks a JOIN checks b ON b.user_id = a.user_id AND b.topic_id = a.topic_id AND b.phase = 'post'
-   JOIN users u ON u.id = a.user_id
-   WHERE a.phase = 'pre' AND a.topic_id = 'sorting';
-   ```
-
-6. Report the mean gain (after − before) per group and the number of students. With fewer than about 20 per group, report the numbers without claiming a significant difference.
-
-Optional: a week later, give the practice quiz (`/topics/<id>/quiz?n=10`) to all groups to compare retention.
+Students can leave the study on `/study`. Optional: a week later, give the practice quiz (`/topics/<id>/quiz?n=10`) to all groups to compare retention.

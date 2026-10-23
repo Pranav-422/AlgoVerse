@@ -12,11 +12,13 @@ interface Props {
   post?: Score;
   /** False once a format other than the brief is open: a "before" score would no longer be one. */
   canPre: boolean;
+  /** Study members keep their first after score, so there is no retake. */
+  inStudy?: boolean;
 }
 
 // The same few questions before and after learning, graded on the server, so the
 // learner (and the insights page) can see what the topic actually taught.
-export function TopicCheck({ topicId, questions, pre: initialPre, post: initialPost, canPre }: Props) {
+export function TopicCheck({ topicId, questions, pre: initialPre, post: initialPost, canPre, inStudy }: Props) {
   const [pre, setPre] = useState(initialPre);
   const [post, setPost] = useState(initialPost);
   const [open, setOpen] = useState(!initialPre && canPre);
@@ -37,7 +39,7 @@ export function TopicCheck({ topicId, questions, pre: initialPre, post: initialP
         body: JSON.stringify({ topicId, phase, answers: picks }),
       });
       const json = await res.json();
-      if (!json.ok) throw new Error(json.error === "TOO_LATE" ? "You have already opened other formats, so this can no longer be a 'before' score." : "Could not save your answers. Try again.");
+      if (!json.ok) throw new Error(json.error === "TOO_LATE" ? "You have already opened other formats, so this can no longer be a 'before' score." : json.error === "ALREADY_TAKEN" ? "Your score for the study is already saved." : "Could not save your answers. Try again.");
       const score = { score: json.data.score, total: json.data.total };
       if (phase === "pre") setPre(score);
       else setPost(score);
@@ -121,7 +123,7 @@ export function TopicCheck({ topicId, questions, pre: initialPre, post: initialP
           )}
         </form>
       ) : (
-        pre && (
+        pre && !(post && inStudy) && (
           <button type="button" className="btn btn-light !py-1.5 mt-3" onClick={retake}>
             {post ? "Retake" : "Take the after check"}
           </button>

@@ -9,10 +9,11 @@ import { TopicSidePanel } from "@/components/shared/TopicSidePanel";
 import { RelatedTopics } from "@/components/shared/RelatedTopics";
 import { ExpressiveSummary } from "./ExpressiveSummary";
 import { TopicCheck } from "./TopicCheck";
+import { StudyBanner } from "@/components/shared/StudyBanner";
 
 export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
   const { slug } = await props.params;
-  const { user, topic, opened, related, crumbs } = await loadTopicPage(slug, "brief");
+  const { user, topic, opened, related, crumbs, arm } = await loadTopicPage(slug, "brief");
   const nextFormat = topic.formats.includes("comic") ? "comic" : "visualizer";
   const checks = getChecks(user.id, topic.id);
 
@@ -44,12 +45,14 @@ export default async function BriefPage(props: PageProps<"/topics/[slug]">) {
 
         <div className="grid lg:grid-cols-[1fr_360px] gap-8 items-start">
           <div className="space-y-8">
+            {arm && <StudyBanner arm={arm} topicId={topic.id} done={!!checks.post} />}
             <TopicCheck
               topicId={topic.id}
               questions={checkQuestions(topic.id).map(({ q, options }) => ({ q, options }))}
               pre={checks.pre}
               post={checks.post}
               canPre={opened.every((f) => f === "brief")}
+              inStudy={!!arm}
             />
             <ExpressiveSummary topicId={topic.id} summary={topic.summary} />
 

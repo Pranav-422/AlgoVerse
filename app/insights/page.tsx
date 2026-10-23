@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { requireUser } from "@/lib/session";
-import { allGenerations, feedbackCounts, checkGains, checkPairs } from "@/lib/db";
-import { gainsByFormat } from "@/lib/learning";
+import { allGenerations, feedbackCounts, checkGains, checkPairs, studyGains } from "@/lib/db";
+import { gainsByFormat, STUDY_ARMS } from "@/lib/learning";
 import { getAllTopics } from "@/lib/knowledge";
 import { AppHeader } from "@/components/shared/AppHeader";
 import { AppFooter } from "@/components/shared/AppFooter";
@@ -25,6 +25,12 @@ const GROUP_LABEL: Record<string, string> = {
   comic: "Opened the comic",
   video: "Opened the video",
   visualizer: "Used the visualizer",
+};
+
+const ARM_LABEL: Record<string, string> = {
+  text: "Text only (conventional)",
+  visualgo: "Text + VisuAlgo (existing tool)",
+  algoverse: "Text + AlgoVerse formats",
 };
 
 const KIND_LABEL: Record<string, string> = { comic: "Comic picks", expressive: "Expressive rewrite", hinglish: "Hinglish rewrite" };
@@ -71,6 +77,8 @@ export default async function InsightsPage() {
   const gains = checkGains();
   const pairs = checkPairs();
   const byFormat = gainsByFormat(pairs, ["comic", "video", "visualizer"]);
+  const study = studyGains();
+  const arms = STUDY_ARMS.map((arm) => study.find((g) => g.arm === arm) ?? { arm, learners: 0, pre: 0, post: 0 });
   const topicName = new Map(getAllTopics().map((t) => [t.id, t.name]));
   const pctOf = (x: number) => Math.round(x * 100);
 
@@ -268,6 +276,48 @@ export default async function InsightsPage() {
             </div>
           ) : (
             <p className="p-5 font-mono text-[12px] text-muted">No learner has taken both checks yet.</p>
+          )}
+        </section>
+
+        <section className="box overflow-hidden">
+          <div className="px-5 py-3 border-b-2 border-ink bg-cream">
+            <h2 className="font-head font-bold text-lg">Classroom study: AlgoVerse vs textbook vs VisuAlgo</h2>
+            <p className="font-mono text-[11px] text-muted">
+              Learners who joined <a href="/study" className="underline">/study</a> are put in a group at random; the text and VisuAlgo groups cannot
+              open the other formats before their after check. Counts only checks started after joining. Under about 20 per group, read the
+              difference as a hint, not a result.
+            </p>
+          </div>
+          {study.length ? (
+            <div className="overflow-x-auto">
+              <table className="w-full font-mono text-[12px]">
+                <thead>
+                  <tr className="text-left label !text-[10px] border-b border-outline-soft">
+                    <th className="px-4 py-2">Group</th>
+                    <th className="px-4 py-2 text-right">Learner-topics</th>
+                    <th className="px-4 py-2 text-right">Before</th>
+                    <th className="px-4 py-2 text-right">After</th>
+                    <th className="px-4 py-2 text-right">Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {arms.map((g) => {
+                    const change = pctOf(g.post) - pctOf(g.pre);
+                    return (
+                      <tr key={g.arm} className="border-b border-dashed border-outline-soft">
+                        <td className="px-4 py-2">{ARM_LABEL[g.arm]}</td>
+                        <td className="px-4 py-2 text-right">{g.learners}</td>
+                        <td className="px-4 py-2 text-right">{g.learners ? `${pctOf(g.pre)}%` : "—"}</td>
+                        <td className="px-4 py-2 text-right">{g.learners ? `${pctOf(g.post)}%` : "—"}</td>
+                        <td className="px-4 py-2 text-right font-bold">{g.learners ? `${change >= 0 ? "+" : ""}${change} pts` : "—"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="p-5 font-mono text-[12px] text-muted">No study results yet. Share /study with a class to start.</p>
           )}
         </section>
 

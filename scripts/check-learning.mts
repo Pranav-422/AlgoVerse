@@ -1,5 +1,5 @@
 // Sanity checks for the spaced-review schedule and the learning-map layout. Run: node scripts/check-learning.mts
-import { nextReview, layoutMap, gainsByFormat, weakestTopic, REVIEW_GAPS } from "../lib/learning.ts";
+import { nextReview, layoutMap, gainsByFormat, weakestTopic, pickArm, STUDY_ARMS, REVIEW_GAPS } from "../lib/learning.ts";
 
 let failures = 0;
 const check = (cond: boolean, msg: string) => {
@@ -59,6 +59,16 @@ check(g("video").learners === 0 && g("video").post === 0, "an empty group has ze
 // --- weakest topic ---
 check(weakestTopic([{ id: "a", answered: 4, correct: 1 }, { id: "b", answered: 2, correct: 0 }, { id: "c", answered: 1, correct: 0 }]) === "b", "lowest share right wins; one answer is too few");
 check(weakestTopic([{ id: "a", answered: 5, correct: 4 }]) === undefined, "no weak topic when all are above the bar");
+
+// --- study groups ---
+check(pickArm({ text: 2, visualgo: 1, algoverse: 2 }, 0.99) === "visualgo", "the smallest group is picked");
+check(pickArm({}, 0) === "text" && pickArm({}, 0.99) === "algoverse", "ties are broken by the random number");
+const tally: Record<string, number> = {};
+for (let i = 0; i < 30; i++) {
+  const a = pickArm(tally, (i * 0.37) % 1);
+  tally[a] = (tally[a] ?? 0) + 1;
+}
+check(STUDY_ARMS.every((a) => tally[a] === 10), `30 joins split 10/10/10 (${JSON.stringify(tally)})`);
 
 console.log(failures ? `${failures} problem(s)` : "learning helpers OK");
 process.exit(failures ? 1 : 0);

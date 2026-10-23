@@ -87,3 +87,14 @@ export function weakestTopic(stats: { id: string; answered: number; correct: num
     .filter((s) => s.answered >= minAnswered && s.correct / s.answered < below)
     .sort((a, b) => a.correct / a.answered - b.correct / b.answered || b.answered - a.answered)[0]?.id;
 }
+
+/** Classroom study groups: everyone reads the text brief; they differ in what they study next. */
+export const STUDY_ARMS = ["text", "visualgo", "algoverse"] as const;
+export type StudyArm = (typeof STUDY_ARMS)[number];
+
+/** Balanced random assignment: a random group among those with the fewest members. `r` is in [0, 1). */
+export function pickArm(counts: Partial<Record<StudyArm, number>>, r: number): StudyArm {
+  const min = Math.min(...STUDY_ARMS.map((a) => counts[a] ?? 0));
+  const open = STUDY_ARMS.filter((a) => (counts[a] ?? 0) === min);
+  return open[Math.floor(r * open.length)];
+}
