@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Arc, Comic, DialogueBank, DialogueLine, Kit, Selection } from "./comic";
+import type { Arc, Comic, ComicQuiz, DialogueBank, DialogueLine, Kit, Selection } from "./comic";
 import { FEEDBACK_MAP, type FeedbackCategory } from "./feedbackMap";
 import { COMIC_STYLE } from "./styleGuide";
 import { validateScene, numbersMatchScene } from "./sceneSchema";
@@ -24,6 +24,17 @@ function lineIndex(bank: DialogueBank) {
   const map = new Map<string, { line: DialogueLine; arc: Arc; order: number }>();
   for (const arc of bank.arcs) arc.lines.forEach((line, order) => map.set(line.id, { line, arc, order }));
   return map;
+}
+
+export type QuizItem = ComicQuiz & { id: string; arcId?: string };
+
+/** Every question for a topic: one per comic arc, then the extra ones in content/quiz/<topic>.json. */
+export function loadQuizBank(topicId: string): QuizItem[] {
+  const arcs = (loadBank(topicId)?.arcs ?? []).flatMap((a) => (a.quiz ? [{ ...a.quiz, id: a.id, arcId: a.id }] : []));
+  const file = path.join(process.cwd(), "content", "quiz", `${topicId}.json`);
+  if (!/^[a-z0-9-]+$/.test(topicId) || !fs.existsSync(file)) return arcs;
+  const extra = (JSON.parse(fs.readFileSync(file, "utf8")) as { questions: ComicQuiz[] }).questions;
+  return [...arcs, ...extra.map((q, i) => ({ ...q, id: `extra-${i + 1}` }))];
 }
 
 // --- rules ---------------------------------------------------------------------
@@ -316,35 +327,29 @@ export function factsFor(sel: Selection, bank: DialogueBank, coreFacts: string[]
   return [...out];
 }
 
+/** One multiple-choice question: 3 options, a verbatim core fact, a short "why" per option. */
+export function lintQuiz(q: ComicQuiz, label: string, coreFacts: string[]): string[] {
+  const errs: string[] = [];
+  const words = (t: string) => t.split(/\s+/).filter(Boolean).length;
+  if (!Array.isArray(q.options) || q.options.length !== 3) errs.push(`${label} must have exactly 3 options`);
+  if (typeof q.answer !== "number" || q.answer < 0 || q.answer > 2 || !Number.isInteger(q.answer)) errs.push(`${label} answer must be 0, 1, or 2`);
+  if (typeof q.q !== "string" || words(q.q) > 25) errs.push(`${label} question is missing or over 25 words`);
+  if (!coreFacts.some((f) => f.trim() === q.fact?.trim())) errs.push(`${label} fact "${q.fact}" not found verbatim in core facts`);
+  if (!Array.isArray(q.why) || q.why.length !== 3 || q.why.some((w) => typeof w !== "string" || !w.trim())) {
+    errs.push(`${label} needs "why": 3 non-empty explanations, one per option`);
+  } else {
+    for (const [i, w] of q.why.entries()) if (words(w) > 25) errs.push(`${label} why[${i}] is over 25 words`);
+  }
+  return errs;
+}
+
 /** Bank-level checks: run by scripts/check-comic-kit.mts. */
 export function lintBank(bank: DialogueBank, kit: Kit, coreFacts: string[]): string[] {
   const errs: string[] = [];
   const ids = new Set<string>();
   for (const arc of bank.arcs) {
-    if (!arc.quiz) {
-      errs.push(`arc ${arc.id}: missing quiz`);
-    } else {
-      const q = arc.quiz;
-      if (!Array.isArray(q.options) || q.options.length !== 3) {
-        errs.push(`arc ${arc.id}: quiz must have exactly 3 options`);
-      }
-      if (typeof q.answer !== "number" || q.answer < 0 || q.answer > 2 || !Number.isInteger(q.answer)) {
-        errs.push(`arc ${arc.id}: quiz answer must be 0, 1, or 2`);
-      }
-      const words = q.q.split(/\s+/).filter(Boolean).length;
-      if (words > 25) {
-        errs.push(`arc ${arc.id}: quiz question has ${words} words (max 25)`);
-      }
-      if (!coreFacts.some((f) => f.trim() === q.fact.trim())) {
-        errs.push(`arc ${arc.id}: quiz fact "${q.fact}" not found verbatim in core facts`);
-      }
-      if (!Array.isArray(q.why) || q.why.length !== 3 || q.why.some((w) => typeof w !== "string" || !w.trim())) {
-        errs.push(`arc ${arc.id}: quiz needs "why": 3 non-empty explanations, one per option`);
-      } else {
-        for (const [i, w] of q.why.entries())
-          if (w.split(/\s+/).filter(Boolean).length > 25) errs.push(`arc ${arc.id}: why[${i}] is over 25 words`);
-      }
-    }
+    if (!arc.quiz) errs.push(`arc ${arc.id}: missing quiz`);
+    else errs.push(...lintQuiz(arc.quiz, `arc ${arc.id}: quiz`, coreFacts));
     for (const l of arc.lines) {
       if (ids.has(l.id)) errs.push(`${l.id}: duplicate id`);
       ids.add(l.id);
