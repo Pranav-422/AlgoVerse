@@ -13,7 +13,7 @@ interface Props {
   crumbs?: Crumb[];
   /** Topic slug — enables the per-format nav. */
   topic?: { slug: string; formats: string[] };
-  active?: "topics" | "brief" | "comic" | "video" | "visualizer" | "quiz" | "insights" | "consistency";
+  active?: "topics" | "brief" | "comic" | "video" | "visualizer" | "quiz" | "insights" | "consistency" | "help";
   children?: React.ReactNode;
 }
 
@@ -48,6 +48,9 @@ export function AppHeader({ email, crumbs, topic, active, children }: Props) {
                   </Link>
                   <Link href="/insights" className={linkCls(active === "insights")} title="Pipeline reliability metrics">
                     Insights
+                  </Link>
+                  <Link href="/how-it-helps" className={linkCls(active === "help")} title="How AlgoVerse helps learning, in one minute">
+                    How it helps
                   </Link>
                 </>
               )}
